@@ -1,0 +1,11 @@
+rakib@cgm6:~/java/RelatednessSolution/phraserelatedness/src/main/java$ shopt -s globstar
+rakib@cgm6:~/java/RelatednessSolution/phraserelatedness/src/main/java$ javac **/*.java
+rakib@cgm6:~/java/RelatednessSolution/phraserelatedness/src/main/java$ java dal.relatedness.startup.App
+
+rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ shopt -s globstar
+rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ javac  -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar" **/*.java
+rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ java -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar" dal.relatedness.phrase.startup.App
+
+rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ shopt -s globstar
+rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ javac  -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar" **/*.java
+rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ java -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar" dal.relatedness.phrase.startup.App
