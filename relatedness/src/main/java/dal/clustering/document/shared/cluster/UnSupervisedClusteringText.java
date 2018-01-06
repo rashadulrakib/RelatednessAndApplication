@@ -16,7 +16,7 @@ import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 
 public class UnSupervisedClusteringText {
-	DocClusterUtilText docClusterUtilText;
+	public DocClusterUtilText docClusterUtilText;
 	DocClusterUtil docClusterUtil;
 	DocClusterUtilW2Vec docClusterUtilW2Vec;
 	
@@ -24,6 +24,11 @@ public class UnSupervisedClusteringText {
 		docClusterUtilText = new DocClusterUtilText();
 		this.docClusterUtil = docClusterUtil;
 		this.docClusterUtilW2Vec = docClusterUtilW2Vec;
+	}
+	
+	public UnSupervisedClusteringText(DocClusterUtil docClusterUtil) throws IOException{
+		docClusterUtilText = new DocClusterUtilText();
+		this.docClusterUtil = docClusterUtil;
 	}
 	
 	public ClusterResultConatainerText PerformUnSeupervisedSeededClusteringByGtmWordSim(LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody,
@@ -145,18 +150,11 @@ public class UnSupervisedClusteringText {
 			LinkedHashMap<String, double[]> lastCenetrsW2Vec = new LinkedHashMap<String, double[]>();
 			double minimumSSE = Double.MAX_VALUE;
 			
-			//HashSet<String> usedMedoidTexts = new HashSet<String>();
-			
 			while(!converge && iter++< DocClusterConstant.KMedoidMaxIteration){
 				LinkedHashMap<String, ArrayList<InstanceText>> newClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 				LinkedHashMap<String, ArrayList<InstanceW2Vec>> newClustersW2Vec = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
-				//LinkedHashMap<String, double[]> cenetrsW2Vec = new LinkedHashMap<String, double[]>();
-			
-				double newSSE = 0;
 				
-//				for(String key: hmTrainDocsLabelBody.keySet()){
-//					usedMedoidTexts.addAll(hmTrainDocsLabelBody.get(key));
-//				}
+				double newSSE = 0;
 				
 				for(String[] bodyLabel: alTestDocsBodyLabel){
 					String body = bodyLabel[0];
@@ -227,9 +225,10 @@ public class UnSupervisedClusteringText {
 				tempclusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingText(newClusters);
 				//temp
 				
-				if(minimumSSE>newSSE){
+				//if(minimumSSE>newSSE)
+				{
 					System.out.println("newSSE="+newSSE+",minimumSSE="+minimumSSE+",iter="+iter);
-					minimumSSE = newSSE;
+					//minimumSSE = newSSE;
 				}
 				
 				LinkedHashMap<String, double[]> newCenetrsW2Vec = docClusterUtil.ReComputeCenters(newClustersW2Vec);

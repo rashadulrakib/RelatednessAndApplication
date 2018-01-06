@@ -21,6 +21,7 @@ import dal.clustering.document.googlewebsnippets.ClusterUnSupervisedGoogleWebSni
 import dal.clustering.document.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetWEKA;
 import dal.clustering.document.googlewebsnippets.ProcessGoogleWebSnippet;
 import dal.clustering.document.googlewebsnippets.ClusterSemiSupervisedGoogleWebSnippet;
+import dal.clustering.document.googlewebsnippets.WebSnippetExternalEvaluation;
 import dal.clustering.document.stackoverflow.ClusterUnSupervisedStackOverflow;
 import dal.clustering.document.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
 import dal.clustering.document.stackoverflow.ProcessStackOverflow;
@@ -196,6 +197,9 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
+    	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixGtm();
+    	new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixW2Vec();
+    	//new WebSnippetExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessStackOverflow().Process();
     	//new ClusterUnSupervisedStackOverflowWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
@@ -207,6 +211,7 @@ public class App
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecAverageVector();
+    	//new ClusterUnSupervisedBioMedical().ClusterDocsBySimilarityMatrixGtm();
     	
     	//end doc clustering
     	
@@ -218,6 +223,10 @@ public class App
     	//computational intelligence
     	//new CIStartup().CICallTextSim();
     	//end computational intelligence
+    	
+    	//external evaluation
+    	
+    	//end external evaluation
     }
     
     static void size(Map map) {

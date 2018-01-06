@@ -14,6 +14,7 @@ import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
+import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedGoogleWebSnippet {
 	
@@ -33,6 +34,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 				googlewebSnippetUtil.getDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.getDocsGoogleWebSnippetList(), 
 				googlewebSnippetUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
 	}
 	
 	public void ClusterDocsNGramBasedSimilarityGtm() {
@@ -40,18 +42,18 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
 			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
 			
-//			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
-//					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
+			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
+					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
 			
-			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
-			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("sba gov oit business administration temp programoffice style breaking trade game business guide exporting export gov export legal assistance network elan african growth opportunity")));
-			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("slac stanford bfroot computing environment tools srt srtuser user guide software release tools instructions software release tools softreltools srt releases test versions")));
-			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("prospects cms showpage explore types jobs types job eipal state showocc idno doctor hospital job description activities hospital doctors apply medical knowledge skills diagnosis prevention treatment illnesses diseases infections patients")));
-			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("esr oxfordjournals cgi reprint ijkey xyywzrsofm keytype inheritance inequality theoretical reasoning empirical institution google indexer sign personal subscriber oxford journals social sciences european sociological review volume")));
-			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("sciencemag current dtl science aaas table contents transitions high school pillars college science philip sadler american association advancement science")));
-			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("inter kdlp democratic labor party minjoo nodong dang labor party news releases vision statement overview history leadership")));
-			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("nytimes technology onyx adxnnl partner rssnyt emc adxnnlx pnq qbqxuuwjxymxgch movie audience picks scene york software program nav film onyx project viewers links click serve departure scene")));
-			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("arenafan arenafan online afl arena football resource arenafan premier community fans arena football league news scores standings statistics games")));
+//			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
+//			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("sba gov oit business administration temp programoffice style breaking trade game business guide exporting export gov export legal assistance network elan african growth opportunity")));
+//			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("slac stanford bfroot computing environment tools srt srtuser user guide software release tools instructions software release tools softreltools srt releases test versions")));
+//			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("prospects cms showpage explore types jobs types job eipal state showocc idno doctor hospital job description activities hospital doctors apply medical knowledge skills diagnosis prevention treatment illnesses diseases infections patients")));
+//			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("esr oxfordjournals cgi reprint ijkey xyywzrsofm keytype inheritance inequality theoretical reasoning empirical institution google indexer sign personal subscriber oxford journals social sciences european sociological review volume")));
+//			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("sciencemag current dtl science aaas table contents transitions high school pillars college science philip sadler american association advancement science")));
+//			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("inter kdlp democratic labor party minjoo nodong dang labor party news releases vision statement overview history leadership")));
+//			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("nytimes technology onyx adxnnl partner rssnyt emc adxnnlx pnq qbqxuuwjxymxgch movie audience picks scene york software program nav film onyx project viewers links click serve departure scene")));
+//			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("arenafan arenafan online afl arena football resource arenafan premier community fans arena football league news scores standings statistics games")));
 
 			ClusterResultConatainerText clusterResultConatainerText = unSupervisedClusteringText
 					.PerformUnSeupervisedSeededClusteringByGtmWordSimIterative(hmTrainDocsLabelBody, alDocLabelFlat);
@@ -93,16 +95,28 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 //			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
 //					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
-			
+
+//seed for small dataset
 			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
-			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("psdblog worldbank psdblog predicting predicting category psd blog bank knowledge services sector development reading lists toolkits journals surveys business database")));
-			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("interstrength curriculum selfdiscoveryprocess discovery process interstrength associates temperament institute leader language organizations multiple model")));
-			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("cde state stateinfo slstpschbib school topics weekly entries tips topics health history outdoors politics http cospl blogspot")));
-			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("memory loc gov ammem mcchtml scihm science medicine exploration schematics diagrams papers forest inventor vacuum tube electronic devices development radio")));
-			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("sciencemag current dtl science aaas table contents search journal keyword transitions high school pillars college science philip sadler tai")));
-			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("inter kdlp democratic labor party minjoo nodong dang labor party news releases vision statement overview history leadership")));
-			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("mangadownload mangadownload mangadownload downloads archive manga web people signed")));
-			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("missouristatebears sportselect dbml oem spid swimming news missouristatebears official web missouri women swimming diving teams season nation mid major programs")));
+			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("whitepaper wstonline keyword cmpwstonline programming bank transaction software programming bank transaction software programming bank transaction software wall street technology bank edwardsville chose echo solve disaster recovery backup issues echo itera")));
+			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("islandnet kpolsson comphist chronology personal computers gray founds amateur computer society publishing acs newsletter birth personal computing")));
+			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("eurekalert pub releases uoc lhp hiv prevention programs cheaper ucsf led team researchers hiv prevention programs middle income countries efficiency program")));
+			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("microsoft barc mediapresence mylifebits mylifebits project microsoft barc media presence researcher records life computer cbs evening news perfect memory wattnow lifeblogging virtual brain")));
+			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("dbwilson exact web random sampling markov chains ggstr wrote course book finite markov chains algorithmic applications chapter cftp")));
+			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("tomcruisefan tomcruisefan tomcruiseweb tom cruise resource tomcruisefan tomcruiseweb news media resource tom cruise web news pictures")));
+			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("drewbarfield drew barfield news album purchase online sale drew solo los pacaminos gigs")));
+			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("wbaonline wbaonline boxing news schedule ratings history boxing association sanctioning body comprehensive website features champions")));			
+			
+//seed for large-dataset			
+//			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
+//			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("psdblog worldbank psdblog predicting predicting category psd blog bank knowledge services sector development reading lists toolkits journals surveys business database")));
+//			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("interstrength curriculum selfdiscoveryprocess discovery process interstrength associates temperament institute leader language organizations multiple model")));
+//			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("cde state stateinfo slstpschbib school topics weekly entries tips topics health history outdoors politics http cospl blogspot")));
+//			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("memory loc gov ammem mcchtml scihm science medicine exploration schematics diagrams papers forest inventor vacuum tube electronic devices development radio")));
+//			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("sciencemag current dtl science aaas table contents search journal keyword transitions high school pillars college science philip sadler tai")));
+//			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("inter kdlp democratic labor party minjoo nodong dang labor party news releases vision statement overview history leadership")));
+//			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("mangadownload mangadownload mangadownload downloads archive manga web people signed")));
+//			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("missouristatebears sportselect dbml oem spid swimming news missouristatebears official web missouri women swimming diving teams season nation mid major programs")));
 			
 			ClusterResultConatainerVector clusterResultConatainer = unSupervisedClusteringW2Vec.PerformUnSeuperVisedSeededClusteringByW2VecAverageVec
 					(hmTrainDocsLabelBody, alDocLabelFlat);
@@ -127,6 +141,35 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			//PerformUnsupervisedSeededClusteringByGTM(preprocessedContainer);
 			PerformUnsupervisedKemansSeededClusteringByGTM(clusterResultConatainer, docsLabelBody);
 
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void ClusterDocsBySimilarityMatrixGtm(){
+		try{
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\google-sparseMatrix", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void ClusterDocsBySimilarityMatrixW2Vec(){
+		try{
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeDistanceMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\google-sparseMatrix", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

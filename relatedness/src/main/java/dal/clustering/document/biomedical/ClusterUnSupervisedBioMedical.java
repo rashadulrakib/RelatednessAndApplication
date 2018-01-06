@@ -24,7 +24,8 @@ public class ClusterUnSupervisedBioMedical {
 		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(bioMedicalUtil.getUniqueWords(),
 				bioMedicalUtil.getDocsBiomedicalFlat(), bioMedicalUtil.getDocsBiomedicalList(), 
 				bioMedicalUtil.docClusterUtil);
-		//unSupervisedClusteringText = new UnSupervisedClusteringText(bioMedicalUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+		unSupervisedClusteringText = new UnSupervisedClusteringText(bioMedicalUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(bioMedicalUtil.docClusterUtil);
 	}
 
 	public void ClusterDocsNGramBasedSimilarityGtm() {
@@ -135,5 +136,17 @@ public class ClusterUnSupervisedBioMedical {
 			e.printStackTrace();
 		}
 	}
-		
+	
+	public void ClusterDocsBySimilarityMatrixGtm(){
+		try{
+			ArrayList<String []> alDocLabelFlat = bioMedicalUtil.getDocsBiomedicalFlat();
+			
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+
+			docSimMatrix = bioMedicalUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

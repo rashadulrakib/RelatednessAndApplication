@@ -25,7 +25,9 @@ public class ClusterUnSupervisedStackOverflow {
 		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(stackOverflowUtil.getUniqueWords(),
 				stackOverflowUtil.getDocsStackOverflowFlat(), stackOverflowUtil.getDocsStackOverflowList(), 
 				stackOverflowUtil.docClusterUtil);
-		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+		unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil);
+		
 	}
 	
 	public void ClusterDocsNGramBasedSimilarityGtm(){
@@ -57,7 +59,7 @@ public class ClusterUnSupervisedStackOverflow {
 //			hmTrainDocsLabelBody.put("11", new ArrayList<>(Arrays.asList("spring initbinder webbindinginitializer example")));
 //			hmTrainDocsLabelBody.put("20", new ArrayList<>(Arrays.asList("problem fetch product url custom module magento")));
 			
-			//for(int seed=1;seed<=20;seed++)
+			//for(int seed=0;seed<=20;seed++)
 			{
 				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = stackOverflowUtil
 						.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
@@ -103,31 +105,31 @@ public class ClusterUnSupervisedStackOverflow {
 			//for(int seed=1;seed<=20;seed++)
 			{
 				//System.out.println("Seed="+0);
-//				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = stackOverflowUtil
-//						.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
+				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = stackOverflowUtil
+						.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 20);
 				
-				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
-				
-				hmTrainDocsLabelBody.put("18", new ArrayList<>(Arrays.asList("linq sql loadwith limiting fields returned")));
-				hmTrainDocsLabelBody.put("9", new ArrayList<>(Arrays.asList("check command key held java swt startup mac os")));
-				hmTrainDocsLabelBody.put("7", new ArrayList<>(Arrays.asList("visual studio addin development resolve process access file problem exiting visual studio")));
-				hmTrainDocsLabelBody.put("8", new ArrayList<>(Arrays.asList("safe keyboard shortcut activating code completion style functionality mac os browsers")));
-				hmTrainDocsLabelBody.put("15", new ArrayList<>(Arrays.asList("changing highlighcolor default option ajax ruby rails")));
-				hmTrainDocsLabelBody.put("3", new ArrayList<>(Arrays.asList("svn external subdirectory sync head revision svn update parent working copy")));
-				hmTrainDocsLabelBody.put("14", new ArrayList<>(Arrays.asList("change sharepoint extended webapplicaion web config file")));
-				hmTrainDocsLabelBody.put("19", new ArrayList<>(Arrays.asList("simple library utf haskell streams longer compile")));
-				hmTrainDocsLabelBody.put("4", new ArrayList<>(Arrays.asList("help apache mod rewrite fetch file based url")));
-				hmTrainDocsLabelBody.put("10", new ArrayList<>(Arrays.asList("pass long strings search replace bash sed rpl script")));
-				hmTrainDocsLabelBody.put("13", new ArrayList<>(Arrays.asList("scala example implicit paremeter working")));
-				hmTrainDocsLabelBody.put("2", new ArrayList<>(Arrays.asList("returning multiple columns case select satement oracle")));
-				hmTrainDocsLabelBody.put("5", new ArrayList<>(Arrays.asList("process current excel throught vba relying finding window caption")));
-				hmTrainDocsLabelBody.put("6", new ArrayList<>(Arrays.asList("problem array type dampar matlab deconvolucy")));
-				hmTrainDocsLabelBody.put("16", new ArrayList<>(Arrays.asList("import qt resources main cpp gui classes dependend static lib project")));
-				hmTrainDocsLabelBody.put("1", new ArrayList<>(Arrays.asList("wordpress plug allow edit meta tags individual post")));
-				hmTrainDocsLabelBody.put("17", new ArrayList<>(Arrays.asList("adding zend framework php ini include path drupal site blank")));
-				hmTrainDocsLabelBody.put("12", new ArrayList<>(Arrays.asList("hibernaqte exception org hibernate exception sqlgrammarexception execute query")));
-				hmTrainDocsLabelBody.put("11", new ArrayList<>(Arrays.asList("spring security problem error creating bean org springframework web servlet mvc annotation defaultannotationhandlermapping")));
-				hmTrainDocsLabelBody.put("20", new ArrayList<>(Arrays.asList("problem fetch product url custom module magento")));
+//				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
+//				
+//				hmTrainDocsLabelBody.put("18", new ArrayList<>(Arrays.asList("linq sql loadwith limiting fields returned")));
+//				hmTrainDocsLabelBody.put("9", new ArrayList<>(Arrays.asList("check command key held java swt startup mac os")));
+//				hmTrainDocsLabelBody.put("7", new ArrayList<>(Arrays.asList("visual studio addin development resolve process access file problem exiting visual studio")));
+//				hmTrainDocsLabelBody.put("8", new ArrayList<>(Arrays.asList("safe keyboard shortcut activating code completion style functionality mac os browsers")));
+//				hmTrainDocsLabelBody.put("15", new ArrayList<>(Arrays.asList("changing highlighcolor default option ajax ruby rails")));
+//				hmTrainDocsLabelBody.put("3", new ArrayList<>(Arrays.asList("svn external subdirectory sync head revision svn update parent working copy")));
+//				hmTrainDocsLabelBody.put("14", new ArrayList<>(Arrays.asList("change sharepoint extended webapplicaion web config file")));
+//				hmTrainDocsLabelBody.put("19", new ArrayList<>(Arrays.asList("simple library utf haskell streams longer compile")));
+//				hmTrainDocsLabelBody.put("4", new ArrayList<>(Arrays.asList("help apache mod rewrite fetch file based url")));
+//				hmTrainDocsLabelBody.put("10", new ArrayList<>(Arrays.asList("pass long strings search replace bash sed rpl script")));
+//				hmTrainDocsLabelBody.put("13", new ArrayList<>(Arrays.asList("scala example implicit paremeter working")));
+//				hmTrainDocsLabelBody.put("2", new ArrayList<>(Arrays.asList("returning multiple columns case select satement oracle")));
+//				hmTrainDocsLabelBody.put("5", new ArrayList<>(Arrays.asList("process current excel throught vba relying finding window caption")));
+//				hmTrainDocsLabelBody.put("6", new ArrayList<>(Arrays.asList("problem array type dampar matlab deconvolucy")));
+//				hmTrainDocsLabelBody.put("16", new ArrayList<>(Arrays.asList("import qt resources main cpp gui classes dependend static lib project")));
+//				hmTrainDocsLabelBody.put("1", new ArrayList<>(Arrays.asList("wordpress plug allow edit meta tags individual post")));
+//				hmTrainDocsLabelBody.put("17", new ArrayList<>(Arrays.asList("adding zend framework php ini include path drupal site blank")));
+//				hmTrainDocsLabelBody.put("12", new ArrayList<>(Arrays.asList("hibernaqte exception org hibernate exception sqlgrammarexception execute query")));
+//				hmTrainDocsLabelBody.put("11", new ArrayList<>(Arrays.asList("spring security problem error creating bean org springframework web servlet mvc annotation defaultannotationhandlermapping")));
+//				hmTrainDocsLabelBody.put("20", new ArrayList<>(Arrays.asList("problem fetch product url custom module magento")));
 				
 				ClusterResultConatainerVector clusterResultConatainer = unSupervisedClusteringW2Vec.PerformUnSeuperVisedSeededClusteringByW2VecAverageVec
 						(hmTrainDocsLabelBody, alDocLabelFlat);

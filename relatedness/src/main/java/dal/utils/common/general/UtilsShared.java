@@ -1,5 +1,7 @@
 package dal.utils.common.general;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -57,5 +59,40 @@ public class UtilsShared {
                 temp[j][i] = m[i][j];
         return temp;
     }
+	
+	public static double [][] InitializeMatrix(int rows, int cols){
+		double [][] matrix = new double [rows][];
+		try{
+			for(int i=0;i<rows;i++){
+				double [] arr = new double[cols];
+				matrix[i] = arr;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return matrix;
+	}
+	
+	public static void WriteMatrixToFile(String outFile, double [][] m, String seperator){
+		try{		
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+			
+			 for (int i = 0; i < m.length; i++){
+	            for (int j = 0; j < m[i].length; j++){
+	            	bw.write(Double.toString(m[i][j]));
+	            	if(j<m[i].length-1){
+	            		bw.write(seperator);
+	            	}
+	            }
+	            
+	            bw.write("\n");
+			 }
+			 
+			 bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 }

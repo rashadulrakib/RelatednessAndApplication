@@ -18,6 +18,7 @@ import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 import dal.utils.common.compute.ComputeUtil;
+import dal.utils.common.general.UtilsShared;
 
 public class DocClusterUtil {
 	
@@ -1016,6 +1017,26 @@ public class DocClusterUtil {
 		
 		return hmTrainDocsLabelBody;
 	}
+	
+//	public LinkedHashMap<String, ArrayList<String>> GetTrainRandomDocuments(
+//			ArrayList<String[]> alDocLabelFlat, int numberOfClusters, int seed) {
+//		LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody  = new LinkedHashMap<String, ArrayList<String>>();
+//		
+//		try{
+//			Collections.shuffle(alDocLabelFlat, new Random(seed));
+//			
+//			for(int i=0;i< numberOfClusters;i++){
+//				ArrayList<String> doc1 = new ArrayList<String>();
+//				doc1.add(alDocLabelFlat.get(i)[0]);
+//				hmTrainDocsLabelBody.put(alDocLabelFlat.get(i)[1], doc1);
+//			}
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		
+//		return hmTrainDocsLabelBody;
+//	}
 
 	public LinkedHashMap<String, InstanceW2Vec> GetInstanceClosestToCentersW2Vec(LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClusters,
 			LinkedHashMap<String, double[]> lastCenters) {
@@ -1083,7 +1104,113 @@ public class DocClusterUtil {
 		
 		return oneCenters;
 	}
+
+	public double[][] ComputeSimilarityMatrixGtm(ArrayList<String[]> alDocLabelFlat,
+			DocClusterUtilText docClusterUtilText) {
+		
+		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
+		
+		try{
+			for(int i=0;i< alDocLabelFlat.size();i++){
+				
+				String text1 = alDocLabelFlat.get(i)[0];
+				
+				docSimMatrix[i][i] = 1;
+				
+				for(int j=i+1;j<alDocLabelFlat.size();j++){
+					
+					String text2 = alDocLabelFlat.get(j)[0];
+					
+					docSimMatrix[i][j] = docClusterUtilText.ComputeTextSimGTM(text1, text2);
+					
+					docSimMatrix[j][i] = docSimMatrix[i][j];
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
 	
-	
-	
+	public double[][] ComputeDistanceMatrixW2Vec(ArrayList<String[]> alDocLabelFlat,
+			DocClusterUtilW2Vec docClusterUtilW2Vec) {
+		
+		double[][] docDistanceMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
+		
+		try{
+			ArrayList<InstanceW2Vec> insts = docClusterUtilW2Vec.populateW2VecDocsFlat(alDocLabelFlat);
+			
+			for(int i=0;i< insts.size();i++){
+				
+				InstanceW2Vec inst1 = insts.get(i);
+				
+				docDistanceMatrix[i][i] = 0;
+				
+				for(int j=i+1;j<insts.size();j++){
+					
+					InstanceW2Vec inst2 = insts.get(j);
+					
+					docDistanceMatrix[i][j] = ComputeUtil.ComputeEuclidianDistance(inst1.Features, inst2.Features);
+					
+					docDistanceMatrix[j][i] = docDistanceMatrix[i][j];
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docDistanceMatrix;
+	}
+
+	public double[][] SparsifyDocDisSimilarityMatrix(double[][] docSimMatrix) {
+		double[][] sparsifySimMatrix = new double[docSimMatrix.length][];
+		
+		try{
+			int mulConst = 1;
+			
+			for(int i=0;i<docSimMatrix.length;i++){
+				double simArr [] = docSimMatrix[i];
+				
+				double simSim = 0.0;
+				for(int j=0;j<simArr.length;j++){
+					simSim= simSim + simArr[j]*mulConst;
+				}
+				
+				double avgSimSum = simSim/ simArr.length;
+				
+				double varianceSum = 0;
+				
+				for(int j=0;j<simArr.length;j++){
+					varianceSum = varianceSum + (simArr[j]*mulConst-avgSimSum)*(simArr[j]*mulConst-avgSimSum);
+				}
+				
+				double sd = Math.sqrt(varianceSum/simArr.length);
+				
+				//filter sim
+				int zeroCount = 0;
+				for(int j=0;j<simArr.length;j++){
+					 //double newSim = simArr[j]*100> avgSimSum+ sd*0.6 ? simArr[j]: 0;
+					double newSim = simArr[j]*mulConst> avgSimSum- sd*0.0 ? Double.MAX_VALUE: simArr[j];
+					 //double newSim = simArr[j];
+					 if( newSim==0){
+						 zeroCount++;
+					 }
+					 //simArr[j] = 1-newSim;
+					 simArr[j] = newSim;
+				}
+				
+				System.out.println("total="+simArr.length+", zero count="+ zeroCount);
+				sparsifySimMatrix[i] = simArr;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sparsifySimMatrix;
+	}
+
 }
