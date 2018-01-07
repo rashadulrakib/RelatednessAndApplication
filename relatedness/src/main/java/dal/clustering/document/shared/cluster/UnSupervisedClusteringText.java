@@ -233,8 +233,9 @@ public class UnSupervisedClusteringText {
 				
 				LinkedHashMap<String, double[]> newCenetrsW2Vec = docClusterUtil.ReComputeCenters(newClustersW2Vec);
 				
-				if(iter>1){
-					converge = docClusterUtil.IsConverge(newCenetrsW2Vec, lastCenetrsW2Vec);
+				//if(iter>1)
+				{
+					converge = true; //docClusterUtil.IsConverge(newCenetrsW2Vec, lastCenetrsW2Vec);
 				}
 				
 				hmTrainDocsLabelBody = docClusterUtil.GetInstanceClosestToCentersText(newClustersW2Vec, newCenetrsW2Vec);

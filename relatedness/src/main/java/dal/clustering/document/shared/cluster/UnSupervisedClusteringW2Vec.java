@@ -197,7 +197,7 @@ public class UnSupervisedClusteringW2Vec {
 				clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(newClusters);
 				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(newClusters);
 				
-				converge = docClusterUtil.IsConverge(newCenetrs, centers);
+				converge = true; //docClusterUtil.IsConverge(newCenetrs, centers);
 				centers = newCenetrs;
 				
 				lastClusters = newClusters;

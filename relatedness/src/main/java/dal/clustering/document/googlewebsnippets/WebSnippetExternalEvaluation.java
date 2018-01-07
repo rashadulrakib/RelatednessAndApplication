@@ -46,7 +46,7 @@ public class WebSnippetExternalEvaluation {
 			
 			if(clusterLables.size()== alBodyLabel.size()){
 				
-				ArrayList<String> hmOrderedLabels = new ArrayList<String>();
+				//ArrayList<String> hmOrderedLabels = new ArrayList<String>();
 				
 				for(int i=0;i<alBodyLabel.size();i++ ){
 					InstanceText newInst = new InstanceText();
@@ -55,16 +55,16 @@ public class WebSnippetExternalEvaluation {
 					newInst.ClusteredLabel = clusterLables.get(i);
 					alInsts.add(newInst);
 					
-					if(!hmOrderedLabels.contains(alBodyLabel.get(i)[1])){
-						hmOrderedLabels.add(alBodyLabel.get(i)[1]);
-					}
+//					if(!hmOrderedLabels.contains(alBodyLabel.get(i)[1])){
+//						hmOrderedLabels.add(alBodyLabel.get(i)[1]);
+//					}
 				}
 				
 				//convert clusteredlabels from index to label
-				for(InstanceText inst: alInsts){
-					int labelid = Integer.parseInt(inst.ClusteredLabel)-1;
-					inst.ClusteredLabel = hmOrderedLabels.get(labelid);
-				}
+//				for(InstanceText inst: alInsts){
+//					int labelid = Integer.parseInt(inst.ClusteredLabel)-1;
+//					inst.ClusteredLabel = hmOrderedLabels.get(labelid);
+//				}
 				
 				for(InstanceText inst: alInsts){
 					if(!lastClusters.containsKey(inst.ClusteredLabel)){
@@ -78,8 +78,8 @@ public class WebSnippetExternalEvaluation {
 					}
 				}
 				
-				clusterEvaluation.ClusterEvaluationGeneratorText(lastClusters);
-				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingText(lastClusters);
+				clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
+				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			}
 			
 		}catch(Exception e){

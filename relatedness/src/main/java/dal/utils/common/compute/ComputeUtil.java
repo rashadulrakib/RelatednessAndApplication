@@ -7,7 +7,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import dal.utils.common.general.UtilsShared;
+
 public class ComputeUtil {
+	
+	public static double ComputeCosineSimilarity(double [] ftr1, double[] ftr2){
+		try{
+			List<Double> vec1 = UtilsShared.ConvertDoubleArrayToArrayList(ftr1);
+			List<Double> vec2 = UtilsShared.ConvertDoubleArrayToArrayList(ftr2);
+			
+			return ComputeCosineSimilarity(vec1, vec2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return 0;
+	}
 	
 	public static double ComputeCosineSimilarity(List<Double> vec1, List<Double> vec2) {
 		try{

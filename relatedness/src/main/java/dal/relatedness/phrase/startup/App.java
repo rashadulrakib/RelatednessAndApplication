@@ -196,9 +196,10 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippetWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecFollowingGtm();
-    	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
+    	new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixGtm();
-    	new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixW2Vec();
+    	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixEuclidianW2Vec();
+    	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new WebSnippetExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessStackOverflow().Process();

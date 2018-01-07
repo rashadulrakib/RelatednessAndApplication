@@ -1134,7 +1134,7 @@ public class DocClusterUtil {
 		return docSimMatrix;
 	}
 	
-	public double[][] ComputeDistanceMatrixW2Vec(ArrayList<String[]> alDocLabelFlat,
+	public double[][] ComputeEuclidianDistanceMatrixW2Vec(ArrayList<String[]> alDocLabelFlat,
 			DocClusterUtilW2Vec docClusterUtilW2Vec) {
 		
 		double[][] docDistanceMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
@@ -1164,12 +1164,44 @@ public class DocClusterUtil {
 		
 		return docDistanceMatrix;
 	}
+	
+	
+	public double[][] ComputeCosineMatrixW2Vec(ArrayList<String[]> alDocLabelFlat,
+			DocClusterUtilW2Vec docClusterUtilW2Vec) {
+		
+		double[][] docDistanceMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
+		
+		try{
+			ArrayList<InstanceW2Vec> insts = docClusterUtilW2Vec.populateW2VecDocsFlat(alDocLabelFlat);
+			
+			for(int i=0;i< insts.size();i++){
+				
+				InstanceW2Vec inst1 = insts.get(i);
+				
+				docDistanceMatrix[i][i] = 0;
+				
+				for(int j=i+1;j<insts.size();j++){
+					
+					InstanceW2Vec inst2 = insts.get(j);
+					
+					docDistanceMatrix[i][j] = ComputeUtil.ComputeCosineSimilarity(inst1.Features, inst2.Features);
+					
+					docDistanceMatrix[j][i] = docDistanceMatrix[i][j];
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docDistanceMatrix;
+	}
 
 	public double[][] SparsifyDocDisSimilarityMatrix(double[][] docSimMatrix) {
 		double[][] sparsifySimMatrix = new double[docSimMatrix.length][];
 		
 		try{
-			int mulConst = 1;
+			int mulConst = 100;
 			
 			for(int i=0;i<docSimMatrix.length;i++){
 				double simArr [] = docSimMatrix[i];
@@ -1192,14 +1224,14 @@ public class DocClusterUtil {
 				//filter sim
 				int zeroCount = 0;
 				for(int j=0;j<simArr.length;j++){
-					 //double newSim = simArr[j]*100> avgSimSum+ sd*0.6 ? simArr[j]: 0;
-					double newSim = simArr[j]*mulConst> avgSimSum- sd*0.0 ? Double.MAX_VALUE: simArr[j];
+					 double newSim = simArr[j]*mulConst> avgSimSum+ sd*0.6 ? simArr[j]: 0;
+					//double newSim = simArr[j]*mulConst> avgSimSum- sd*0.0 ? Double.MAX_VALUE: simArr[j];
 					 //double newSim = simArr[j];
 					 if( newSim==0){
 						 zeroCount++;
 					 }
-					 //simArr[j] = 1-newSim;
-					 simArr[j] = newSim;
+					 simArr[j] = 1-newSim;
+					 //simArr[j] = newSim;
 				}
 				
 				System.out.println("total="+simArr.length+", zero count="+ zeroCount);

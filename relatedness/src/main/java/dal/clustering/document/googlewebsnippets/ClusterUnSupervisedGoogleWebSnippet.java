@@ -62,6 +62,9 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			clusterEvaluation.EvalSemiSupervisedByAccOneToOneText(clusterResultConatainerText.FinalCluster);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingText(clusterResultConatainerText.FinalCluster);
 			
+			clusterEvaluation.ClusterEvaluationGeneratorTextExternal(clusterResultConatainerText.FinalCluster);
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(clusterResultConatainerText.FinalCluster);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -93,19 +96,19 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
 			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
 			
-//			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
-//					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
+			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
+					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
 
 //seed for small dataset
-			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
-			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("whitepaper wstonline keyword cmpwstonline programming bank transaction software programming bank transaction software programming bank transaction software wall street technology bank edwardsville chose echo solve disaster recovery backup issues echo itera")));
-			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("islandnet kpolsson comphist chronology personal computers gray founds amateur computer society publishing acs newsletter birth personal computing")));
-			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("eurekalert pub releases uoc lhp hiv prevention programs cheaper ucsf led team researchers hiv prevention programs middle income countries efficiency program")));
-			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("microsoft barc mediapresence mylifebits mylifebits project microsoft barc media presence researcher records life computer cbs evening news perfect memory wattnow lifeblogging virtual brain")));
-			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("dbwilson exact web random sampling markov chains ggstr wrote course book finite markov chains algorithmic applications chapter cftp")));
-			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("tomcruisefan tomcruisefan tomcruiseweb tom cruise resource tomcruisefan tomcruiseweb news media resource tom cruise web news pictures")));
-			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("drewbarfield drew barfield news album purchase online sale drew solo los pacaminos gigs")));
-			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("wbaonline wbaonline boxing news schedule ratings history boxing association sanctioning body comprehensive website features champions")));			
+//			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
+//			hmTrainDocsLabelBody.put("business", new ArrayList<>(Arrays.asList("whitepaper wstonline keyword cmpwstonline programming bank transaction software programming bank transaction software programming bank transaction software wall street technology bank edwardsville chose echo solve disaster recovery backup issues echo itera")));
+//			hmTrainDocsLabelBody.put("computers", new ArrayList<>(Arrays.asList("islandnet kpolsson comphist chronology personal computers gray founds amateur computer society publishing acs newsletter birth personal computing")));
+//			hmTrainDocsLabelBody.put("health", new ArrayList<>(Arrays.asList("eurekalert pub releases uoc lhp hiv prevention programs cheaper ucsf led team researchers hiv prevention programs middle income countries efficiency program")));
+//			hmTrainDocsLabelBody.put("engineering", new ArrayList<>(Arrays.asList("microsoft barc mediapresence mylifebits mylifebits project microsoft barc media presence researcher records life computer cbs evening news perfect memory wattnow lifeblogging virtual brain")));
+//			hmTrainDocsLabelBody.put("education-science", new ArrayList<>(Arrays.asList("dbwilson exact web random sampling markov chains ggstr wrote course book finite markov chains algorithmic applications chapter cftp")));
+//			hmTrainDocsLabelBody.put("politics-society", new ArrayList<>(Arrays.asList("tomcruisefan tomcruisefan tomcruiseweb tom cruise resource tomcruisefan tomcruiseweb news media resource tom cruise web news pictures")));
+//			hmTrainDocsLabelBody.put("culture-arts-entertainment", new ArrayList<>(Arrays.asList("drewbarfield drew barfield news album purchase online sale drew solo los pacaminos gigs")));
+//			hmTrainDocsLabelBody.put("sports", new ArrayList<>(Arrays.asList("wbaonline wbaonline boxing news schedule ratings history boxing association sanctioning body comprehensive website features champions")));			
 			
 //seed for large-dataset			
 //			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
@@ -124,6 +127,9 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			clusterEvaluation.ClusterEvaluationGeneratorVector(clusterResultConatainer.FinalCluster);
 			clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(clusterResultConatainer.FinalCluster);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(clusterResultConatainer.FinalCluster);
+			
+			clusterEvaluation.ClusterEvaluationGeneratorVectorExternal(clusterResultConatainer.FinalCluster);
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(clusterResultConatainer.FinalCluster);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -161,11 +167,26 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 		}
 	}
 	
-	public void ClusterDocsBySimilarityMatrixW2Vec(){
+	public void ClusterDocsBySimilarityMatrixEuclidianW2Vec(){
 		try{
 			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
 			
-			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeDistanceMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeEuclidianDistanceMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\google-sparseMatrix", saprsifyMatrix, " ");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void ClusterDocsBySimilarityMatrixCosineW2Vec(){
+		try{
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			

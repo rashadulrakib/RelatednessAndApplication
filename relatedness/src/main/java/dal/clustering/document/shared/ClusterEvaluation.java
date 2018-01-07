@@ -91,7 +91,26 @@ public class ClusterEvaluation {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void EvalSemiSupervisedByPurityMajorityVotingTextExternal(LinkedHashMap<String, ArrayList<InstanceText>> lastClusters) {
+		try{
+			EvalSemiSupervisedByPurityMajorityVotingText(lastClusters);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void EvalSemiSupervisedByPurityMajorityVotingVectorExternal(
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> finalCluster) {
+		try{
+			EvalSemiSupervisedByPurityMajorityVotingVector(finalCluster);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void EvalSemiSupervisedByPurityMajorityVotingVector(LinkedHashMap<String, ArrayList<InstanceW2Vec>> finalCluster) {
 		try{
 			
@@ -174,8 +193,8 @@ public class ClusterEvaluation {
 			}
 			
 			
-//			System.out.println("labels_pred = "+preds);
-//			System.out.println("labels_true = "+trues);
+			System.out.println("labels_pred = "+preds);
+			System.out.println("labels_true = "+trues);
 			
 			//cooccurrence_matrix = np.array([[ 5,  1,  2], [ 1,  4,  0], [ 0,  1,  3]])
 			
@@ -212,6 +231,220 @@ public class ClusterEvaluation {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public void ClusterEvaluationGeneratorTextExternal(LinkedHashMap<String, ArrayList<InstanceText>> finalCluster) {
+		try{
+			//int matchInCluster = 0;
+			int totalItems = 0;
+			int maxGroupSizeSum =0;
+			
+			TreeMap<String, ArrayList<InstanceText>> sortedFinalCluster = new TreeMap<String, ArrayList<InstanceText>>(finalCluster);
+			
+			TreeMap<String, Integer> hmSortedLabelInds = new TreeMap<String, Integer>();
+			
+			ArrayList<InstanceText> mergedInstants = new ArrayList<InstanceText>();
+			//merge the instances
+			for(String label: sortedFinalCluster.keySet()){
+				ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
+				mergedInstants.addAll(instants);
+			}
+			
+			TreeMap<String, ArrayList<InstanceText>> sortedClusterGroupsOriginalLabelByMerged = new TreeMap<String, ArrayList<InstanceText>>(getClusterGroupsTextOriginalLabel(mergedInstants));
+			//end merge the instances
+			
+			int labelInd =0;
+			for(String label: sortedClusterGroupsOriginalLabelByMerged.keySet()){
+				hmSortedLabelInds.put(label, labelInd++);
+			}
+			
+			ArrayList<Integer> preds = new  ArrayList<Integer>();
+			ArrayList<Integer> trues = new ArrayList<Integer>();
+			
+			for(String label: sortedFinalCluster.keySet()){
+				ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
+				totalItems = totalItems+ instants.size();
+				
+				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = getClusterGroupsTextOriginalLabel(instants);
+				int maxMemInGroupSize = Integer.MIN_VALUE;
+				String maxMemOriginalLabel = "";
+				for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
+					if(maxMemInGroupSize<clusterGroupsOriginalLabel.get(afterClusterLabel).size()){
+						maxMemInGroupSize= clusterGroupsOriginalLabel.get(afterClusterLabel).size();
+						maxMemOriginalLabel = afterClusterLabel;
+					}
+				}
+				
+				maxGroupSizeSum=maxGroupSizeSum+ maxMemInGroupSize;
+				
+				for(InstanceText instTtx: instants){
+					trues.add(hmSortedLabelInds.get(instTtx.OriginalLabel));
+					preds.add(hmSortedLabelInds.get( maxMemOriginalLabel));
+				}
+			}
+			
+			System.out.println("labels_pred = "+preds);
+			System.out.println("labels_true = "+trues);
+			
+			if(sortedFinalCluster.keySet().size()== sortedClusterGroupsOriginalLabelByMerged.keySet().size()){
+
+				//create matrix
+				double [][] matrixColRow = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()][];
+				int rowId = 0;
+				for(String label: sortedFinalCluster.keySet()){
+					ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
+					
+					TreeMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceText>>(getClusterGroupsTextOriginalLabel(instants));
+					//TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(clusterGroupsOriginalLabel);
+					
+					double [] col = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()];
+					
+					for(String keyInd: hmSortedLabelInds.keySet()){
+						System.out.println(keyInd+","+hmSortedLabelInds.get(keyInd));
+					}
+					
+					for(String sortedLabel: clusterGroupsOriginalLabel.keySet()){
+						//col[hmSortedLabelInds.get(sortedLabel)] = sortedClusterGroupsOriginalLabel.get(sortedLabel).size();
+//						System.out.println("sortedLabel="+sortedLabel+","+clusterGroupsOriginalLabel.get(sortedLabel).size()+
+//								","+hmSortedLabelInds.get(sortedLabel)+","+hmSortedLabelInds.containsKey(sortedLabel));
+						//System.out.println();
+						col[hmSortedLabelInds.get(sortedLabel)] = clusterGroupsOriginalLabel.get(sortedLabel).size();
+						
+					}
+					matrixColRow[rowId++] = col;
+					System.out.println();
+				}
+				
+				double [][] transposed = UtilsShared.TransposeMatrix(matrixColRow);
+				
+				System.out.print("cooccurrence_matrix=np.array([");
+				
+				for(int i=0;i<transposed.length;i++){
+					System.out.print("[");
+					for(int j=0;j<transposed[i].length;j++){
+						System.out.print(transposed[i][j]+",");
+					}
+					System.out.println("]");
+				}
+				
+				System.out.print("])");
+				
+			}else{
+				System.out.println("predicted clusters="+sortedFinalCluster.keySet().size()+", original clusters= "+sortedClusterGroupsOriginalLabelByMerged.keySet().size());
+			}
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void ClusterEvaluationGeneratorVectorExternal(LinkedHashMap<String, ArrayList<InstanceW2Vec>> finalCluster) {
+		try{
+			
+				//int matchInCluster = 0;
+				int totalItems = 0;
+				int maxGroupSizeSum =0;
+				
+				TreeMap<String, ArrayList<InstanceW2Vec>> sortedFinalCluster = new TreeMap<String, ArrayList<InstanceW2Vec>>(finalCluster);
+				
+				TreeMap<String, Integer> hmSortedLabelInds = new TreeMap<String, Integer>();
+				
+				ArrayList<InstanceW2Vec> mergedInstants = new ArrayList<InstanceW2Vec>();
+				//merge the instances
+				for(String label: sortedFinalCluster.keySet()){
+					ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
+					mergedInstants.addAll(instants);
+				}
+				
+				TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabelByMerged = new TreeMap<String, ArrayList<InstanceW2Vec>>(getClusterGroupsVectorOriginalLabel(mergedInstants));
+				//end merge the instances
+				
+				int labelInd =0;
+				for(String label: sortedClusterGroupsOriginalLabelByMerged.keySet()){
+					hmSortedLabelInds.put(label, labelInd++);
+				}
+				
+				ArrayList<Integer> preds = new  ArrayList<Integer>();
+				ArrayList<Integer> trues = new ArrayList<Integer>();
+				
+				for(String label: sortedFinalCluster.keySet()){
+					ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
+					totalItems = totalItems+ instants.size();
+					
+					HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = getClusterGroupsVectorOriginalLabel(instants);
+					int maxMemInGroupSize = Integer.MIN_VALUE;
+					String maxMemOriginalLabel = "";
+					for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
+						if(maxMemInGroupSize<clusterGroupsOriginalLabel.get(afterClusterLabel).size()){
+							maxMemInGroupSize= clusterGroupsOriginalLabel.get(afterClusterLabel).size();
+							maxMemOriginalLabel = afterClusterLabel;
+						}
+					}
+					
+					maxGroupSizeSum=maxGroupSizeSum+ maxMemInGroupSize;
+					
+					for(InstanceW2Vec instVec: instants){
+						trues.add(hmSortedLabelInds.get(instVec.OriginalLabel));
+						preds.add(hmSortedLabelInds.get( maxMemOriginalLabel));
+					}
+				}
+				
+				System.out.println("labels_pred = "+preds);
+				System.out.println("labels_true = "+trues);
+				
+				if(sortedFinalCluster.keySet().size()== sortedClusterGroupsOriginalLabelByMerged.keySet().size()){
+
+					//create matrix
+					double [][] matrixColRow = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()][];
+					int rowId = 0;
+					for(String label: sortedFinalCluster.keySet()){
+						ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
+						
+						TreeMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(getClusterGroupsVectorOriginalLabel(instants));
+						//TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(clusterGroupsOriginalLabel);
+						
+						double [] col = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()];
+						
+						for(String keyInd: hmSortedLabelInds.keySet()){
+							System.out.println(keyInd+","+hmSortedLabelInds.get(keyInd));
+						}
+						
+						for(String sortedLabel: clusterGroupsOriginalLabel.keySet()){
+							//col[hmSortedLabelInds.get(sortedLabel)] = sortedClusterGroupsOriginalLabel.get(sortedLabel).size();
+//							System.out.println("sortedLabel="+sortedLabel+","+clusterGroupsOriginalLabel.get(sortedLabel).size()+
+//									","+hmSortedLabelInds.get(sortedLabel)+","+hmSortedLabelInds.containsKey(sortedLabel));
+							//System.out.println();
+							col[hmSortedLabelInds.get(sortedLabel)] = clusterGroupsOriginalLabel.get(sortedLabel).size();
+							
+						}
+						matrixColRow[rowId++] = col;
+						System.out.println();
+					}
+					
+					double [][] transposed = UtilsShared.TransposeMatrix(matrixColRow);
+					
+					System.out.print("cooccurrence_matrix=np.array([");
+					
+					for(int i=0;i<transposed.length;i++){
+						System.out.print("[");
+						for(int j=0;j<transposed[i].length;j++){
+							System.out.print(transposed[i][j]+",");
+						}
+						System.out.println("]");
+					}
+					
+					System.out.print("])");
+					
+				}else{
+					System.out.println("predicted clusters="+sortedFinalCluster.keySet().size()+", original clusters= "+sortedClusterGroupsOriginalLabelByMerged.keySet().size());
+				}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void ClusterEvaluationGeneratorVector(LinkedHashMap<String, ArrayList<InstanceW2Vec>> finalCluster) {
@@ -260,8 +493,8 @@ public class ClusterEvaluation {
 			}
 			
 			
-//			System.out.println("labels_pred = "+preds);
-//			System.out.println("labels_true = "+trues);
+			System.out.println("labels_pred = "+preds);
+			System.out.println("labels_true = "+trues);
 			
 			//cooccurrence_matrix = np.array([[ 5,  1,  2], [ 1,  4,  0], [ 0,  1,  3]])
 			
@@ -310,7 +543,7 @@ public class ClusterEvaluation {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private HashMap<String, ArrayList<InstanceW2Vec>> getClusterGroupsVectorOriginalLabel(ArrayList<InstanceW2Vec> instants) {
 		
 		HashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = new HashMap<String, ArrayList<InstanceW2Vec>>();
@@ -360,5 +593,6 @@ public class ClusterEvaluation {
 		
 		return clusterGroups;
 	}
+
 	
 }
