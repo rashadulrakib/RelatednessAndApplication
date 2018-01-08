@@ -21,7 +21,7 @@ public class ClusterSemiSupervisedAgNews {
 		agNewsUtil = new AgNewsUtil();
 		docClusterUtil = new DocClusterUtil();
 		semiSupervisedClustering = new SemiSupervisedClusteringVector();
-		clusterEvaluation = new ClusterEvaluation();
+		clusterEvaluation = new ClusterEvaluation(docClusterUtil);
 	}
 	
 	public void ClusterDocsW2VecBasedSimilarity(){

@@ -1,4 +1,4 @@
-package dal.clustering.document.googlewebsnippets;
+package dal.clustering.document.cicling2002;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,19 +9,18 @@ import java.util.LinkedHashMap;
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.entities.InstanceText;
 
-public class WebSnippetExternalEvaluation {
-
-	GooglewebSnippetUtil googlewebSnippetUtil;
+public class Cicling2002ExternalEvaluation {
+	Cicling2002Util cicling2002Util;
 	ClusterEvaluation clusterEvaluation;
 	
-	public WebSnippetExternalEvaluation(){
-		googlewebSnippetUtil = new GooglewebSnippetUtil();
-		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
+	public Cicling2002ExternalEvaluation(){
+		cicling2002Util = new Cicling2002Util();
+		clusterEvaluation = new ClusterEvaluation(cicling2002Util.docClusterUtil);
 	}
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\2018\\jan\\web-snippet-2280-r-hc-label.txt";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\2018\\jan\\r-hc-label.txt";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			
@@ -39,7 +38,7 @@ public class WebSnippetExternalEvaluation {
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 	
-			ArrayList<String []> alBodyLabel = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alBodyLabel = cicling2002Util.getDocsCicling2002Flat();
 			ArrayList<InstanceText> alInsts = new ArrayList<InstanceText>();
 			
 			if(clusterLables.size()== alBodyLabel.size()){
@@ -84,5 +83,4 @@ public class WebSnippetExternalEvaluation {
 			e.printStackTrace();
 		}
 	}
-
 }

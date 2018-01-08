@@ -17,6 +17,8 @@ import dal.clustering.document.agnews.ProcessAgNewsDocument;
 import dal.clustering.document.agnews.ClusterSemiSupervisedAgNews;
 import dal.clustering.document.biomedical.ClusterUnSupervisedBioMedical;
 import dal.clustering.document.biomedical.ProcessBiomedicalData;
+import dal.clustering.document.cicling2002.Cicling2002ExternalEvaluation;
+import dal.clustering.document.cicling2002.ClusterUnSupervisedCicling2002;
 import dal.clustering.document.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippet;
 import dal.clustering.document.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetWEKA;
 import dal.clustering.document.googlewebsnippets.ProcessGoogleWebSnippet;
@@ -25,6 +27,7 @@ import dal.clustering.document.googlewebsnippets.WebSnippetExternalEvaluation;
 import dal.clustering.document.stackoverflow.ClusterUnSupervisedStackOverflow;
 import dal.clustering.document.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
 import dal.clustering.document.stackoverflow.ProcessStackOverflow;
+import dal.clustering.document.stackoverflow.StackOverflowExternalEvaluation;
 import dal.clustering.document.twentynewsgroup.ProcessMiniNewsGroupDocument;
 import dal.computationalintelligence.CIStartup;
 import dal.dimensionality.reduction.fastmap.FastMapDimReducer;
@@ -196,7 +199,7 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippetWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecFollowingGtm();
-    	new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
+    	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixEuclidianW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
@@ -207,12 +210,19 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsSimilarityByW2VecAverageVector();
+    	//new ClusterUnSupervisedStackOverflow().ClusterDocsBySimilarityMatrixGtm();
+    	//new ClusterUnSupervisedStackOverflow().ClusterDocsBySimilarityMatrixCosineW2Vec();
+    	new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsBySimilarityMatrixGtm();
+    	
+    	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
+    	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();
+    	//new Cicling2002ExternalEvaluation().ExternalEvaluate();
     	
     	//end doc clustering
     	

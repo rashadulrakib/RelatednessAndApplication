@@ -38,7 +38,7 @@ public class UnSupervisedClusteringW2Vec {
 		
 		try{
 			
-			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation();
+			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation(docClusterUtil);
 			
 			boolean converge = false;
 			int iter = 0;
@@ -148,7 +148,7 @@ public class UnSupervisedClusteringW2Vec {
 	private ClusterResultConatainerVector ComputeSemiSupervisedClusters(LinkedHashMap<String, double[]> centers, ArrayList<InstanceW2Vec> testW2Vecs) {
 		
 		ClusterResultConatainerVector clusterResultConatainer = new ClusterResultConatainerVector();
-		ClusterEvaluation clusterEvaluation = new ClusterEvaluation();
+		ClusterEvaluation clusterEvaluation = new ClusterEvaluation(docClusterUtil);
 		
 		try{
 			boolean converge = false;

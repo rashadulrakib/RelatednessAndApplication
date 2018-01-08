@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
@@ -1178,7 +1179,7 @@ public class DocClusterUtil {
 				
 				InstanceW2Vec inst1 = insts.get(i);
 				
-				docDistanceMatrix[i][i] = 0;
+				docDistanceMatrix[i][i] = 1;
 				
 				for(int j=i+1;j<insts.size();j++){
 					
@@ -1224,9 +1225,9 @@ public class DocClusterUtil {
 				//filter sim
 				int zeroCount = 0;
 				for(int j=0;j<simArr.length;j++){
-					 double newSim = simArr[j]*mulConst> avgSimSum+ sd*0.6 ? simArr[j]: 0;
+					 //double newSim = simArr[j]*mulConst> avgSimSum/2+ sd*0.0 ? simArr[j]: 0;
 					//double newSim = simArr[j]*mulConst> avgSimSum- sd*0.0 ? Double.MAX_VALUE: simArr[j];
-					 //double newSim = simArr[j];
+					 double newSim = simArr[j];
 					 if( newSim==0){
 						 zeroCount++;
 					 }
@@ -1244,5 +1245,95 @@ public class DocClusterUtil {
 		
 		return sparsifySimMatrix;
 	}
+
+	public ArrayList<String[]> SampledDocsPerCategory(ArrayList<String[]> alDocLabelFlat, int docsPerCategory, int seed) {
+		
+		ArrayList<String[]> sampledList = new ArrayList<String[]>();
+		
+		HashMap<String, ArrayList<String[]>> hmBodyLabel = new LinkedHashMap<String, ArrayList<String[]>>();
+		
+		try{
+			for(String[] bodyLabel: alDocLabelFlat){
+				String body = bodyLabel[0];
+				String label = bodyLabel[1];
+				
+				if(!hmBodyLabel.containsKey(label)){
+					ArrayList<String[]> al = new ArrayList<String[]>();
+					al.add(bodyLabel);
+					hmBodyLabel.put(label, al);
+				}else{
+					ArrayList<String[]> al = hmBodyLabel.get(label);
+					al.add(bodyLabel);
+					hmBodyLabel.put(label, al);
+				}
+			}
+			
+			Random rd = new Random(seed);
+			
+			for(String label: hmBodyLabel.keySet()){
+				ArrayList<String[]> al = hmBodyLabel.get(label);
+				Collections.shuffle(al, rd);
+				sampledList.addAll(al.subList(0, docsPerCategory));
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sampledList;
+	}
+	
+	public HashMap<String, ArrayList<InstanceW2Vec>> GetClusterGroupsVectorOriginalLabel(ArrayList<InstanceW2Vec> instants) {
+		
+		HashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = new HashMap<String, ArrayList<InstanceW2Vec>>();
+		
+		try{
+			for(InstanceW2Vec instant: instants){
+				if(!clusterGroups.containsKey(instant.OriginalLabel)){
+					ArrayList<InstanceW2Vec> al = new ArrayList<InstanceW2Vec>();
+					al.add(instant);
+					clusterGroups.put(instant.OriginalLabel, al);
+				}
+				else{
+					ArrayList<InstanceW2Vec> al = clusterGroups.get(instant.OriginalLabel);
+					al.add(instant);
+					clusterGroups.put(instant.OriginalLabel, al);
+				}
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return clusterGroups;
+	}
+	
+	public HashMap<String, ArrayList<InstanceText>> GetClusterGroupsTextOriginalLabel(ArrayList<InstanceText> instants) {
+		
+		HashMap<String, ArrayList<InstanceText>> clusterGroups = new HashMap<String, ArrayList<InstanceText>>();
+
+		try{
+			for(InstanceText instant: instants){
+				if(!clusterGroups.containsKey(instant.OriginalLabel)){
+					ArrayList<InstanceText> al = new ArrayList<InstanceText>();
+					al.add(instant);
+					clusterGroups.put(instant.OriginalLabel, al);
+				}
+				else{
+					ArrayList<InstanceText> al = clusterGroups.get(instant.OriginalLabel);
+					al.add(instant);
+					clusterGroups.put(instant.OriginalLabel, al);
+				}
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return clusterGroups;
+	}
+
+	
+	
 
 }

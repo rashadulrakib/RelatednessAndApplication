@@ -34,7 +34,7 @@ public class SemiSupervisedClusteringVector {
 	private ClusterResultConatainerVector ComputeSemiSupervisedClusters(LinkedHashMap<String, double[]> centers, ArrayList<InstanceW2Vec> testW2Vecs) {
 		
 		ClusterResultConatainerVector clusterResultConatainer = new ClusterResultConatainerVector();
-		ClusterEvaluation clusterEvaluation = new ClusterEvaluation();
+		ClusterEvaluation clusterEvaluation = new ClusterEvaluation(docClusterUtil);
 		
 		try{
 			boolean converge = false;

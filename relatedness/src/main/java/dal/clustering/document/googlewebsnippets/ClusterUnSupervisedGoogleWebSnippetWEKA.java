@@ -26,7 +26,7 @@ public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
 		docClusterUtil = new DocClusterUtil();
 		unSupervisedClusteringText = new UnSupervisedClusteringText(docClusterUtil,  null);
-		clusterEvaluation = new ClusterEvaluation();
+		clusterEvaluation = new ClusterEvaluation(docClusterUtil);
 		
 	}
 	

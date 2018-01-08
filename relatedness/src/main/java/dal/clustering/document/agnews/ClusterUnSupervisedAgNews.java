@@ -21,7 +21,7 @@ public class ClusterUnSupervisedAgNews {
 	public ClusterUnSupervisedAgNews() throws IOException{
 		agNewsUtil = new AgNewsUtil();
 		
-		clusterEvaluation = new ClusterEvaluation();
+		clusterEvaluation = new ClusterEvaluation(agNewsUtil.docClusterUtil);
 		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
 				agNewsUtil.getDocsBiomedicalFlat(), agNewsUtil.getDocsBiomedicalList(), 
 				agNewsUtil.docClusterUtil);

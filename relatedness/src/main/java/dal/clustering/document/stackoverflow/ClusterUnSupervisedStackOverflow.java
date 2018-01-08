@@ -10,6 +10,7 @@ import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
+import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedStackOverflow {
 	
@@ -20,12 +21,12 @@ public class ClusterUnSupervisedStackOverflow {
 
 	public ClusterUnSupervisedStackOverflow() throws IOException{
 		
-		clusterEvaluation = new ClusterEvaluation();
 		stackOverflowUtil = new StackOverflowUtil();
+		clusterEvaluation = new ClusterEvaluation(stackOverflowUtil.docClusterUtil);
 		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(stackOverflowUtil.getUniqueWords(),
 				stackOverflowUtil.getDocsStackOverflowFlat(), stackOverflowUtil.getDocsStackOverflowList(), 
 				stackOverflowUtil.docClusterUtil);
-		unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil);
 		
 	}
@@ -138,6 +139,39 @@ public class ClusterUnSupervisedStackOverflow {
 				clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(clusterResultConatainer.FinalCluster);
 				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(clusterResultConatainer.FinalCluster);
 			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void ClusterDocsBySimilarityMatrixGtm(){
+		try{
+			ArrayList<String []> alDocLabelFlat = stackOverflowUtil.getDocsStackOverflowFlat();
+			
+			alDocLabelFlat = stackOverflowUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 100, 0);
+			
+			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void ClusterDocsBySimilarityMatrixCosineW2Vec(){
+		try{
+			ArrayList<String []> alDocLabelFlat = stackOverflowUtil.getDocsStackOverflowFlat();
+			
+			alDocLabelFlat = stackOverflowUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 100, 0);
+			
+			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

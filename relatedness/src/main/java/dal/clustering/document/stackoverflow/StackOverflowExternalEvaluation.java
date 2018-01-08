@@ -1,4 +1,4 @@
-package dal.clustering.document.googlewebsnippets;
+package dal.clustering.document.stackoverflow;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,19 +9,18 @@ import java.util.LinkedHashMap;
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.entities.InstanceText;
 
-public class WebSnippetExternalEvaluation {
-
-	GooglewebSnippetUtil googlewebSnippetUtil;
+public class StackOverflowExternalEvaluation {
+	StackOverflowUtil stackOverflowUtil;
 	ClusterEvaluation clusterEvaluation;
 	
-	public WebSnippetExternalEvaluation(){
-		googlewebSnippetUtil = new GooglewebSnippetUtil();
-		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
+	public StackOverflowExternalEvaluation(){
+		stackOverflowUtil = new StackOverflowUtil();
+		clusterEvaluation = new ClusterEvaluation(stackOverflowUtil.docClusterUtil);
 	}
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\2018\\jan\\web-snippet-2280-r-hc-label.txt";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\2018\\jan\\r-hc-label.txt";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			
@@ -39,7 +38,7 @@ public class WebSnippetExternalEvaluation {
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 	
-			ArrayList<String []> alBodyLabel = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alBodyLabel = stackOverflowUtil.getDocsStackOverflowFlat();
 			ArrayList<InstanceText> alInsts = new ArrayList<InstanceText>();
 			
 			if(clusterLables.size()== alBodyLabel.size()){
@@ -84,5 +83,4 @@ public class WebSnippetExternalEvaluation {
 			e.printStackTrace();
 		}
 	}
-
 }

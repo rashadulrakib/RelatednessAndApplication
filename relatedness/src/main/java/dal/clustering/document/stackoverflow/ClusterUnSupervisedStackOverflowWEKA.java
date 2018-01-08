@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
-import dal.clustering.document.shared.DocClusterUtil;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.tools.weka.KMeansClusteringArff;
@@ -14,18 +13,16 @@ import dal.utils.common.compute.ComputeUtil;
 
 public class ClusterUnSupervisedStackOverflowWEKA {
 	
+	StackOverflowUtil stackOverflowUtil;
 	KMeansClusteringArff kMeansClusteringArff;
-	DocClusterUtil docClusterUtil;
 	UnSupervisedClusteringText unSupervisedClusteringText;
 	ClusterEvaluation clusterEvaluation;
-	StackOverflowUtil stackOverflowUtil;
 	
 	public ClusterUnSupervisedStackOverflowWEKA() throws IOException{
-		kMeansClusteringArff = new KMeansClusteringArff();
-		docClusterUtil = new DocClusterUtil();
-		clusterEvaluation = new ClusterEvaluation();
 		stackOverflowUtil = new StackOverflowUtil();
-		unSupervisedClusteringText = new UnSupervisedClusteringText(docClusterUtil, null);
+		kMeansClusteringArff = new KMeansClusteringArff();
+		clusterEvaluation = new ClusterEvaluation(stackOverflowUtil.docClusterUtil);
+		unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, null);
 	}
 
 	public void ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA() {

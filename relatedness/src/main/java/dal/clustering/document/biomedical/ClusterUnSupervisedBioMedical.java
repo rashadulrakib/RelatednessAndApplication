@@ -20,7 +20,7 @@ public class ClusterUnSupervisedBioMedical {
 	
 	public ClusterUnSupervisedBioMedical() throws IOException{
 		bioMedicalUtil = new BioMedicalUtil();
-		clusterEvaluation = new ClusterEvaluation();
+		clusterEvaluation = new ClusterEvaluation(bioMedicalUtil.docClusterUtil);
 		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(bioMedicalUtil.getUniqueWords(),
 				bioMedicalUtil.getDocsBiomedicalFlat(), bioMedicalUtil.getDocsBiomedicalList(), 
 				bioMedicalUtil.docClusterUtil);

@@ -37,7 +37,7 @@ public class UnSupervisedClusteringText {
 		
 		try{
 			
-			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation();
+			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation(docClusterUtil);
 			
 			boolean converge = false;
 			int iter = 0;
@@ -142,7 +142,7 @@ public class UnSupervisedClusteringText {
 		
 		try{
 			
-			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation();
+			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation(docClusterUtil);
 			
 			boolean converge = false;
 			int iter = 0;

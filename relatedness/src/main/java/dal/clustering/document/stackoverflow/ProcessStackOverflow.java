@@ -10,14 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import dal.clustering.document.shared.DocClusterConstant;
-import dal.clustering.document.shared.DocClusterUtil;
 
 public class ProcessStackOverflow {
 
-	DocClusterUtil docClusterUtil;
+	StackOverflowUtil stackOverflowUtil;
 	
 	public ProcessStackOverflow() {
-		docClusterUtil = new DocClusterUtil();
+		stackOverflowUtil = new StackOverflowUtil();
 	}
 	
 	public void Process() {
@@ -51,13 +50,13 @@ public class ProcessStackOverflow {
 			   String label = arrLabelBody[0];
 			   String body =  arrLabelBody[1];
 			   
-			   body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+			   body = stackOverflowUtil.docClusterUtil.PerformPreprocess(body);
+		        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.RemoveStopWord(body);
 			   
 		        uniquewords.addAll(processed); //populate the unique words from the text corpus
 			   
 		        String arr[] = new String[2];
-		        arr[0]= docClusterUtil.ConvertArrayListToString(processed);
+		        arr[0]= stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
 		        arr[1] = label;
 			   
 		        aldocsBodeyLabel.add(arr);
@@ -107,13 +106,13 @@ public class ProcessStackOverflow {
 				   String label = arrLabelBody[0];
 				   String body =  arrLabelBody[1];
 				   
-				   body = docClusterUtil.PerformPreprocess(body);
-			        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+				   body = stackOverflowUtil.docClusterUtil.PerformPreprocess(body);
+			        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.RemoveStopWord(body);
 				   
 			        uniquewords.addAll(processed); //populate the unique words from the text corpus
 				   
 			        String arr[] = new String[2];
-			        arr[0]= docClusterUtil.ConvertArrayListToString(processed);
+			        arr[0]= stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
 			        arr[1] = label;
 				   
 			        aldocsBodeyLabel.add(arr);

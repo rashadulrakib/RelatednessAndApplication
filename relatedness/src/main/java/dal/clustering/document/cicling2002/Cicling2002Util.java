@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-
-import dal.clustering.document.biomedical.BioMedicalConstant;
 import dal.clustering.document.shared.DocClusterUtil;
 
 public class Cicling2002Util {
@@ -28,18 +26,18 @@ public class Cicling2002Util {
 		return uniqueWords;
 	}
 	
-	public ArrayList<String[]> getDocsBiomedicalFlat(){
+	public ArrayList<String[]> getDocsCicling2002Flat(){
 		return aldocsBodeyLabelFlat;
 	}
 	
-	public LinkedHashMap<String, ArrayList<String>> getDocsBiomedicalList(){
+	public LinkedHashMap<String, ArrayList<String>> getDocsCicling2002List(){
 		return docsLabelBodyList;
 	}
 		
 	private void loadAllDocsCicling2002() {
 		try{
 			
-			BufferedReader br =  new BufferedReader(new FileReader(BioMedicalConstant.BiomedicalDocsFile));
+			BufferedReader br =  new BufferedReader(new FileReader(Cicling2002Constant.Cicling2002DocsFile));
 			
 			String line = "";
 			while((line = br.readLine())!=null){
