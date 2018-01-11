@@ -14,9 +14,6 @@ public class DocClusterConstant {
 	//public static final String wordPhPairssimAgNewsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\ag_news\\agnewsGTMwordPhraseSimScores";
 	//public static final String wPhFreqAgNewsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\ag_news\\phrasefreqs";
 	
-	public static final String AgNewsDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\ag_news\\agnewsdataraw";
-	public static final String AgNewsW2VecArffFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\ag_news\\w2Vecagnews.arff";
-	
 	public static final long MeanBgFreq = 2140;
 	public static final	long Std = 314830;
 	
@@ -43,12 +40,6 @@ public class DocClusterConstant {
 	public static final String OnlyWordPairsFile = "/users/grad/rakib/dr.norbert/docclustering/onlywdpairs";
 	
 	public static final String GTMScores = "/users/grad/rakib/TextSimilarity/SimScores/GTMSimScore.txt";
-
-	//public static final String AgNewsDocsFile = "/users/grad/rakib/dr.norbert/docclustering/agnews/agnewsdataraw";
 	public static final String wordPhPairssimAgNewsFile = "/users/grad/rakib/dr.norbert/docclustering/agnews/agnewsGTMwordPhraseSimScores";
 	public static final String AgNewsDocSimFile = "/users/grad/rakib/dr.norbert/docclustering/agnews/agNewsdocSim";
-	
-	
-	//public static final String GoogleWebSnippetDocsFile = "/users/grad/rakib/dr.norbert/docclustering/data-web-snippets/test.txt";
-
 }

@@ -164,8 +164,9 @@ public class UnSupervisedClusteringW2Vec {
 				
 				for(InstanceW2Vec instanceW2Vec: testW2Vecs){
 					
-					double minDist = Double.MAX_VALUE;
 					String minLabel = "";
+					
+					double minDist = Double.MAX_VALUE;
 					for(String label: centers.keySet()){
 						double distFromInstToCenter = ComputeUtil.ComputeEuclidianDistance(centers.get(label), instanceW2Vec.Features);
 						if(minDist>distFromInstToCenter){
@@ -174,9 +175,20 @@ public class UnSupervisedClusteringW2Vec {
 						}
 					}
 					
+//					double maxSim = Double.MIN_VALUE;
+//					for(String label: centers.keySet()){
+//						double simFromInstToCenter = ComputeUtil.ComputeCosineSimilarity(centers.get(label), instanceW2Vec.Features);
+//						if(maxSim<simFromInstToCenter){
+//							maxSim= simFromInstToCenter;
+//							minLabel = label;
+//						}
+//					}
+					
+					
 					instanceW2Vec.ClusteredLabel = minLabel;
 					
 					totalMinDist = totalMinDist + minDist;
+					//totalMinDist = totalMinDist + maxSim;
 					
 					if(!newClusters.containsKey(minLabel)){
 						ArrayList<InstanceW2Vec> newAl = new ArrayList<InstanceW2Vec>();
@@ -197,7 +209,7 @@ public class UnSupervisedClusteringW2Vec {
 				clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(newClusters);
 				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(newClusters);
 				
-				converge = true; //docClusterUtil.IsConverge(newCenetrs, centers);
+				converge = docClusterUtil.IsConverge(newCenetrs, centers);
 				centers = newCenetrs;
 				
 				lastClusters = newClusters;

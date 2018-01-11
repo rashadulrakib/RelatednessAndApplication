@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
+import net.sourceforge.jdistlib.disttest.NormalityTest;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
@@ -1072,6 +1072,51 @@ public class DocClusterUtil {
 	}
 
 	public LinkedHashMap<String, ArrayList<String>> GetInstanceClosestToCentersText(
+			ArrayList<InstanceW2Vec> alTestDocsBodyLabel,
+			LinkedHashMap<String, double[]> newCenetrsW2Vec, int x) {
+		
+		LinkedHashMap<String, ArrayList<String>> oneCenters = new LinkedHashMap<String, ArrayList<String>>();
+		
+		try{
+			for(String label: newCenetrsW2Vec.keySet()){
+				double[] center = newCenetrsW2Vec.get(label);
+				
+				double minDist = Double.MAX_VALUE;
+				InstanceW2Vec minInst = new InstanceW2Vec();
+				
+				for(InstanceW2Vec inst: alTestDocsBodyLabel){
+					double dist = ComputeUtil.ComputeEuclidianDistance(center, inst.Features);
+					if(minDist>dist){
+						minDist = dist;
+						minInst = inst;
+					}
+				}
+				
+//				double maxSim = Double.MIN_VALUE;
+//				InstanceW2Vec minInst = new InstanceW2Vec();
+//				
+//				for(InstanceW2Vec inst: alTestDocsBodyLabel){
+//					double sim = ComputeUtil.ComputeCosineSimilarity(center, inst.Features);
+//					if(maxSim<sim){
+//						maxSim = sim;
+//						minInst = inst;
+//					}
+//				}
+				
+				ArrayList<String> oneCenter = new ArrayList<String>();
+				oneCenter.add(minInst.Text);
+				
+				oneCenters.put(label, oneCenter);
+				System.out.println("label="+label+", closest inst="+minInst.Text);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return oneCenters;
+	}
+	
+	public LinkedHashMap<String, ArrayList<String>> GetInstanceClosestToCentersText(
 			LinkedHashMap<String, ArrayList<InstanceW2Vec>> newClustersW2Vec,
 			LinkedHashMap<String, double[]> newCenetrsW2Vec) {
 		
@@ -1202,7 +1247,14 @@ public class DocClusterUtil {
 		double[][] sparsifySimMatrix = new double[docSimMatrix.length][];
 		
 		try{
-			int mulConst = 100;
+			int mulConst = 1;
+			int pvalCount = 0;
+			int WvalCount = 0;
+			int bothCOunt =0;
+			
+			int pvalAndersonCount = 0;
+			int wvalAndersonCount = 0;
+			int bothAndersonCount = 0;
 			
 			for(int i=0;i<docSimMatrix.length;i++){
 				double simArr [] = docSimMatrix[i];
@@ -1211,6 +1263,51 @@ public class DocClusterUtil {
 				for(int j=0;j<simArr.length;j++){
 					simSim= simSim + simArr[j]*mulConst;
 				}
+				
+				double simArrTest [] = new double[simArr.length];
+				ArrayList<Integer> alsimArrTest = new  ArrayList<Integer>();
+				for(int j=0;j<simArr.length;j++){
+					//simArrTest[j] = (int)(simArr[j]*mulConst);
+					alsimArrTest.add((int)(simArr[j]*mulConst));
+				}
+				
+				Collections.sort(alsimArrTest);
+				
+				for(int j=0;j<alsimArrTest.size();j++){
+					simArrTest[j] = alsimArrTest.get(j);
+				}
+				
+				//check normally distributed or not
+				double Wval = 0;//NormalityTest.shapiro_wilk_statistic(simArrTest);
+				double Pval = 0;//NormalityTest.shapiro_wilk_pvalue(Wval, simArr.length);
+				
+				
+				double WvalAnderson = 0;//NormalityTest.anderson_darling_statistic(simArrTest);
+				double PvalAnderson = 0;//NormalityTest.anderson_darling_pvalue(WvalAnderson, simArr.length);
+				
+				
+				if(Pval>=0.05){
+					pvalCount++;
+				}
+				if(Wval>=0.99){
+					WvalCount++;
+				}
+				if(Pval>=0.05 && WvalCount>=0.99){
+					bothCOunt++;
+				}
+				
+				if(PvalAnderson>=0.05){
+					pvalAndersonCount++;
+				}
+				if(WvalAnderson>=0.99){
+					wvalAndersonCount++;
+				}
+				
+				if(PvalAnderson>=0.05 && WvalAnderson>=0.99){
+					bothAndersonCount++;
+				}
+				
+				//
 				
 				double avgSimSum = simSim/ simArr.length;
 				
@@ -1225,7 +1322,14 @@ public class DocClusterUtil {
 				//filter sim
 				int zeroCount = 0;
 				for(int j=0;j<simArr.length;j++){
-					 //double newSim = simArr[j]*mulConst> avgSimSum/2+ sd*0.0 ? simArr[j]: 0;
+					
+					//double newSim = simArr[j];
+					//if(Pval>=0.5 || Wval>=0.99)
+					
+					//double newSim = simArr[j]*mulConst> avgSimSum*0.01+ sd*0 ? simArr[j]: 0; //0.7 best for stack
+						//System.out.println("newSim="+newSim);
+					
+					//double newSim = simArr[j]*mulConst> avgSimSum+ sd*1.3 ? simArr[j]: 0; //0.7 best for stack
 					//double newSim = simArr[j]*mulConst> avgSimSum- sd*0.0 ? Double.MAX_VALUE: simArr[j];
 					 double newSim = simArr[j];
 					 if( newSim==0){
@@ -1235,9 +1339,12 @@ public class DocClusterUtil {
 					 //simArr[j] = newSim;
 				}
 				
-				System.out.println("total="+simArr.length+", zero count="+ zeroCount);
+				System.out.println("total="+simArr.length+", zero count="+ zeroCount+",Wval="+Wval+",Pval="+Pval);
+				//System.out.println("total="+simArr.length+", zero count="+ zeroCount+",Wval="+Wval);
 				sparsifySimMatrix[i] = simArr;
 			}
+			
+			System.out.println("pcount="+ pvalCount+", wcount="+ WvalCount+", bothcount="+ bothCOunt+": pander="+  pvalAndersonCount+", wvalander="+ wvalAndersonCount+", bothAnder="+ bothAndersonCount);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -1273,6 +1380,7 @@ public class DocClusterUtil {
 			for(String label: hmBodyLabel.keySet()){
 				ArrayList<String[]> al = hmBodyLabel.get(label);
 				Collections.shuffle(al, rd);
+				docsPerCategory = al.size()>= docsPerCategory? docsPerCategory: al.size();
 				sampledList.addAll(al.subList(0, docsPerCategory));
 			}
 			

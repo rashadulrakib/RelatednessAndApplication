@@ -305,9 +305,9 @@ public class ClusterEvaluation {
 					
 					double [] col = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()];
 					
-					for(String keyInd: hmSortedLabelInds.keySet()){
-						System.out.println(keyInd+","+hmSortedLabelInds.get(keyInd));
-					}
+//					for(String keyInd: hmSortedLabelInds.keySet()){
+//						System.out.println(keyInd+","+hmSortedLabelInds.get(keyInd));
+//					}
 					
 					for(String sortedLabel: clusterGroupsOriginalLabel.keySet()){
 						//col[hmSortedLabelInds.get(sortedLabel)] = sortedClusterGroupsOriginalLabel.get(sortedLabel).size();
@@ -318,7 +318,7 @@ public class ClusterEvaluation {
 						
 					}
 					matrixColRow[rowId++] = col;
-					System.out.println();
+					//System.out.println();
 				}
 				
 				double [][] transposed = UtilsShared.TransposeMatrix(matrixColRow);

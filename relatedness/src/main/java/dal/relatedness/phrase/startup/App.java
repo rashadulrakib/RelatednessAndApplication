@@ -12,23 +12,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import dal.clustering.document.agnews.ClusterUnSupervisedAgNews;
-import dal.clustering.document.agnews.ProcessAgNewsDocument;
-import dal.clustering.document.agnews.ClusterSemiSupervisedAgNews;
-import dal.clustering.document.biomedical.ClusterUnSupervisedBioMedical;
-import dal.clustering.document.biomedical.ProcessBiomedicalData;
-import dal.clustering.document.cicling2002.Cicling2002ExternalEvaluation;
-import dal.clustering.document.cicling2002.ClusterUnSupervisedCicling2002;
-import dal.clustering.document.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippet;
-import dal.clustering.document.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetWEKA;
-import dal.clustering.document.googlewebsnippets.ProcessGoogleWebSnippet;
-import dal.clustering.document.googlewebsnippets.ClusterSemiSupervisedGoogleWebSnippet;
-import dal.clustering.document.googlewebsnippets.WebSnippetExternalEvaluation;
-import dal.clustering.document.stackoverflow.ClusterUnSupervisedStackOverflow;
-import dal.clustering.document.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
-import dal.clustering.document.stackoverflow.ProcessStackOverflow;
-import dal.clustering.document.stackoverflow.StackOverflowExternalEvaluation;
-import dal.clustering.document.twentynewsgroup.ProcessMiniNewsGroupDocument;
+import dal.clustering.document.dataset.agnews.AgNewsExternalEvaluation;
+import dal.clustering.document.dataset.agnews.ClusterSemiSupervisedAgNews;
+import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNews;
+import dal.clustering.document.dataset.agnews.ProcessAgNewsDocument;
+import dal.clustering.document.dataset.biomedical.BioMedicalExternalEvaluation;
+import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedical;
+import dal.clustering.document.dataset.biomedical.ProcessBiomedicalData;
+import dal.clustering.document.dataset.cicling2002.Cicling2002ExternalEvaluation;
+import dal.clustering.document.dataset.cicling2002.ClusterUnSupervisedCicling2002;
+import dal.clustering.document.dataset.googlewebsnippets.ClusterSemiSupervisedGoogleWebSnippet;
+import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippet;
+import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetWEKA;
+import dal.clustering.document.dataset.googlewebsnippets.ProcessGoogleWebSnippet;
+import dal.clustering.document.dataset.googlewebsnippets.ProcessWebSnippetSTC2;
+import dal.clustering.document.dataset.googlewebsnippets.WebSnippetExternalEvaluation;
+import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflow;
+import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
+import dal.clustering.document.dataset.stackoverflow.ProcessStackOverflow;
+import dal.clustering.document.dataset.stackoverflow.StackOverflowExternalEvaluation;
+import dal.clustering.document.dataset.twentynewsgroup.ProcessMiniNewsGroupDocument;
 import dal.computationalintelligence.CIStartup;
 import dal.dimensionality.reduction.fastmap.FastMapDimReducer;
 import dal.dimensionality.reduction.tsne.TsneInputMatrixConstructor;
@@ -192,8 +195,12 @@ public class App
     	//new ClusterUnSupervisedAgNews().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedAgNews().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedAgNews().ClusterDocsSimilarityByW2VecAverageVector();
+    	//new ClusterUnSupervisedAgNews().ClusterDocsBySimilarityMatrixGtm();
+    	//new ClusterUnSupervisedAgNews().ClusterDocsBySimilarityMatrixCosineW2Vec();
+    	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessGoogleWebSnippet().Process();
+    	new ProcessWebSnippetSTC2().ProcessBySTC2();
     	//new ClusterSemiSupervisedGoogleWebSnippet().ClusterDo csW2VecBasedSimilarity();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtmAndW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippetWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
@@ -203,7 +210,8 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixEuclidianW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
-    	//new WebSnippetExternalEvaluation().ExternalEvaluate();
+    	//new WebSnippetExternalEvaluation().ExternalEvaluate();    	
+    	
     	
     	//new ProcessStackOverflow().Process();
     	//new ClusterUnSupervisedStackOverflowWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
@@ -212,13 +220,15 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsBySimilarityMatrixGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsBySimilarityMatrixCosineW2Vec();
-    	new StackOverflowExternalEvaluation().ExternalEvaluate();
+    	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsBySimilarityMatrixGtm();
+    	//new ClusterUnSupervisedBioMedical().ClusterDocsBySimilarityMatrixCosineW2Vec();
+    	//new BioMedicalExternalEvaluation().ExternalEvaluate();
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();

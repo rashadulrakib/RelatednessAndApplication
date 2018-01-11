@@ -135,6 +135,123 @@ public class UnSupervisedClusteringText {
 		return clusterResultConatainerText;
 	}
 	
+	public ClusterResultConatainerText PerformUnSeupervisedSeededClusteringByGtmWordSimIterative(LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody,  ArrayList<InstanceW2Vec> alTestDocsBodyLabel, int x) {
+		
+		ClusterResultConatainerText clusterResultConatainerText = new ClusterResultConatainerText();
+		
+		try{
+			
+			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation(docClusterUtil);
+			
+			boolean converge = false;
+			int iter = 0;
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
+			LinkedHashMap<String, double[]> lastCenetrsW2Vec = new LinkedHashMap<String, double[]>();
+			double minimumSSE = Double.MAX_VALUE;
+			
+			while(!converge && iter++< DocClusterConstant.KMedoidMaxIteration){
+				LinkedHashMap<String, ArrayList<InstanceText>> newClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
+				LinkedHashMap<String, ArrayList<InstanceW2Vec>> newClustersW2Vec = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+				
+				double newSSE = 0;
+				
+				for(InstanceW2Vec instW2Vec: alTestDocsBodyLabel){
+					String body = instW2Vec.Text;
+					String label = instW2Vec.OriginalLabel;
+					
+					//last item is the center-medoid
+					String closestLabel = "";
+					double mostSimilarity = Double.MIN_VALUE;
+					
+					for(String centerLabel: hmTrainDocsLabelBody.keySet()){
+						ArrayList<String> allCentes = hmTrainDocsLabelBody.get(centerLabel);
+						String centerText = allCentes.get(allCentes.size()-1);
+						
+						//double dist = 1.0-docClusterUtilText.ComputeTextSimGTM(centerText, body);
+						double similarity = docClusterUtilText.ComputeTextSimGTM(centerText, body);
+						
+						if(mostSimilarity<similarity){
+							mostSimilarity = similarity;
+							closestLabel = centerLabel;
+						}
+					}
+					
+					if(closestLabel.trim().length()<=0){
+						continue;
+					}
+					
+					newSSE = newSSE + mostSimilarity;
+					
+					InstanceText newInst = new InstanceText(); 
+					newInst.OriginalLabel = label;
+					newInst.Text = body;
+					newInst.ClusteredLabel = closestLabel;
+					
+//					InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
+//					instanceW2Vec.OriginalLabel = label;
+//					instanceW2Vec.Features = docClusterUtilW2Vec.PopulateW2VecForSingleDoc(body);
+//					instanceW2Vec.Text = body;
+//					instanceW2Vec.ClusteredLabel = closestLabel;
+					
+					if(!newClusters.containsKey(closestLabel)){
+						ArrayList<InstanceText> newAl = new ArrayList<InstanceText>();
+						newAl.add(newInst);
+						newClusters.put(closestLabel, newAl);
+					}
+					else{
+						ArrayList<InstanceText> newAl = newClusters.get(closestLabel);
+						newAl.add(newInst);
+						newClusters.put(closestLabel, newAl);
+					}
+					
+					
+					////
+					if(!newClustersW2Vec.containsKey(closestLabel)){
+						ArrayList<InstanceW2Vec> newAl = new ArrayList<InstanceW2Vec>();
+						newAl.add(instW2Vec);
+						newClustersW2Vec.put(closestLabel, newAl);
+					}
+					else{
+						ArrayList<InstanceW2Vec> newAl = newClustersW2Vec.get(closestLabel);
+						newAl.add(instW2Vec);
+						newClustersW2Vec.put(closestLabel, newAl);
+					}
+				}
+				
+				//temp
+				
+				tempclusterEvaluation.EvalSemiSupervisedByAccOneToOneText(newClusters);
+				tempclusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingText(newClusters);
+				//temp
+				
+				//if(minimumSSE>newSSE)
+				{
+					System.out.println("newSSE="+newSSE+",minimumSSE="+minimumSSE+",iter="+iter);
+					//minimumSSE = newSSE;
+				}
+				
+				LinkedHashMap<String, double[]> newCenetrsW2Vec = docClusterUtil.ReComputeCenters(newClustersW2Vec);
+				
+				if(iter>1)
+				{
+					converge = docClusterUtil.IsConverge(newCenetrsW2Vec, lastCenetrsW2Vec);
+				}
+				
+				//hmTrainDocsLabelBody = docClusterUtil.GetInstanceClosestToCentersText(newClustersW2Vec, newCenetrsW2Vec);
+				hmTrainDocsLabelBody = docClusterUtil.GetInstanceClosestToCentersText(alTestDocsBodyLabel, newCenetrsW2Vec, 0);
+				
+				lastClusters = newClusters;
+				lastCenetrsW2Vec = newCenetrsW2Vec;
+				
+				clusterResultConatainerText.FinalCluster = lastClusters;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return clusterResultConatainerText;
+	}
+	
 	public ClusterResultConatainerText PerformUnSeupervisedSeededClusteringByGtmWordSimIterative(
 			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody, ArrayList<String[]> alTestDocsBodyLabel) {
 		
@@ -169,7 +286,7 @@ public class UnSupervisedClusteringText {
 						String centerText = allCentes.get(allCentes.size()-1);
 						
 						//double dist = 1.0-docClusterUtilText.ComputeTextSimGTM(centerText, body);
-						double similarity = docClusterUtilText.ComputeTextSimGTM(centerText, body)*100;
+						double similarity = docClusterUtilText.ComputeTextSimGTM(centerText, body);
 						
 						if(mostSimilarity<similarity){
 							mostSimilarity = similarity;
@@ -233,12 +350,13 @@ public class UnSupervisedClusteringText {
 				
 				LinkedHashMap<String, double[]> newCenetrsW2Vec = docClusterUtil.ReComputeCenters(newClustersW2Vec);
 				
-				//if(iter>1)
+				if(iter>1)
 				{
-					converge = true; //docClusterUtil.IsConverge(newCenetrsW2Vec, lastCenetrsW2Vec);
+					converge = docClusterUtil.IsConverge(newCenetrsW2Vec, lastCenetrsW2Vec);
 				}
 				
 				hmTrainDocsLabelBody = docClusterUtil.GetInstanceClosestToCentersText(newClustersW2Vec, newCenetrsW2Vec);
+				//hmTrainDocsLabelBody = docClusterUtil.GetInstanceClosestToCentersText(alTestDocsBodyLabel, newCenetrsW2Vec);
 				
 				lastClusters = newClusters;
 				lastCenetrsW2Vec = newCenetrsW2Vec;

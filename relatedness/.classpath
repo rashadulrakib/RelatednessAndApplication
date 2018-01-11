@@ -17,6 +17,7 @@
 	<classpathentry kind="lib" path="lib/gtm.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/stanford-corenlp-3.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jdistlib-0.4.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

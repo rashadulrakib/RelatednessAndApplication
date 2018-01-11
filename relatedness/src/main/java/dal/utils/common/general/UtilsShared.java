@@ -94,5 +94,34 @@ public class UtilsShared {
 			e.printStackTrace();
 		}
 	}
+
+	public static void ReWriteDocBodyLabelFile(ArrayList<String []> alDocLabelFlat, String outFileBodyLabel,
+			String seperator) {
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFileBodyLabel));
+			
+			for(String [] bodyLabel: alDocLabelFlat){
+				bw.write(bodyLabel[1]+seperator+bodyLabel[0]+"\n");
+			}
+			
+			bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public static void WriteLinesToFile(String outFile, ArrayList<String> lines){
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+			
+			for(String line: lines){
+				bw.write(line+"\n");
+			}
+			
+			bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 }
