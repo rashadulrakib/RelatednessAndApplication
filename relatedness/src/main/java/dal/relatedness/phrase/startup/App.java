@@ -19,6 +19,7 @@ import dal.clustering.document.dataset.agnews.ProcessAgNewsDocument;
 import dal.clustering.document.dataset.biomedical.BioMedicalExternalEvaluation;
 import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedical;
 import dal.clustering.document.dataset.biomedical.ProcessBiomedicalData;
+import dal.clustering.document.dataset.biomedical.ProcessBiomedicalSTC2;
 import dal.clustering.document.dataset.cicling2002.Cicling2002ExternalEvaluation;
 import dal.clustering.document.dataset.cicling2002.ClusterUnSupervisedCicling2002;
 import dal.clustering.document.dataset.googlewebsnippets.ClusterSemiSupervisedGoogleWebSnippet;
@@ -30,6 +31,7 @@ import dal.clustering.document.dataset.googlewebsnippets.WebSnippetExternalEvalu
 import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflow;
 import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
 import dal.clustering.document.dataset.stackoverflow.ProcessStackOverflow;
+import dal.clustering.document.dataset.stackoverflow.ProcessStackOverflowSTC2;
 import dal.clustering.document.dataset.stackoverflow.StackOverflowExternalEvaluation;
 import dal.clustering.document.dataset.twentynewsgroup.ProcessMiniNewsGroupDocument;
 import dal.computationalintelligence.CIStartup;
@@ -200,7 +202,7 @@ public class App
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessGoogleWebSnippet().Process();
-    	new ProcessWebSnippetSTC2().ProcessBySTC2();
+    	//new ProcessWebSnippetSTC2().ProcessBySTC2();
     	//new ClusterSemiSupervisedGoogleWebSnippet().ClusterDo csW2VecBasedSimilarity();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtmAndW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippetWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
@@ -214,6 +216,7 @@ public class App
     	
     	
     	//new ProcessStackOverflow().Process();
+    	//new ProcessStackOverflowSTC2().ProcessBySTC2();
     	//new ClusterUnSupervisedStackOverflowWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsSimilarityByW2VecFollowingGtm();
@@ -223,6 +226,7 @@ public class App
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();
+    	new ProcessBiomedicalSTC2().ProcessBySTC2();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecAverageVector();

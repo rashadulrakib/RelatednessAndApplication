@@ -5,5 +5,10 @@ public class StackOverflowConstant {
 	public static final String  StackOverflowW2VecArffFile ="D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\stackoevrflowrawW2Vec.arff";
 	public static final String  StackOverflowTextArffFile ="D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\stackoevrflowrawText.arff";
 	
+	public static final String StackOverflowSTC2RawOut = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\STC2\\StackOverflow.txt";
+	public static final String StackOverflowSTC2GndOut = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\STC2\\StackOverflow_gnd.txt";
+	public static final String StackOverflowSTC2TextIndexOut = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\STC2\\StackOverflow_index.txt";
+	public static final String StackOverflowSTC2VocabIndexIn="D:\\PhD\\dr.norbert\\method\\STC2-master\\STC2-master\\dataset\\StackOverflow_vocab2idx.dic";
+	
 	public static final int NumberOfClusters = 20;
 }

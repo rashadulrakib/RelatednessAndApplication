@@ -35,7 +35,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 //				googlewebSnippetUtil.getDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.getDocsGoogleWebSnippetList(), 
 //				googlewebSnippetUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
+		unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
 	}
 	
 	public void ClusterDocsNGramBasedSimilarityGtm() {
