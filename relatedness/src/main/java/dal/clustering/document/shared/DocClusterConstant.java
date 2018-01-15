@@ -3,10 +3,12 @@ package dal.clustering.document.shared;
 public class DocClusterConstant {
 	
 	public static final String InputGlobalWordEmbeddingFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\glove.42B.300d\\glove.42B.300d.txt";
+	//public static final String InputGlobalWordEmbeddingFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/glove.42B.300d/glove.42B.300d.txt";
 	
 	//public static final String MiniNewsGroupDocsFile = "D:\\PhD\\dr.norbert\\dataset\\mininews-group\\all-data";
 
   public static final String StopWordFile = "D:\\Google-n-gram\\stopwords\\stopWords.txt";
+  //public final static String StopWordFile = "/users/grad/rakib/google-n-gram/stopwords/stopWords.txt";
 //	public static final String PhPairsFile = "C:\\Users\\mona\\Desktop\\phpairs";
  //public static final String MiniNewsGroupDocSimFile = "D:\\PhD\\dr.norbert\\dataset\\mininews-group\\docSim-euclidian";
   //public static final String WPhFreqMiniNewsGroupFile = "C:\\Users\\mona\\Desktop\\wpfreqfile";

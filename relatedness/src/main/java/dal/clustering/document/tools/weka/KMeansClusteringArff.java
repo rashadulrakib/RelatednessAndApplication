@@ -55,7 +55,7 @@ public class KMeansClusteringArff {
 		this.seed = seed;
 	}
 	
-	public void ClusterAndEvaluate(){
+	public String ClusterAndEvaluate(){
 		try{
 			Instances insts = new LoadArffFile(arffFile).load();
 			insts.setClassIndex(insts.numAttributes()-1);
@@ -93,9 +93,13 @@ public class KMeansClusteringArff {
 			clusterAssignments = eval.getClusterAssignments();
 			
 			 
-			System.out.println(eval.clusterResultsToString());	
+			System.out.println(eval.clusterResultsToString());
+			
+			return eval.clusterResultsToString();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		return "";
 	}
 }

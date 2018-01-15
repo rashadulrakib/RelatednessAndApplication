@@ -82,6 +82,8 @@ import dal.relatedness.text.compute.tokenized.TextRelatednessTokenizedOverlappin
 //rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ javac  -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar" **/*.java
 //rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ java -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar" dal.relatedness.phrase.startup.App
 
+//rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ javac  -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar:./../../../lib/commons-lang3-3.2.1.jar:./../../../lib/gtm.jar:./../../../lib/jdistlib-0.4.5.jar:./../../../lib/stanford-corenlp-3.3.1.jar:./../../../lib/stanford-parser-3.2.0.jar:./../../../lib/trove4j-3.0.3.jar" **/*.java
+//rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ java -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar:./../../../lib/commons-lang3-3.2.1.jar:./../../../lib/gtm.jar:./../../../lib/jdistlib-0.4.5.jar:./../../../lib/stanford-corenlp-3.3.1.jar:./../../../lib/stanford-parser-3.2.0.jar:./../../../lib/trove4j-3.0.3.jar" dal.relatedness.phrase.startup.App
  
 public class App 
 {
@@ -203,9 +205,10 @@ public class App
     	
     	//new ProcessGoogleWebSnippet().Process();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2();
-    	//new ClusterSemiSupervisedGoogleWebSnippet().ClusterDo csW2VecBasedSimilarity();
+    	//new ClusterSemiSupervisedGoogleWebSnippet().ClusterDocsW2VecBasedSimilarity();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtmAndW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippetWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
+    	//new ClusterUnSupervisedGoogleWebSnippetWEKA().ConstructDocsSimilarityMatrixSparsificationByKMeansW2VecGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
@@ -226,7 +229,7 @@ public class App
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();
-    	new ProcessBiomedicalSTC2().ProcessBySTC2();
+    	//new ProcessBiomedicalSTC2().ProcessBySTC2();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecAverageVector();

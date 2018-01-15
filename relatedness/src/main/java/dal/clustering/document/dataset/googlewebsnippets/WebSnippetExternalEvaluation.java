@@ -21,7 +21,7 @@ public class WebSnippetExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\2018\\jan\\r-hc-label.txt";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-kmeans-w2vec-hc-gtm-sd-0-labels";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			

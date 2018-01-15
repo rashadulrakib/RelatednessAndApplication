@@ -237,21 +237,32 @@ public class ProcessGoogleWebSnippet {
 			//extract doc and label 
 			String line="";
 			while((line=br.readLine()) != null) {
-		        line = line.trim().toLowerCase();
-		        if(line.isEmpty()) continue;
-		        
-		        int lastSpaceIndex = line.lastIndexOf(" ");
-		        String label = line.substring(lastSpaceIndex);
-		        
-		        String body = line.substring(0, lastSpaceIndex);
-		        
-		        body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+				 line = line.trim().toLowerCase();
+			        if(line.isEmpty()) continue;
+			        
+//			        int lastSpaceIndex = line.lastIndexOf(" ");
+//			        String label = line.substring(lastSpaceIndex).trim();
+//			        
+//			        String body = line.substring(0, lastSpaceIndex).trim();
+			        
+			        String [] arrLabelBody = line.split("\\t");
+					   
+				   if(arrLabelBody.length!=2)
+					   continue;
+				   
+				   String label = arrLabelBody[0].trim();
+				   String body =  arrLabelBody[1].trim();
+			        
+			        body = docClusterUtil.PerformPreprocess(body);
+			        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+			        body = docClusterUtil.ConvertArrayListToString(processed);
+			        
+			        if(body.isEmpty()) continue;
 		        
 		        uniquewords.addAll(processed); //populate the unique words from the text corpus
 		        
 		        String arr[] = new String[2];
-		        arr[0]= docClusterUtil.ConvertArrayListToString(processed);
+		        arr[0]= body;
 		        arr[1] = label;
 		        
 		        aldocsBodeyLabel.add(arr);

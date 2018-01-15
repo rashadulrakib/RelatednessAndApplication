@@ -1152,13 +1152,46 @@ public class DocClusterUtil {
 	}
 
 	public double[][] ComputeSimilarityMatrixGtm(ArrayList<String[]> alDocLabelFlat,
+			DocClusterUtilText docClusterUtilText, double[] clusterAssignments) {
+		
+		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
+		
+		try{
+			for(int i=0;i< alDocLabelFlat.size();i++){
+				System.out.println("doc="+i);
+				String text1 = alDocLabelFlat.get(i)[0];
+				
+				docSimMatrix[i][i] = 1;
+				
+				for(int j=i+1;j<alDocLabelFlat.size();j++){
+					
+					if(clusterAssignments[i]!=clusterAssignments[j]){
+						continue;
+					}
+					
+					String text2 = alDocLabelFlat.get(j)[0];
+					
+					docSimMatrix[i][j] = docClusterUtilText.ComputeTextSimGTM(text1, text2);
+					
+					docSimMatrix[j][i] = docSimMatrix[i][j];
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
+	public double[][] ComputeSimilarityMatrixGtm(ArrayList<String[]> alDocLabelFlat,
 			DocClusterUtilText docClusterUtilText) {
 		
 		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
 		
 		try{
 			for(int i=0;i< alDocLabelFlat.size();i++){
-				
+				System.out.println("doc="+i);
 				String text1 = alDocLabelFlat.get(i)[0];
 				
 				docSimMatrix[i][i] = 1;
@@ -1227,6 +1260,44 @@ public class DocClusterUtil {
 				docDistanceMatrix[i][i] = 1;
 				
 				for(int j=i+1;j<insts.size();j++){
+					
+					InstanceW2Vec inst2 = insts.get(j);
+					
+					docDistanceMatrix[i][j] = ComputeUtil.ComputeCosineSimilarity(inst1.Features, inst2.Features);
+					
+					docDistanceMatrix[j][i] = docDistanceMatrix[i][j];
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docDistanceMatrix;
+	}
+	
+	public double[][] ComputeCosineMatrixW2Vec(ArrayList<String[]> alDocLabel,
+			DocClusterUtilW2Vec docClusterUtilW2Vec, double[] clusterAssignments) {
+		
+		double[][] docDistanceMatrix = UtilsShared.InitializeMatrix(alDocLabel.size(), alDocLabel.size());
+		
+		try{
+			
+			ArrayList<InstanceW2Vec> insts = docClusterUtilW2Vec.populateW2VecDocsFlat(alDocLabel);
+			
+			for(int i=0;i< insts.size();i++){
+				
+				System.out.println("doc="+i);
+				
+				InstanceW2Vec inst1 = insts.get(i);
+				
+				docDistanceMatrix[i][i] = 1;
+				
+				for(int j=i+1;j<insts.size();j++){
+					
+					if(clusterAssignments[i]!=clusterAssignments[j]){
+						continue;
+					}
 					
 					InstanceW2Vec inst2 = insts.get(j);
 					
@@ -1440,8 +1511,5 @@ public class DocClusterUtil {
 		
 		return clusterGroups;
 	}
-
-	
-	
 
 }
