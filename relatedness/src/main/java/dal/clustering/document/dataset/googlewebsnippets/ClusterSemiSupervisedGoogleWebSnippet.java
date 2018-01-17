@@ -19,7 +19,7 @@ public class ClusterSemiSupervisedGoogleWebSnippet {
 	
 	public ClusterSemiSupervisedGoogleWebSnippet(){
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
-		semiSupervisedClusteringVector = new SemiSupervisedClusteringW2Vec();
+		semiSupervisedClusteringVector = new SemiSupervisedClusteringW2Vec(googlewebSnippetUtil.docClusterUtil);
 		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
 	}
 	

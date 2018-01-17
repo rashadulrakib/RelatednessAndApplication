@@ -17,7 +17,7 @@ public class ClusterSemiSupervisedAgNews {
 	
 	public ClusterSemiSupervisedAgNews(){
 		agNewsUtil = new AgNewsUtil();
-		semiSupervisedClustering = new SemiSupervisedClusteringW2Vec();
+		semiSupervisedClustering = new SemiSupervisedClusteringW2Vec(agNewsUtil.docClusterUtil);
 		clusterEvaluation = new ClusterEvaluation(agNewsUtil.docClusterUtil);
 	}
 	

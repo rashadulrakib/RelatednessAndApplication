@@ -28,7 +28,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	public ClusterUnSupervisedGoogleWebSnippet() throws IOException{
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
 		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
-		semiSupervisedClusteringW2Vec = new SemiSupervisedClusteringW2Vec();
+		semiSupervisedClusteringW2Vec = new SemiSupervisedClusteringW2Vec(googlewebSnippetUtil.docClusterUtil);
 		
 //		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(googlewebSnippetUtil.GetUniqueWords(),
 //				googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.GetDocsGoogleWebSnippetList(), 

@@ -14,8 +14,8 @@ public class SemiSupervisedClusteringW2Vec {
 	
 	DocClusterUtil docClusterUtil;
 	
-	public SemiSupervisedClusteringW2Vec(){
-		docClusterUtil = new DocClusterUtil();
+	public SemiSupervisedClusteringW2Vec(DocClusterUtil docClusterUtil){
+		this.docClusterUtil = docClusterUtil;
 	}
 
 	public ClusterResultConatainerVector PerformSemiSeuperVisedClustering(LinkedHashMap<String, ArrayList<double[]>> trainW2Vecs, ArrayList<InstanceW2Vec> testW2Vecs) {
