@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
+import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 
 public class ProcessBiomedicalData {
 
@@ -54,9 +54,9 @@ public class ProcessBiomedicalData {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 			   
-			   body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
-		        body = docClusterUtil.ConvertArrayListToString(processed);
+			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
 		        if(body.isEmpty()) continue;
 			   
@@ -72,7 +72,7 @@ public class ProcessBiomedicalData {
 			   
 		   br.close();
 		  
-			br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+			br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 	           
 			String text="";
 			HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
@@ -103,7 +103,7 @@ public class ProcessBiomedicalData {
             	labels.add(label);
             	
             	String arr[] = body.split("\\s+");
-            	double [] avgVec = new double[DocClusterConstant.W2VecDimension];
+            	double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
             	
             	for(String word: arr){
             		if(w2vec.containsKey(word)){
@@ -127,7 +127,7 @@ public class ProcessBiomedicalData {
             BufferedWriter bw = new BufferedWriter(new FileWriter(BioMedicalConstant.BiomedicalW2VecArffFile));
             
             bw.write("@relation BiomedicalDocsW2Vec\n\n");
-            for(int i=0;i< DocClusterConstant.W2VecDimension;i++){
+            for(int i=0;i< TextRelatednessW2VecConstant.W2VecDimension;i++){
             	bw.write("@attribute ftr"+i+" NUMERIC\n");
             }
             bw.write("@attribute Category {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}\n\n");

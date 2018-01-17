@@ -145,7 +145,7 @@ public class UnSupervisedClusteringW2Vec {
 			LinkedHashMap<String, ArrayList<double[]>> trainW2Vecs = docClusterUtilW2Vec.populateW2VecDocsList(hmTrainDocsLabelBody);
 			ArrayList<InstanceW2Vec> testW2Vecs = docClusterUtilW2Vec.populateW2VecDocsFlat(alDocLabelFlat);
 			
-			LinkedHashMap<String, double[]> initialCenters = ComputeUtil.ComputeInitialCenters(trainW2Vecs);
+			LinkedHashMap<String, double[]> initialCenters = docClusterUtil.ComputeInitialCenters(trainW2Vecs);
 			
 			return ComputeSemiSupervisedClusters(initialCenters, testW2Vecs);
 			

@@ -13,11 +13,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 
-import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.PairSim;
 import dal.clustering.document.shared.entities.ClusterDocumentShared;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
-import dal.relatedness.text.utils.TextRelatednessComputeUtil;
+import dal.relatedness.text.compute.trwp.TextRelatednessTrwpConstant;
+import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
+import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 
 public class ProcessAgNewsDocument extends ClusterDocumentShared {
 	ArrayList<String> phrasesOfAText;
@@ -68,7 +69,6 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 	private void loadAllDocAgNewsByW2VecListAndWriteToArff() {
 		try{
 		  List<String[]> aldocsBodeyLabel = new ArrayList<String[]>();
-			int w2vecdimension = 300;
 			
 			BufferedReader br =  new BufferedReader(new FileReader(AgNewsConstant.AgNewsDocsFile));
 			HashSet<String> uniquewords = new HashSet<String>();
@@ -84,16 +84,19 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 				   if(arrLabelTitleBody.length!=3)
 					   continue;
 				   
-				   String label = arrLabelTitleBody[0];
-				   String body =  arrLabelTitleBody[1]+ " " +arrLabelTitleBody[2];
+				   String label = arrLabelTitleBody[0].trim();
+				   String body =  (arrLabelTitleBody[1]+ " " +arrLabelTitleBody[2]).trim();
 				   
-				   body = docClusterUtil.PerformPreprocess(body);
-			        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+				   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+			        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+			        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 				   
+			        if(body.isEmpty()) continue;
+			        
 			        uniquewords.addAll(processed); //populate the unique words from the text corpus
 				   
 			        String arr[] = new String[2];
-			        arr[0]= docClusterUtil.ConvertArrayListToString(processed);
+			        arr[0]= body;
 			        arr[1] = label;
 				   
 			        aldocsBodeyLabel.add(arr);
@@ -108,7 +111,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 			//aldocsBodeyLabel = aldocsBodeyLabel.subList(0, 50000);
 			//end temp
 			
-			br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+			br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 	           
 			String text="";
 			HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
@@ -140,7 +143,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
             	labels.add(label);
             	
             	String arr[] = body.split("\\s+");
-            	double [] avgVec = new double[w2vecdimension];
+            	double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
             	
             	for(String word: arr){
             		if(w2vec.containsKey(word)){
@@ -166,7 +169,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
             BufferedWriter bw = new BufferedWriter(new FileWriter(AgNewsConstant.AgNewsW2VecArffFile));
             
             bw.write("@relation AgnewsW2Vec\n\n");
-            for(int i=0;i< w2vecdimension;i++){
+            for(int i=0;i< TextRelatednessW2VecConstant.W2VecDimension;i++){
             	bw.write("@attribute ftr"+i+" NUMERIC\n");
             }
             bw.write("@attribute Category {1,2,3,4}\n\n");
@@ -272,7 +275,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 	 
 	 private void writeSimMatrix(ArrayList<ArrayList<Double>> simMatrix ) {
 			try{
-				BufferedWriter bw = new BufferedWriter(new FileWriter(DocClusterConstant.AgNewsDocSimFile));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(AgNewsConstant.AgNewsDocSimFile));
 				
 				for(int i=0;i<simMatrix.size();i++){
 					ArrayList<Double> rowsimScores = simMatrix.get(i); 
@@ -295,8 +298,8 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 	private void loadPhSimScores() {
 			try{
 				
-				if(new File(DocClusterConstant.wordPhPairssimAgNewsFile).exists()){
-					BufferedReader br =  new BufferedReader(new FileReader(DocClusterConstant.wordPhPairssimAgNewsFile));
+				if(new File(AgNewsConstant.wordPhPairssimAgNewsFile).exists()){
+					BufferedReader br =  new BufferedReader(new FileReader(AgNewsConstant.wordPhPairssimAgNewsFile));
 					
 					String line="";
 					while((line=br.readLine()) != null) {
@@ -305,7 +308,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 				        String stem1 = StemmingUtil.stemPhrase(arr[0]);
 				        String stem2 = StemmingUtil.stemPhrase(arr[1]);
 				        phSimChacheScores.put(stem1+","+ stem2, Double.parseDouble(arr[2]));
-				    }
+					}
 					
 					br.close();
 				}
@@ -331,10 +334,10 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 						
 						String text1 = preprocessedDocs.get(i);
 						
-						ArrayList<String> cands1 = docClusterUtil.splitByStopWord(text1);
-						 ArrayList<String> phs1 = docClusterUtil.SplitPhrases(generatePhsByFreq(cands1));
+						ArrayList<String> cands1 = docClusterUtil.textRelatednessGoogleNgUtil.splitByStopWord(text1);
+						 ArrayList<String> phs1 = docClusterUtil.textRelatednessGoogleNgUtil.SplitPhrases(generatePhsByFreq(cands1));
 						 
-						  ArrayList<String> phWordList1 = docClusterUtil.CombineWordPhs(phs1, cands1);
+						  ArrayList<String> phWordList1 = docClusterUtil.textUtilShared.CombineWordPhs(phs1, cands1);
 						 
 						// System.out.println("text1="+text1);
 						 //System.out.println("phs1="+phs1+"\n........................................");
@@ -349,18 +352,18 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 							//System.out.println("--text1="+text1);
 							//System.out.println("--text2="+text2);
 							
-			                ArrayList<String> cands2 = docClusterUtil.splitByStopWord(text2);
+			                ArrayList<String> cands2 = docClusterUtil.textRelatednessGoogleNgUtil.splitByStopWord(text2);
 			                
 			                if(cands1.size()<=0 || cands2.size()<=0){
 			                	rowsimScores.add(0.0);
 			                	continue;
 			                }
 			               
-			                ArrayList<String> phs2 = docClusterUtil.SplitPhrases(generatePhsByFreq(cands2));
-		                   ArrayList<String> phWordList2 = docClusterUtil.CombineWordPhs(phs2, cands2);
+			                ArrayList<String> phs2 = docClusterUtil.textRelatednessGoogleNgUtil.SplitPhrases(generatePhsByFreq(cands2));
+		                   ArrayList<String> phWordList2 = docClusterUtil.textUtilShared.CombineWordPhs(phs2, cands2);
 		                   
-		                   ArrayList<String>  newPhWordList1 = docClusterUtil.SplitSuperPhrases(phWordList1, phWordList2);
-		                   ArrayList<String>  newPhWordList2 = docClusterUtil.SplitSuperPhrases(phWordList2, phWordList1);
+		                   ArrayList<String>  newPhWordList1 = docClusterUtil.textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList1, phWordList2);
+		                   ArrayList<String>  newPhWordList2 = docClusterUtil.textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList2, phWordList1);
 		                   
 		                   if (newPhWordList1.size() > newPhWordList2.size()) {
 		                       ArrayList<String> temp = newPhWordList1;
@@ -368,9 +371,9 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 		                       newPhWordList2 = temp;
 		                   }
 		                   
-		                   ArrayList<String> commonPhWords = docClusterUtil.GetCommonPhWordsByStemming(newPhWordList1, newPhWordList2);
-		                   ArrayList<String> getRestPhWords1 = docClusterUtil.GetRestPhWords(newPhWordList1, commonPhWords);
-		                   ArrayList<String> getRestPhWords2 = docClusterUtil.GetRestPhWords(newPhWordList2, commonPhWords);
+		                   ArrayList<String> commonPhWords = docClusterUtil.textUtilShared.GetCommonPhWordsByStemming(newPhWordList1, newPhWordList2);
+		                   ArrayList<String> getRestPhWords1 = docClusterUtil.textUtilShared.GetRestPhWords(newPhWordList1, commonPhWords);
+		                   ArrayList<String> getRestPhWords2 = docClusterUtil.textUtilShared.GetRestPhWords(newPhWordList2, commonPhWords);
 		                   
 		                   //System.out.println("commonPhWords="+commonPhWords);
 		                   //System.out.println("getRestPhWords1="+getRestPhWords1);
@@ -389,8 +392,10 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 		                   double textSImscore=0;
 		                   
 		                   if(t1t2simPairList!=null){
-		                   textSImscore = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.GetCommonWeight(commonPhWords), 
-		                		   docClusterUtil.GetTextSize(newPhWordList1), docClusterUtil.GetTextSize(newPhWordList2), false);
+		                   textSImscore = docClusterUtil.textRelatednessGoogleNgUtil.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, 
+		                		   docClusterUtil.textRelatednessGoogleNgUtil.GetCommonWeight(commonPhWords), 
+		                		   docClusterUtil.textRelatednessGoogleNgUtil.GetTextSize(newPhWordList1), 
+		                		   docClusterUtil.textRelatednessGoogleNgUtil.GetTextSize(newPhWordList2), false);
 		       			
 			       			if (Double.isNaN(textSImscore)){
 			       			textSImscore=0.0;
@@ -614,7 +619,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
                             		bgFreq = getBgFreq(StemmingUtil.stemPhrase(bg));
                             		wphFreqsCache.put(bg, (int)bgFreq);
                             	}
-	                                if (bgFreq >= maxfreq && bgFreq >= (double) (DocClusterConstant.MeanBgFreq + DocClusterConstant.Std)) {
+	                                if (bgFreq >= maxfreq && bgFreq >= (double) (TextRelatednessTrwpConstant.MeanBgFreq + TextRelatednessTrwpConstant.Std)) {
 	                                    maxfreq = bgFreq;
 	                                    maxBg = bg;
 	                                    i1 = i;

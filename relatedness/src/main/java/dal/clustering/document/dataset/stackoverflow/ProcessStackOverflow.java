@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import dal.clustering.document.shared.DocClusterConstant;
+import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 
 public class ProcessStackOverflow {
 
@@ -50,9 +50,9 @@ public class ProcessStackOverflow {
 			   String label = arrLabelBody[0];
 			   String body =  arrLabelBody[1];
 			   
-			   body = stackOverflowUtil.docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.RemoveStopWord(body);
-		        body = stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
+			   body = stackOverflowUtil.docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = stackOverflowUtil.docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
 		        if(body.isEmpty()) continue;
 			   
@@ -109,9 +109,9 @@ public class ProcessStackOverflow {
 				   String label = arrLabelBody[0];
 				   String body =  arrLabelBody[1];
 				   
-				   body = stackOverflowUtil.docClusterUtil.PerformPreprocess(body);
-			        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.RemoveStopWord(body);
-			        body = stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
+				   body = stackOverflowUtil.docClusterUtil.textUtilShared.PerformPreprocess(body);
+			        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.textUtilShared.RemoveStopWord(body);
+			        body = stackOverflowUtil.docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 			        
 			        if(body.isEmpty()) continue;
 				   
@@ -127,7 +127,7 @@ public class ProcessStackOverflow {
 				   
 			   br.close();
 			  
-				br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+				br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 		           
 				String text="";
 				HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
@@ -158,7 +158,7 @@ public class ProcessStackOverflow {
 	            	labels.add(label);
 	            	
 	            	String arr[] = body.split("\\s+");
-	            	double [] avgVec = new double[DocClusterConstant.W2VecDimension];
+	            	double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
 	            	
 	            	for(String word: arr){
 	            		if(w2vec.containsKey(word)){
@@ -182,7 +182,7 @@ public class ProcessStackOverflow {
 	            BufferedWriter bw = new BufferedWriter(new FileWriter(StackOverflowConstant.StackOverflowW2VecArffFile));
 	            
 	            bw.write("@relation StackOverflowDocsW2Vec\n\n");
-	            for(int i=0;i< DocClusterConstant.W2VecDimension;i++){
+	            for(int i=0;i< TextRelatednessW2VecConstant.W2VecDimension;i++){
 	            	bw.write("@attribute ftr"+i+" NUMERIC\n");
 	            }
 	            bw.write("@attribute Category {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}\n\n");

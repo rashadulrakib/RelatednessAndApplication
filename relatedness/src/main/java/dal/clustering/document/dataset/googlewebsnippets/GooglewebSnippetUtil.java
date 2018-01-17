@@ -25,15 +25,15 @@ public class GooglewebSnippetUtil {
 
 	}
 	
-	public HashSet<String> getUniqueWords(){
+	public HashSet<String> GetUniqueWords(){
 		return uniqueWords;
 	}
 	
-	public ArrayList<String[]> getDocsGoogleWebSnippetFlat(){
+	public ArrayList<String[]> GetDocsGoogleWebSnippetFlat(){
 		return aldocsBodeyLabelFlat;
 	}
 	
-	public LinkedHashMap<String, ArrayList<String>> getDocsGoogleWebSnippetList(){
+	public LinkedHashMap<String, ArrayList<String>> GetDocsGoogleWebSnippetList(){
 		return docsLabelBodyList;
 	}
 	
@@ -59,9 +59,9 @@ public class GooglewebSnippetUtil {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 		        
-		        body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> noStopWords = docClusterUtil.RemoveStopWord(body);
-		        body = docClusterUtil.ConvertArrayListToString(noStopWords);
+		        body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> noStopWords = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(noStopWords);
 		        
 		        if(body.isEmpty()) continue;
 		        

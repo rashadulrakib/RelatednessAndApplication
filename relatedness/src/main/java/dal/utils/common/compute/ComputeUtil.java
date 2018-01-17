@@ -1,15 +1,68 @@
 package dal.utils.common.compute;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
 import dal.utils.common.general.UtilsShared;
 
 public class ComputeUtil {
+	
+	public static double NormalizeSimilarity( double cp1, double cp2, double comCount)  {
+        double score = 0.0;
+        try {
+            score = normalizeByNGD(cp1, cp2, comCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return score;
+	 }
+	 
+	 private static double normalizeByNGD(double countPh1, double countPh2, double commonCount) throws Exception {
+        double score = 0.0;
+        double N = 3107547215.0;
+        try {
+            if (countPh1 == 0 || countPh2 == 0 || commonCount == 0) {
+                score = 0.0;
+            } else {
+                score = (Math.max(Math.log(countPh1) / Math.log(2), Math.log(countPh2) / Math.log(2)) - Math.log(commonCount) / Math.log(2))
+                        / (Math.log(N) / Math.log(2) - Math.min(Math.log(countPh1) / Math.log(2), Math.log(countPh2) / Math.log(2)));
+                score = Math.exp(-2 * score);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return score;
+	 }
+	 
+	public static double ComputeCosineSimilarity(HashMap<String, Double> v1, 	HashMap<String, Double> v2) {
+		double sim = 0;
+		try{
+			
+			double v1v2Sum = 0.0;
+			
+			double v1Sq = 0.0;
+			for(String v1Key: v1.keySet()){
+				if(v2.containsKey(v1Key)){
+					v1v2Sum = v1v2Sum+ v1.get(v1Key)* v2.get(v1Key);
+				}
+				
+				v1Sq = v1Sq+Math.pow( v1.get(v1Key), 2);
+			}
+			
+			double v2Sq = 0.0;
+			for(String v2Key: v2.keySet()){
+				v2Sq = v2Sq+Math.pow( v2.get(v2Key), 2);
+			}
+			
+			return v1v2Sum/Math.sqrt(v1Sq)/Math.sqrt(v2Sq);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return sim;
+	}
 	
 	public static double ComputeCosineSimilarity(double [] ftr1, double[] ftr2){
 		try{
@@ -59,36 +112,7 @@ public class ComputeUtil {
 		return 0;
 	}
 	
-	public static LinkedHashMap<String, double[]> ComputeInitialCenters(LinkedHashMap<String, ArrayList<double[]>> trainW2Vecs) {
-		LinkedHashMap<String, double[]> InitialCenters = new LinkedHashMap<String, double[]>();
-
-		try{
-			for(String label: trainW2Vecs.keySet()){
-				int centerSize = trainW2Vecs.get(label).get(0).length;
-				double totalDocVecs = trainW2Vecs.get(label).size();
-				double [] center = new double[centerSize];
-				
-				//sum all the vecs
-				for(double[] docVec: trainW2Vecs.get(label)){
-					for(int i=0;i<docVec.length;i++){
-						center [i] = center[i]+docVec[i];
-					}
-				}
-				
-				//average centers;
-				for(int i=0;i<center.length;i++){
-					center[i]=center[i]/totalDocVecs;
-				}
-				
-				InitialCenters.put(label, center);
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return InitialCenters;
-	}
+	
 
 	public static double ComputeEuclidianDistance(double[] center, double[] instanceFtrs) {
 		double dist = 0;

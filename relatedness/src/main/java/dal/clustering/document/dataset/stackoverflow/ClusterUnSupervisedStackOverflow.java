@@ -2,7 +2,6 @@ package dal.clustering.document.dataset.stackoverflow;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;

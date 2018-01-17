@@ -54,9 +54,9 @@ public class BioMedicalUtil {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 			   
-			   body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
-		        body = docClusterUtil.ConvertArrayListToString(processed);
+			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
 		        if(body.isEmpty()) continue;
 		        

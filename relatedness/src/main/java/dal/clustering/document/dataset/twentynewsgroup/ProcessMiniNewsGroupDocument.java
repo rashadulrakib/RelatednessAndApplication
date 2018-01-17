@@ -6,18 +6,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.PairSim;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.entities.ClusterDocumentShared;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
-import dal.relatedness.text.utils.TextRelatednessComputeUtil;
+import dal.relatedness.text.compute.trwp.TextRelatednessTrwpConstant;
+import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.utils.common.compute.ComputeUtil;
 
 public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
@@ -71,8 +69,8 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 				
 				for(int i=0;i< preprocessedDocs.size();i++){
 				
-					ArrayList<String> document =  docClusterUtil.ConvertAarryToArrayList( preprocessedDocs.get(i).split("\\s+"));
-					document = docClusterUtil.RemoveStopWord(document);
+					ArrayList<String> document =  docClusterUtil.textUtilShared.ConvertAarryToArrayList( preprocessedDocs.get(i).split("\\s+"));
+					document = docClusterUtil.textUtilShared.RemoveStopWord(document);
 					documents.add(document);
 				}
 				
@@ -104,8 +102,8 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 				
 				for(int i=0;i< preprocessedDocs.size();i++){
 				
-					ArrayList<String> document =  docClusterUtil.ConvertAarryToArrayList( preprocessedDocs.get(i).split("\\s+"));
-					document = docClusterUtil.RemoveStopWord(document);
+					ArrayList<String> document =  docClusterUtil.textUtilShared.ConvertAarryToArrayList( preprocessedDocs.get(i).split("\\s+"));
+					document = docClusterUtil.textUtilShared.RemoveStopWord(document);
 					documents.add(document);
 				}
 				
@@ -114,7 +112,7 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 				for(int i=0;i<tfIdfs.size();i++){
 					ArrayList<Double> row = new ArrayList<Double>();
 					for(int j=i+1;j< tfIdfs.size();j++){
-						double cosSim = docClusterUtil.ComputeCosineSImilarity(tfIdfs.get(i), tfIdfs.get(j));
+						double cosSim = ComputeUtil.ComputeCosineSimilarity(tfIdfs.get(i), tfIdfs.get(j));
 						row.add(cosSim);
 					}
 					simMatrix.add(row);
@@ -207,7 +205,7 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 
 		private void writeSimMatrix(ArrayList<ArrayList<Double>> simMatrix ) {
 			try{
-				BufferedWriter bw = new BufferedWriter(new FileWriter(DocClusterConstant.MiniNewsGroupDocSimFile));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(MiniNewsGroupConstant.MiniNewsGroupDocSimFile));
 				
 				for(int i=0;i<simMatrix.size();i++){
 					ArrayList<Double> rowsimScores = simMatrix.get(i); 
@@ -242,10 +240,10 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 						
 						String text1 = preprocessedDocs.get(i);
 						
-						ArrayList<String> cands1 = docClusterUtil.splitByStopWord(text1);
-						 ArrayList<String> phs1 = docClusterUtil.SplitPhrases(generatePhsByFreq(cands1));
+						ArrayList<String> cands1 = docClusterUtil.textRelatednessGoogleNgUtil.splitByStopWord(text1);
+						 ArrayList<String> phs1 = docClusterUtil.textRelatednessGoogleNgUtil.SplitPhrases(generatePhsByFreq(cands1));
 						 
-						  ArrayList<String> phWordList1 = docClusterUtil.CombineWordPhs(phs1, cands1);
+						  ArrayList<String> phWordList1 = docClusterUtil.textUtilShared.CombineWordPhs(phs1, cands1);
 						 
 						// System.out.println("text1="+text1);
 						 //System.out.println("phs1="+phs1+"\n........................................");
@@ -260,7 +258,7 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 							//System.out.println("--text1="+text1);
 							//System.out.println("--text2="+text2);
 							
-			                ArrayList<String> cands2 = docClusterUtil.splitByStopWord(text2);
+			                ArrayList<String> cands2 = docClusterUtil.textRelatednessGoogleNgUtil.splitByStopWord(text2);
 			                
 			                if(cands1.size()<=0 || cands2.size()<=0){
 			                	rowsimScores.add(0.0);
@@ -268,11 +266,11 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 			                }
 			                
 			               
-			                ArrayList<String> phs2 = docClusterUtil.SplitPhrases(generatePhsByFreq(cands2));
-		                   ArrayList<String> phWordList2 = docClusterUtil.CombineWordPhs(phs2, cands2);
+			                ArrayList<String> phs2 = docClusterUtil.textRelatednessGoogleNgUtil.SplitPhrases(generatePhsByFreq(cands2));
+		                   ArrayList<String> phWordList2 = docClusterUtil.textUtilShared.CombineWordPhs(phs2, cands2);
 		                   
-		                   ArrayList<String>  newPhWordList1 = docClusterUtil.SplitSuperPhrases(phWordList1, phWordList2);
-		                   ArrayList<String>  newPhWordList2 = docClusterUtil.SplitSuperPhrases(phWordList2, phWordList1);
+		                   ArrayList<String>  newPhWordList1 = docClusterUtil.textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList1, phWordList2);
+		                   ArrayList<String>  newPhWordList2 = docClusterUtil.textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList2, phWordList1);
 		                   
 		                   if (newPhWordList1.size() > newPhWordList2.size()) {
 		                       ArrayList<String> temp = newPhWordList1;
@@ -280,9 +278,9 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 		                       newPhWordList2 = temp;
 		                   }
 		                   
-		                   ArrayList<String> commonPhWords = docClusterUtil.GetCommonPhWordsByStemming(newPhWordList1, newPhWordList2);
-		                   ArrayList<String> getRestPhWords1 = docClusterUtil.GetRestPhWords(newPhWordList1, commonPhWords);
-		                   ArrayList<String> getRestPhWords2 = docClusterUtil.GetRestPhWords(newPhWordList2, commonPhWords);
+		                   ArrayList<String> commonPhWords = docClusterUtil.textUtilShared.GetCommonPhWordsByStemming(newPhWordList1, newPhWordList2);
+		                   ArrayList<String> getRestPhWords1 = docClusterUtil.textUtilShared.GetRestPhWords(newPhWordList1, commonPhWords);
+		                   ArrayList<String> getRestPhWords2 = docClusterUtil.textUtilShared.GetRestPhWords(newPhWordList2, commonPhWords);
 		                   
 		                   //System.out.println("commonPhWords="+commonPhWords);
 		                   //System.out.println("getRestPhWords1="+getRestPhWords1);
@@ -301,8 +299,8 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 		                   double textSImscore=0;
 		                   
 		                   if(t1t2simPairList!=null){
-		                   textSImscore = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.GetCommonWeight(commonPhWords), 
-		                		   docClusterUtil.GetTextSize(newPhWordList1), docClusterUtil.GetTextSize(newPhWordList2), false);
+		                   textSImscore = docClusterUtil.textRelatednessGoogleNgUtil.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.textRelatednessGoogleNgUtil.GetCommonWeight(commonPhWords), 
+		                		   docClusterUtil.textRelatednessGoogleNgUtil.GetTextSize(newPhWordList1), docClusterUtil.textRelatednessGoogleNgUtil.GetTextSize(newPhWordList2), false);
 		       			
 			       			if (Double.isNaN(textSImscore)){
 			       			textSImscore=0.0;
@@ -532,7 +530,7 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
                             		bgFreq = getBgFreq(StemmingUtil.stemPhrase(bg));
                             		wphFreqsCache.put(bg, (int)bgFreq);
                             	}
-	                                if (bgFreq >= maxfreq && bgFreq >= (double) (DocClusterConstant.MeanBgFreq + DocClusterConstant.Std)) {
+	                                if (bgFreq >= maxfreq && bgFreq >= (double) (TextRelatednessTrwpConstant.MeanBgFreq + TextRelatednessTrwpConstant.Std)) {
 	                                    maxfreq = bgFreq;
 	                                    maxBg = bg;
 	                                    i1 = i;
@@ -633,15 +631,15 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 		private void loadPhSimScores() {
 			try{
 				
-				if(new File(DocClusterConstant.wordPhPairssimMiniNewsGroupFile).exists()){
-					BufferedReader br =  new BufferedReader(new FileReader(DocClusterConstant.wordPhPairssimMiniNewsGroupFile));
+				if(new File(MiniNewsGroupConstant.wordPhPairssimMiniNewsGroupFile).exists()){
+					BufferedReader br =  new BufferedReader(new FileReader(MiniNewsGroupConstant.wordPhPairssimMiniNewsGroupFile));
 					
 					String line="";
 					while((line=br.readLine()) != null) {
 				        line = line.trim();
 				        String [] arr = line.split(",");
 				        phSimChacheScores.put(arr[0]+","+ arr[1], Double.parseDouble(arr[2]));
-				    }
+					}
 					
 					br.close();
 				}
@@ -656,7 +654,7 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 			ArrayList<String> docs = new ArrayList<String>();
 			
 			try{
-				BufferedReader br =  new BufferedReader(new FileReader(DocClusterConstant.MiniNewsGroupDocsFile));
+				BufferedReader br =  new BufferedReader(new FileReader(MiniNewsGroupConstant.MiniNewsGroupDocsFile));
 				
 				String line="";
 				while((line=br.readLine()) != null) {

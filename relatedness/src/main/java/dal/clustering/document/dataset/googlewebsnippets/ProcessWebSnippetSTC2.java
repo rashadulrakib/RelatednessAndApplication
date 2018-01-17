@@ -35,7 +35,7 @@ public class ProcessWebSnippetSTC2 {
 	public void ProcessBySTC2(){
 		try{
 			
-			ArrayList<String[]> aldocsBodeyLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String[]> aldocsBodeyLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			HashMap<String, Integer> hmVocabIndex = sTC2ProcessUtil.getAlVocabIndex();
 			
 			ArrayList<String> allLinesBodyWordIndex = new ArrayList<String>();

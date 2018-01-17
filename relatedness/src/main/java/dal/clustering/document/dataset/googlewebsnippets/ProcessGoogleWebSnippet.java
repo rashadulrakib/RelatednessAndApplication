@@ -12,9 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
+import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 
 public class ProcessGoogleWebSnippet {
 	
@@ -77,13 +77,15 @@ public class ProcessGoogleWebSnippet {
 		        String body = line.substring(0, lastSpaceIndex);
 		        
 		        
-		        body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
+		        if(body.isEmpty()) continue;
 		        //uniquewords.addAll(processed); //populate the unique words from the text corpus
 		        
 		        String arr[] = new String[2];
-		        arr[0]= docClusterUtil.ConvertArrayListToString(processed);
+		        arr[0]= body;
 		        arr[1] = label;
 		        
 		        aldocsBodeyLabel.add(arr);
@@ -138,7 +140,7 @@ public class ProcessGoogleWebSnippet {
 			//end sub:
 			//end perform feature extraction based on document frequency
 			
-			br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+			br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 	           
 			String text="";
 			HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
@@ -171,7 +173,7 @@ public class ProcessGoogleWebSnippet {
             	labels.add(label);
             	
             	String arr[] = body.split("\\s+");
-            	double [] avgVec = new double[DocClusterConstant.W2VecDimension];
+            	double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
             	
             	for(String word: arr){
             		if(w2vec.containsKey(word)){
@@ -199,7 +201,7 @@ public class ProcessGoogleWebSnippet {
             BufferedWriter bw = new BufferedWriter(new FileWriter(GoogleWebSnippetConstant.GoogleWebSnippetW2VecArffFileFilteredDF));
             
             bw.write("@relation GoogleWebSnippetDocsW2Vec\n\n");
-            for(int i=0;i< DocClusterConstant.W2VecDimension;i++){
+            for(int i=0;i< TextRelatednessW2VecConstant.W2VecDimension;i++){
             	bw.write("@attribute ftr"+i+" NUMERIC\n");
             }
             bw.write("@attribute Category {business,computers, cultureartsentertainment, educationscience, engineering, health, politicssociety, sports}\n\n");
@@ -253,9 +255,9 @@ public class ProcessGoogleWebSnippet {
 				   String label = arrLabelBody[0].trim();
 				   String body =  arrLabelBody[1].trim();
 			        
-			        body = docClusterUtil.PerformPreprocess(body);
-			        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
-			        body = docClusterUtil.ConvertArrayListToString(processed);
+			        body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+			        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+			        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 			        
 			        if(body.isEmpty()) continue;
 		        
@@ -277,7 +279,7 @@ public class ProcessGoogleWebSnippet {
 			//end  extract doc and label //end  extract doc and label 
 			
 			//extract  vectors for each unique words of the text file
-			br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+			br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
            
 			String text="";
 			HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
@@ -311,7 +313,7 @@ public class ProcessGoogleWebSnippet {
             	labels.add(label);
             	
             	String arr[] = body.split("\\s+");
-            	double [] avgVec = new double[DocClusterConstant.W2VecDimension];
+            	double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
             	
             	for(String word: arr){
             		if(w2vec.containsKey(word)){
@@ -339,7 +341,7 @@ public class ProcessGoogleWebSnippet {
             BufferedWriter bw = new BufferedWriter(new FileWriter(GoogleWebSnippetConstant.GoogleWebSnippetW2VecArffFileWhole));
             
             bw.write("@relation GoogleWebSnippetDocsW2Vec\n\n");
-            for(int i=0;i< DocClusterConstant.W2VecDimension;i++){
+            for(int i=0;i< TextRelatednessW2VecConstant.W2VecDimension;i++){
             	bw.write("@attribute ftr"+i+" NUMERIC\n");
             }
             bw.write("@attribute Category {business,computers, culture-arts-entertainment, education-science, engineering, health, politics-society, sports}\n\n");
@@ -435,8 +437,8 @@ public class ProcessGoogleWebSnippet {
 				ArrayList<String> docs = new ArrayList<String>();
 				System.out.println(label+","+docsLabelBody.get(label).size());
 				for(String doc: docsLabelBody.get(label)){
-					String stemmed = docClusterUtil.StemByEachWord(doc);
-					docs.add(docClusterUtil.StemByEachWord(doc));
+					String stemmed = docClusterUtil.textUtilShared.StemByEachWord(doc);
+					docs.add(docClusterUtil.textUtilShared.StemByEachWord(doc));
 					
 					//System.out.println("orignal="+doc+", stem="+ stemmed);
 				}

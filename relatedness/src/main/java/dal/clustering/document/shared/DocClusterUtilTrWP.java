@@ -1,20 +1,22 @@
 package dal.clustering.document.shared;
 
+import dal.relatedness.text.compute.trwp.TextRelatednessTrwp;
+import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
+import dal.utils.common.general.TextUtilShared;
+
 public class DocClusterUtilTrWP {
 	
-	public DocClusterUtilTrWP(){
-		
+	TextRelatednessTrwp textRelatednessTrwp;
+	
+	public DocClusterUtilTrWP(DocClusterUtilGTM docClusterUtilGTM, TextUtilShared textUtilShared,
+			TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil){
+		textRelatednessTrwp = new TextRelatednessTrwp(docClusterUtilGTM.textRelatednessGtm, textUtilShared, textRelatednessGoogleNgUtil);
 	}
 	
-	public double ComputeTextSimTrwp(String text1, String text2){ 
+	public double ComputeTextSimTrWp(String text1, String text2){ 
 		double sim=0;
 		try{
-			text1 = text1.trim();
-			text2 = text2.trim();
-			
-			if(text1.isEmpty() || text2.isEmpty()) return 0;
-			
-			
+			sim = textRelatednessTrwp.ComputeTextRelatednessExternal(text1, text2);
 					
 		}catch(Exception e){
 			e.printStackTrace();

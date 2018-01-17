@@ -11,7 +11,7 @@ import java.util.List;
 
 import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenized;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
-import dal.relatedness.text.utils.TextRelatednessComputeUtil;
+import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 
 public class TextProcessor {
 

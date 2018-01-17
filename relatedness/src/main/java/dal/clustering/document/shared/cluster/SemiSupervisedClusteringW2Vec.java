@@ -20,7 +20,7 @@ public class SemiSupervisedClusteringW2Vec {
 
 	public ClusterResultConatainerVector PerformSemiSeuperVisedClustering(LinkedHashMap<String, ArrayList<double[]>> trainW2Vecs, ArrayList<InstanceW2Vec> testW2Vecs) {
 		try{
-			LinkedHashMap<String, double[]> InitialCenters = ComputeUtil.ComputeInitialCenters(trainW2Vecs);
+			LinkedHashMap<String, double[]> InitialCenters = docClusterUtil.ComputeInitialCenters(trainW2Vecs);
 			
 			return ComputeSemiSupervisedClusters(InitialCenters, testW2Vecs);
 		}

@@ -10,16 +10,17 @@ import dal.clustering.document.shared.DocClusterUtil;
 
 public class AgNewsUtil {
 	
-	public DocClusterUtil docClusterUtil;
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
+	public DocClusterUtil docClusterUtil;
 	
 	public AgNewsUtil(){
-		docClusterUtil = new DocClusterUtil();
+		
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
+		docClusterUtil = new DocClusterUtil();
 		
 		loadAllAgNews();
 	}
@@ -62,9 +63,9 @@ public class AgNewsUtil {
 			        body =  arrLabelTitleBody[1].trim();
 		        }
 		        
-		        body = docClusterUtil.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
-		        body = docClusterUtil.ConvertArrayListToString(processed);
+		        body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
 		        if(body.isEmpty()) continue;
 		        

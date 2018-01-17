@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.tools.weka.KMeansClusteringArff;
-import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 	
@@ -29,8 +28,8 @@ public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 	public ClusterUnSupervisedGoogleWebSnippetWEKA() throws IOException{
 		kMeansClusteringArff = new KMeansClusteringArff();
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
-		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(googlewebSnippetUtil.getUniqueWords(),
-				googlewebSnippetUtil.getDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.getDocsGoogleWebSnippetList(), 
+		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(googlewebSnippetUtil.GetUniqueWords(),
+				googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.GetDocsGoogleWebSnippetList(), 
 				googlewebSnippetUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
 		
@@ -38,7 +37,7 @@ public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 	
 	public void ConstructDocsSimilarityMatrixSparsificationByKMeansW2VecGtm() {
 		try{
-			ArrayList<String []> alDocLabel = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabel = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			initializeKMeans();
 			
@@ -67,7 +66,7 @@ public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 	public void ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA() {
 		try{
 			
-			ArrayList<String []> alDocLabel = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabel = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			initializeKMeans();
 			

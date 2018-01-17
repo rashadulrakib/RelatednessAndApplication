@@ -39,7 +39,7 @@ public class WebSnippetExternalEvaluation {
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 	
-			ArrayList<String []> alBodyLabel = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alBodyLabel = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			ArrayList<InstanceText> alInsts = new ArrayList<InstanceText>();
 			
 			if(clusterLables.size()== alBodyLabel.size()){

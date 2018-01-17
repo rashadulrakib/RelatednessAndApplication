@@ -9,8 +9,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.entities.InstanceW2Vec;
-import dal.relatedness.text.utils.TextRelatednessComputeUtil;
-import dal.relatedness.text.utils.TextRelatednessUtilW2Vec;
+import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
+import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
+import dal.relatedness.text.utils.TextRelatednessW2VecUtil;
 
 public class DocClusterUtilW2Vec {
 	
@@ -18,9 +19,9 @@ public class DocClusterUtilW2Vec {
 	DocClusterUtil docClusterUtil;
 	
 	HashMap<String, double[]> w2vec;
-	TextRelatednessUtilW2Vec textRelatednessUtilW2Vec;
+	TextRelatednessW2VecUtil textRelatednessUtilW2Vec;
 	
-	public HashMap<String, double[]> getW2Vec(){
+	public HashMap<String, double[]> GetW2Vec(){
 		return w2vec;
 	}
 	
@@ -29,14 +30,14 @@ public class DocClusterUtilW2Vec {
 		this.docClusterUtil = docClusterUtil;
 		
 		PopulateW2Vec();
-		textRelatednessUtilW2Vec = new TextRelatednessUtilW2Vec(w2vec);
+		textRelatednessUtilW2Vec = new TextRelatednessW2VecUtil(w2vec);
 	}
 
 	private void PopulateW2Vec() {
 		try{
 			w2vec = new HashMap<String, double[]>();
 			
-			BufferedReader br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 	           
 			String text="";
 			
@@ -115,7 +116,7 @@ public class DocClusterUtilW2Vec {
 
 	public double[] PopulateW2VecForSingleDoc(String doc) {
 		
-		double [] avgVec = new double[DocClusterConstant.W2VecDimension];
+		double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
 		String arr[] = doc.split("\\s+");
 		
 		try{
@@ -154,16 +155,16 @@ public class DocClusterUtilW2Vec {
 				doc2 = temp;
 			}
 			
-			HashSet<String> commonWords = docClusterUtil.GetCommonWords(doc1, doc2);
-			ArrayList<String> restDoc1 = docClusterUtil.RemoveCommonWords(doc1, commonWords);
-			ArrayList<String> restDoc2 = docClusterUtil.RemoveCommonWords(doc2, commonWords);
+			HashSet<String> commonWords = docClusterUtil.textUtilShared.GetCommonWords(doc1, doc2);
+			ArrayList<String> restDoc1 = docClusterUtil.textUtilShared.RemoveCommonWords(doc1, commonWords);
+			ArrayList<String> restDoc2 = docClusterUtil.textUtilShared.RemoveCommonWords(doc2, commonWords);
 			
 			ArrayList<ArrayList<PairSim>> t1t2simPairList = null;
 			
 			if (restDoc1.size() > 0 && restDoc2.size() > 0) {
 				t1t2simPairList = textRelatednessUtilW2Vec.GetWeightedSimilarityMatrix(restDoc1, restDoc2);
 
-				sim = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(
+				sim = docClusterUtil.textRelatednessGoogleNgUtil.ComputeSimilarityFromWeightedMatrixBySTD(
 						t1t2simPairList,
 						commonWords.size(),
 						doc1.size(),

@@ -25,14 +25,16 @@ public class UnSupervisedClusteringText {
 	
 	public UnSupervisedClusteringText(DocClusterUtil docClusterUtil, DocClusterUtilW2Vec docClusterUtilW2Vec) throws IOException{
 		docClusterUtilGtm = new DocClusterUtilGTM();
-		docClusterUtilTrWP = new DocClusterUtilTrWP();
+		docClusterUtilTrWP = new DocClusterUtilTrWP(docClusterUtilGtm, docClusterUtil.textUtilShared, 
+				docClusterUtil.textRelatednessGoogleNgUtil);
 		this.docClusterUtil = docClusterUtil;
 		this.docClusterUtilW2Vec = docClusterUtilW2Vec;
 	}
 	
 	public UnSupervisedClusteringText(DocClusterUtil docClusterUtil) throws IOException{
 		docClusterUtilGtm = new DocClusterUtilGTM();
-		docClusterUtilTrWP = new DocClusterUtilTrWP();
+		docClusterUtilTrWP = new DocClusterUtilTrWP(docClusterUtilGtm, docClusterUtil.textUtilShared, 
+				docClusterUtil.textRelatednessGoogleNgUtil);
 		this.docClusterUtil = docClusterUtil;
 	}
 	

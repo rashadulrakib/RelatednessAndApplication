@@ -69,8 +69,8 @@ import dal.relatedness.phrase.tuning.bigramfourgram.BigramFourgramTuning;
 import dal.relatedness.phrase.tuning.unigrambigram.TuneUnigramBigram;
 import dal.relatedness.phrase.tuning.unigramtrigram.UnigramTrigramTuning;
 import dal.relatedness.phrase.unigram.LoadUnigram;
-import dal.relatedness.text.compute.tokenized.TextRelatednessTokenized;
-import dal.relatedness.text.compute.tokenized.TextRelatednessTokenizedOverlappingContext;
+import dal.relatedness.text.compute.trwp.TextRelatednessOverlappingContext;
+import dal.relatedness.text.compute.trwp.TextRelatednessTrwp;
 
 
 

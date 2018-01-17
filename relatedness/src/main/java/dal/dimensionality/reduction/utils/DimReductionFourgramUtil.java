@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import dal.clustering.document.shared.DocClusterConstant;
 import dal.dimensionality.reduction.tsne.DimReductionConstants;
 import dal.relatedness.phrase.constants.PhraseDirectories;
+import dal.relatedness.text.compute.trwp.TextRelatednessTrwpConstant;
 
 public class DimReductionFourgramUtil {
 	
@@ -247,7 +248,7 @@ public class DimReductionFourgramUtil {
 					boolean flagIsPh = false;
 					
 					if(contextSize>=DimReductionConstants.MinContextSize)
-					if( alBgFreqs.get(phid)>=  DocClusterConstant.MeanBgFreq+ DocClusterConstant.Std){
+					if( alBgFreqs.get(phid)>=  TextRelatednessTrwpConstant.MeanBgFreq+ TextRelatednessTrwpConstant.Std){
 						phCounts++;
 						phCtxSum=phCtxSum+contextSize;
 						if(maxPhCtxSize<contextSize){

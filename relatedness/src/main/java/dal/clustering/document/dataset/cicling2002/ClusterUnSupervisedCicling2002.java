@@ -21,7 +21,7 @@ public class ClusterUnSupervisedCicling2002 {
 //				cicling2002Util.getDocsCicling2002Flat(), cicling2002Util.getDocsCicling2002List(), 
 //				cicling2002Util.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(cicling2002Util.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-		unSupervisedClusteringText = new UnSupervisedClusteringText(cicling2002Util.docClusterUtil);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(cicling2002Util.docClusterUtil);
 	}
 	
 	public void ClusterDocsBySimilarityMatrixCosineW2Vec(){

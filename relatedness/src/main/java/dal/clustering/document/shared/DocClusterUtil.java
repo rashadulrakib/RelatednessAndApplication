@@ -1,11 +1,8 @@
 package dal.clustering.document.shared;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,358 +11,24 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import net.sourceforge.jdistlib.disttest.NormalityTest;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
-import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
+import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
+import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.utils.common.compute.ComputeUtil;
+import dal.utils.common.general.TextUtilShared;
 import dal.utils.common.general.UtilsShared;
 
 public class DocClusterUtil {
 	
-	public HashSet<String> listStopWords ;
-	
-	public HashMap<String, Double> hmGTMWordPairSim;
+	public TextUtilShared textUtilShared;
+	public TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil;
 	
 	public DocClusterUtil(){
-		PopulateStopWords(DocClusterConstant.StopWordFile);
+		textUtilShared = new TextUtilShared();
+		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
 	}
-	
-	public void LoadGTMWordPairSimilarities() {
-		try{
-			hmGTMWordPairSim = new HashMap<String, Double>();
-			
-			String line;
-			BufferedReader br = new BufferedReader(new FileReader(DocClusterConstant.GTMScores));
-			
-			while ((line = br.readLine()) != null) {
-				line = line.trim();
-				
-				String arr [] = line.split(",");
-				
-				if(arr.length!=3){
-					continue;
-				}
-				
-				double score = 0;
-				
-				try{
-					score = Double.parseDouble(arr[2]);
-				}				
-				catch(Exception e1){
-					score = 0;
-					System.out.println(line);
-					e1.printStackTrace();
-					continue;
-				}
-				
-				hmGTMWordPairSim.put(arr[0]+","+ arr[1], score);
-			}
-            
-			br.close();
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-	}
-
-	
-	public double ComputeCosineSImilarity(HashMap<String, Double> v1, 	HashMap<String, Double> v2) {
-		double sim = 0;
-		try{
-			
-			double v1v2Sum = 0.0;
-			
-			double v1Sq = 0.0;
-			for(String v1Key: v1.keySet()){
-				if(v2.containsKey(v1Key)){
-					v1v2Sum = v1v2Sum+ v1.get(v1Key)* v2.get(v1Key);
-				}
-				
-				v1Sq = v1Sq+Math.pow( v1.get(v1Key), 2);
-			}
-			
-			double v2Sq = 0.0;
-			for(String v2Key: v2.keySet()){
-				v2Sq = v2Sq+Math.pow( v2.get(v2Key), 2);
-			}
-			
-			return v1v2Sum/Math.sqrt(v1Sq)/Math.sqrt(v2Sq);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		return sim;
-	}
-	
-	
-	 
-   public ArrayList<String> SplitPhrases(ArrayList<String> phs) {
-       ArrayList<String> bads = new ArrayList<String>();
-       try {
-           for (String s : phs) {
-               s = s.trim();
-               if (s.isEmpty()) {
-                   continue;
-               }
-               if (!PhHasLessThanEqualLimitedWords(s) || PhHasLessWorldLength(s)) {
-                   bads.add(s);
-               }
-           }
-
-           for (String s : bads) {
-               phs.remove(s);
-               //phs.addAll(new ArrayList(Arrays.asList(s.split("\\s+"))));
-				phs.addAll(ConvertAarryToArrayList(s.split("\\s+")));
-				
-           }
-       } catch (Exception e) {
-    	   e.printStackTrace();
-       }
-       return phs;
-   }
-   
-   public ArrayList<String> ConvertAarryToArrayList(String arr[]){
-		ArrayList<String> al = new ArrayList<String>();
-		try{
-			for (String s: arr){
-				if(!s.isEmpty()){
-					al.add(s);
-				}
-			}
-		}catch (Exception e) {
-			e.printStackTrace();
-       }
-		return al;
-	}
-   
-   public boolean PhHasLessThanEqualLimitedWords(String phWord) {
-       try {
-           String[] arrP = phWord.split("\\s");
-           if (arrP.length > DocClusterConstant.MaxWordsInPhrase) {
-               return false;
-           }
-       } catch (Exception e) {
-    	   e.printStackTrace();
-       }
-       return true;
-   }
-
-   public boolean PhHasLessWorldLength(String phWord) {
-       try {
-           String[] arrP = phWord.split("\\s");
-           for (String w : arrP) {
-               w = w.trim();
-               if (w.length() < DocClusterConstant.MinLettersInWord) {
-                   return true;
-               }
-           }
-       } catch (Exception e) {
-    	   e.printStackTrace();
-       }
-       return false;
-   }
-
-   
-	private void PopulateStopWords(String stopWordFile) {
-      
-        try {
-        	listStopWords = new HashSet<String>();
-        	
-        	BufferedReader brsw = new BufferedReader(new FileReader(new File(stopWordFile)));
-            String line;
-            while ((line = brsw.readLine()) != null) {
-                line = line.trim().toLowerCase();
-                if (line.isEmpty()) {
-                    continue;
-                }
-                listStopWords.add(line);
-            }
-            brsw.close();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-    }
-	
-	public ArrayList<String> splitByStopWord(String s) {
-        ArrayList<String> ps = new ArrayList<String>();
-        try {
-            String[] arr = s.split("\\s+");
-
-            String phrase = "";
-            for (String w : arr) {
-                w = w.trim();
-                if (w.isEmpty()) {
-                    continue;
-                }
-                if (!listStopWords.contains(w)) {
-                    phrase = phrase + " " + w;
-                } else {
-                    phrase = phrase.trim();
-                    if (!phrase.isEmpty()) {
-                        ps.add(phrase);
-                    }
-                    phrase = "";
-                }
-            }
-
-            phrase = phrase.trim();
-            if (!phrase.isEmpty()) {
-                ps.add(phrase);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ps;
-    }
-	
-	public ArrayList<String> CombineWordPhs(ArrayList<String> phs, ArrayList<String> cands) {
-        ArrayList<String> wPhs = new ArrayList<String>();
-        try {
-            for (String s : cands) {
-                s = s.trim();
-                if (s.isEmpty()) {
-                    continue;
-                }
-                for (String p : phs) {
-                    s = s.replaceAll("\\b" + p + "\\b", "").trim();
-                }
-                if (!s.isEmpty()) {
-                    //wPhs.addAll(Arrays.asList(s.split("\\s+")));
-					wPhs.addAll(convertAarryToArrayList(s.split("\\s+")));
-                }
-            }
-
-            wPhs.addAll(phs);
-        } catch (Exception e) {
-           e.printStackTrace();
-        }
-
-        return wPhs;
-    }
-	
-	private ArrayList<String> convertAarryToArrayList(String arr[]){
-		ArrayList<String> al = new ArrayList<String>();
-		try{
-			for (String s: arr){
-				if(!s.isEmpty()){
-					al.add(s);
-				}
-			}
-		}catch (Exception e) {
-           e.printStackTrace();
-        }
-		return al;
-	}
-	
-	public ArrayList<String> SplitSuperPhrases(ArrayList<String> ls1, ArrayList<String> ls2) {
-        ArrayList<String> phs = ls1;
-        ArrayList<String> supers = new ArrayList<String>();
-
-        try {
-
-            for (String s1 : ls1) {
-                for (String s2 : ls2) {
-                    //ArrayList<String> arr1 = new ArrayList(Arrays.asList(s1.split("\\s+")));
-                    //ArrayList<String> arr2 = new ArrayList(Arrays.asList(s2.split("\\s+")));
-					
-					ArrayList<String> arr1 = convertAarryToArrayList(s1.split("\\s+"));
-                    ArrayList<String> arr2 = convertAarryToArrayList(s2.split("\\s+"));
-
-                    ArrayList<String> commonPhWords = GetCommonPhWordsByStemming(arr1, arr2);
-                    if (commonPhWords.size() > 0) {
-                        //phs.remove(s1);
-                        //phs.addAll(arr1);
-                        supers.add(s1);
-                        break;
-                    }
-                }
-            }
-
-            for (String s : supers) {
-                phs.remove(s);
-                //ArrayList<String> arr = new ArrayList(Arrays.asList(s.split("\\s+")));
-				ArrayList<String> arr = convertAarryToArrayList(s.split("\\s+"));
-                phs.addAll(arr);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return phs;
-    }
-	
-	public ArrayList<String> GetCommonPhWordsByStemming(ArrayList<String> phWordList1, ArrayList<String> phWordList2) {
-		ArrayList<String> commonPhWords = new ArrayList<String>();
-		try {
-			for (int i = 0; i < phWordList1.size(); i++) {
-				for (int j = 0; j < phWordList2.size(); j++) {
-					if (equalStemmedPhrases(phWordList1.get(i),
-							phWordList2.get(j))) {
-						commonPhWords.add(phWordList1.get(i));
-						break;
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return commonPhWords;
-	}
-
-	private boolean equalStemmedPhrases(String ph1, String ph2) {
-		boolean isEqual = true;
-		try {
-			ph1 = StemmingUtil.stemPhrase(ph1);
-			ph2 = StemmingUtil.stemPhrase(ph2);
-
-			isEqual = ph1.equals(ph2);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return isEqual;
-	}
-	
-	public ArrayList<String> GetRestPhWords(ArrayList<String> phWordList, ArrayList<String> commonPhWords) {
-        ArrayList<String> restPhWords = new ArrayList<String>();
-        try {
-            for (String phWord : phWordList) {
-                if (!commonPhWords.contains(phWord)) {
-                    restPhWords.add(phWord);
-                }
-            }
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        return restPhWords;
-    }
-	
-	public double GetCommonWeight(ArrayList<String> commonPhWords) {
-        double com = 0;
-        try {
-            for (String s : commonPhWords) {
-                com = com + s.split("\\s+").length * 2;
-            }
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        return com;
-    }
-	
-	public double GetTextSize(ArrayList<String> phWords) {
-        double size = 0;
-        try {
-            for (String s : phWords) {
-                size = size + s.split("\\s+").length * 2;
-            }
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        return size;
-    }
 	
 //	public double ComputeSimilarityFromWeightedMatrixBySTD(ArrayList<ArrayList<PairSim>> t1t2simPairList, double common,
 //            double t1Size, double t2Size) {
@@ -411,288 +74,37 @@ public class DocClusterUtil {
 //        return score;
 //    }
 //	
-	public  String PerformPreprocess(String doc) {
-		
-		String pDoc = "";
-		try{
-			doc = doc.toLowerCase().trim();
-			pDoc = doc.replaceAll("&amp;", " ").trim();
-			pDoc = pDoc.replaceAll("[^a-zA-Z ]", " ").trim().replaceAll("\\s+", " ").trim();
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return pDoc;
-	}
-	
-	public String GetSubStr(String[] ws, int start, int end) {
-        String str = "";
-        try {
-            for (int i = start; i < end; i++) {
-                str = str + " " + ws[i];
-            }
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-        return str.trim();
-    }
+	public LinkedHashMap<String, double[]> ComputeInitialCenters(LinkedHashMap<String, ArrayList<double[]>> trainW2Vecs) {
+		LinkedHashMap<String, double[]> InitialCenters = new LinkedHashMap<String, double[]>();
 
-	public ArrayList<String> RemoveStopWord(ArrayList<String> document) {
-		ArrayList<String> doc = new ArrayList<String>();
 		try{
-			for(String word: document){
-				if(listStopWords.contains(word)){
-					continue;
-				}
-				doc.add(word);
-			}
-		}
-		catch (Exception e) {
-        	e.printStackTrace();
-        }
-		return doc;
-	}
-	
-	public ArrayList<String> RemoveStopWord(String text) {
-		ArrayList<String> doc = null;
-		try{
-			ArrayList<String> list = new ArrayList<String>(Arrays.asList(text.split("\\s+")));
-			doc = RemoveStopWord(list);
-		}
-		catch (Exception e) {
-        	e.printStackTrace();
-        }
-		return doc;
-	}
-	
-	public ArrayList<String> PreProcessDocs(ArrayList<String> docs) {
-		
-		ArrayList<String> preprocessedDocs = new ArrayList<String>();
-		
-		try{
-			for(String doc: docs){
-				String doc1 = performPreprocess(doc);
+			for(String label: trainW2Vecs.keySet()){
+				int centerSize = trainW2Vecs.get(label).get(0).length;
+				double totalDocVecs = trainW2Vecs.get(label).size();
+				double [] center = new double[centerSize];
 				
-				if(!doc1.isEmpty()){
-					preprocessedDocs.add(doc1);
+				//sum all the vecs
+				for(double[] docVec: trainW2Vecs.get(label)){
+					for(int i=0;i<docVec.length;i++){
+						center [i] = center[i]+docVec[i];
+					}
 				}
 				
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return preprocessedDocs;
-	}
-	
-	private String performPreprocess(String doc) {
-		
-		String pDoc = "";
-		try{
-			doc = doc.toLowerCase();
-			pDoc = doc.replaceAll("&amp;", " ").trim();
-			pDoc = pDoc.replaceAll("[^a-zA-Z ]", " ").trim().replaceAll("\\s+", " ").trim();
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return pDoc;
-	}
-
-	public ArrayList<String> StemByEachWord(ArrayList<String>words) {
-		ArrayList<String> doc = new ArrayList<String>();
-		
-		try{
-			for(String word: words){
-				doc.add(StemmingUtil.stemPhrase(word));
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return doc;
-	}
-	
-	public String StemByEachWord(String doc) {
-		StringBuilder stemdoc = new StringBuilder();
-		try{
-			String arr[] = doc.split("\\s+");
-			for(String word: arr){
-				stemdoc.append(StemmingUtil.stemPhrase(word)+" ");
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return stemdoc.toString().trim();
-	}
-	
-	public String ConvertArrayListToString(ArrayList<String> words){
-		StringBuilder sb = new StringBuilder();
-		try{
-			
-			for(String word: words){
-				sb.append(word+" ");
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return sb.toString().trim();
-	}
-
-	public HashSet<String> GetCommonWords(ArrayList<String> doc1, ArrayList<String> doc2) {
-		HashSet<String> commonWords = new HashSet<String>();
-		try{
-			HashSet<String> comm  = new HashSet<String>();
-			
-			for(String word: doc1){
-				comm.add(word);
-			}
-			
-			for(String word: doc2){
-				if(comm.contains(word)){
-					commonWords.add(word);
+				//average centers;
+				for(int i=0;i<center.length;i++){
+					center[i]=center[i]/totalDocVecs;
 				}
+				
+				InitialCenters.put(label, center);
 			}
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 		
-		return commonWords;
-	}
-
-	public ArrayList<String> RemoveCommonWords(ArrayList<String> doc, HashSet<String> commonWords) {
-		 ArrayList<String> afterRemovedWords = new ArrayList<String>();
-		try{
-			for(String word: doc){
-				if(commonWords.contains(word)){
-					continue;
-				}
-				afterRemovedWords.add(word);
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		return afterRemovedWords;
-	}
-
-	public double ComputeDocSImilarityByPhraseSimNotionFast(LinkedHashMap<Integer, Integer> lhmIdFreqWord1, 	LinkedHashMap<Integer, Integer> lhmIdFreqWord2, double sumOfFreqWord1, double sumOfFreqWord2) {
-		double score = 0;
-		try{
-			
-			HashMap<Integer, Double> commonCunts = new HashMap<Integer, Double>();
-            double sumOfWeight = 0.0;
-            
-            for(Integer id1: lhmIdFreqWord1.keySet()){
-            	if(lhmIdFreqWord2.containsKey(id1)){
-            		double min = lhmIdFreqWord1.get(id1) / sumOfFreqWord1;
-                    double max = lhmIdFreqWord2.get(id1) / sumOfFreqWord2;
-                    if (min > max) {
-                        double temp = min;
-                        min = max;
-                        max = temp;
-                    }
-                    double weight = (min / max) * ( lhmIdFreqWord1.get(id1) + lhmIdFreqWord2.get(id1));
-
-                    sumOfWeight = sumOfWeight + weight;
-                    commonCunts.put(id1, weight);
-            	}
-            }
-            
-            double meanWeight = sumOfWeight / commonCunts.size();
-            double sumOfSquare = 0.0;
-            for (Integer key : commonCunts.keySet()) {
-                sumOfSquare = sumOfSquare + Math.pow(commonCunts.get(key) - meanWeight, 2.0);
-            }
-            
-            double sd = Math.sqrt(sumOfSquare / commonCunts.size());
-            double upperBound = (meanWeight + sd);
-            double lowerBound = (meanWeight - sd);
-
-            int nonCommonCount = 0;
-            int filteredCommonCount = 0;
-            double commonSumRatioWeight =0;
-            
-            for (Integer key : commonCunts.keySet()) {
-                if (commonCunts.get(key) >= lowerBound && commonCunts.get(key) <= upperBound) {
-                    
-                    double min = lhmIdFreqWord1.get(key);
-                    double max = lhmIdFreqWord2.get(key);
-                    if (min > max) {
-                        double temp = min;
-                        min = max;
-                        max = temp;
-                    }
-                    commonSumRatioWeight = commonSumRatioWeight + (min / max) * (lhmIdFreqWord1.get(key) + lhmIdFreqWord2.get(key));
-                    
-                    filteredCommonCount++;
-                }
-                else{
-                	nonCommonCount++;
-                }
-            }
-            
-            int smallSize = lhmIdFreqWord1.size()-nonCommonCount;
-            int bigSize = lhmIdFreqWord2.size()-nonCommonCount;
-            
-            double cosSim =(double) filteredCommonCount/(Math.sqrt(smallSize)*Math.sqrt(bigSize));
-            score = normalizeSimilarity(sumOfFreqWord1, sumOfFreqWord2, cosSim * commonSumRatioWeight);
-            
-            if(cosSim>1){
-            	System.out.println("Error: cosSim > 1 " +sumOfFreqWord1+","+sumOfFreqWord2);
-            }
-
-            commonCunts.clear();
-            lhmIdFreqWord1.clear();
-            lhmIdFreqWord2.clear();
-            
-            lhmIdFreqWord1 = null;
-            lhmIdFreqWord2 = null;
-            commonCunts = null;
-            
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return score;
+		return InitialCenters;
 	}
 	
-	public double normalizeSimilarity( double cp1, double cp2, double comCount)  {
-        double score = 0.0;
-        try {
-            score = normalizeByNGD(cp1, cp2, comCount);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return score;
-	 }
-	 
-	 private double normalizeByNGD(double countPh1, double countPh2, double commonCount) throws Exception {
-        double score = 0.0;
-        double N = 3107547215.0;
-        try {
-            if (countPh1 == 0 || countPh2 == 0 || commonCount == 0) {
-                score = 0.0;
-            } else {
-                score = (Math.max(Math.log(countPh1) / Math.log(2), Math.log(countPh2) / Math.log(2)) - Math.log(commonCount) / Math.log(2))
-                        / (Math.log(N) / Math.log(2) - Math.min(Math.log(countPh1) / Math.log(2), Math.log(countPh2) / Math.log(2)));
-                score = Math.exp(-2 * score);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return score;
-	 }
 
 	public double[] FindMinMaxDocFrequency(HashMap<String, Double> docFreqs, int totalDocs) {
 		double [] minMaxDocFreq = new double [2];
@@ -738,9 +150,9 @@ public class DocClusterUtil {
 			HashSet<String> uniqueWords = new HashSet<String>();
 			
 			for(String label: hmDocsLabelBody.keySet()){
-				ArrayList<String> docs = PreProcessDocs(hmDocsLabelBody.get(label)) ;
+				ArrayList<String> docs = textUtilShared.PreProcessDocs(hmDocsLabelBody.get(label)) ;
 				
-				uniqueWords.addAll(GetUniqeWordsFromListOfDocs(docs));
+				uniqueWords.addAll(textUtilShared.GetUniqeWordsFromListOfDocs(docs));
 				
 				Collections.shuffle(docs);
 				
@@ -784,7 +196,7 @@ public class DocClusterUtil {
 			for(String label: docsLabelBody.keySet()){
 				ArrayList<String> bodies = new ArrayList <String>( docsLabelBody.get(label));
 				
-				uniqueWords.addAll(GetUniqeWordsFromListOfDocs(bodies));
+				uniqueWords.addAll(textUtilShared.GetUniqeWordsFromListOfDocs(bodies));
 				
 				Collections.shuffle(bodies);
 					
@@ -816,24 +228,10 @@ public class DocClusterUtil {
 		return preprocessedContainer;
 	}
 
-	public Collection<? extends String> GetUniqeWordsFromListOfDocs(ArrayList<String> docs) {
-		HashSet<String> uniqueWords = new HashSet<String>();
-		try{
-			for(String doc: docs){
-				uniqueWords.addAll(Arrays.asList(doc.split("\\s+")));
-			}
-		}
-		catch (Exception e) {
-            e.printStackTrace();
-        }
-		
-		return uniqueWords;
-	}
-
 	public HashMap<String, double[]> PopulateW2Vec(HashSet<String> uniqueWords) {
 		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(DocClusterConstant.InputGlobalWordEmbeddingFile));
+			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 	           
 			String text="";
 			
@@ -889,7 +287,7 @@ public class DocClusterUtil {
 
 	private double[] PopulateW2VecForSingleDoc(String doc, HashMap<String, double[]> hmW2Vec) {
 		
-		double [] avgVec = new double[DocClusterConstant.W2VecDimension];
+		double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
 		String arr[] = doc.split("\\s+");
 		
 		try{
@@ -1188,7 +586,7 @@ public class DocClusterUtil {
 	}
 	
 	public double[][] ComputeSimilarityMatrixGtm(ArrayList<String[]> alDocLabelFlat,
-			DocClusterUtilGTM docClusterUtilText) {
+			DocClusterUtilGTM docClusterUtilTextGtm) {
 		
 		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
 		
@@ -1203,7 +601,36 @@ public class DocClusterUtil {
 					
 					String text2 = alDocLabelFlat.get(j)[0];
 					
-					docSimMatrix[i][j] = docClusterUtilText.ComputeTextSimGTM(text1, text2);
+					docSimMatrix[i][j] = docClusterUtilTextGtm.ComputeTextSimGTM(text1, text2);
+					
+					docSimMatrix[j][i] = docSimMatrix[i][j];
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
+	public double[][] ComputeSimilarityMatrixTrWP(ArrayList<String[]> alDocLabelFlat,
+			DocClusterUtilTrWP docClusterUtilTrWP){
+		
+		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
+		try{
+			
+			for(int i=0;i< alDocLabelFlat.size();i++){
+				System.out.println("doc="+i);
+				String text1 = alDocLabelFlat.get(i)[0];
+				
+				docSimMatrix[i][i] = 1;
+				
+				for(int j=i+1;j<alDocLabelFlat.size();j++){
+					
+					String text2 = alDocLabelFlat.get(j)[0];
+					
+					docSimMatrix[i][j] = docClusterUtilTrWP.ComputeTextSimTrWp(text1, text2);
 					
 					docSimMatrix[j][i] = docSimMatrix[i][j];
 				}

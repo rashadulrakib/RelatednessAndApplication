@@ -14,26 +14,24 @@ import dal.clustering.document.shared.entities.PreprocessedContainer;
 public class ClusterSemiSupervisedGoogleWebSnippet {
 
 	GooglewebSnippetUtil googlewebSnippetUtil;
-	DocClusterUtil docClusterUtil;
 	SemiSupervisedClusteringW2Vec semiSupervisedClusteringVector;
 	ClusterEvaluation clusterEvaluation;
 	
 	public ClusterSemiSupervisedGoogleWebSnippet(){
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
-		docClusterUtil = new DocClusterUtil();
 		semiSupervisedClusteringVector = new SemiSupervisedClusteringW2Vec();
-		clusterEvaluation = new ClusterEvaluation(docClusterUtil);
+		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
 	}
 	
 	public void ClusterDocsW2VecBasedSimilarity(){
 		try{
-			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
+			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.GetDocsGoogleWebSnippetList();
 			
-			PreprocessedContainer preprocessedContainer = docClusterUtil.GetTrainTestDocsLabelBodyAndUniqueWords(0.02, docsLabelBody);
+			PreprocessedContainer preprocessedContainer = googlewebSnippetUtil.docClusterUtil.GetTrainTestDocsLabelBodyAndUniqueWords(0.02, docsLabelBody);
 
-			HashMap<String, double[]> hmW2Vec = docClusterUtil.PopulateW2Vec(preprocessedContainer.UniqueWords);
-			LinkedHashMap<String, ArrayList<double []>> trainW2Vecs = docClusterUtil.CreateW2VecForTrainData( preprocessedContainer.HmTrainDocsLabelBody, hmW2Vec);
-			ArrayList<InstanceW2Vec> testW2Vecs = docClusterUtil.CreateW2VecForTestData(preprocessedContainer.AlTestDocsBodyLabel, hmW2Vec);
+			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(preprocessedContainer.UniqueWords);
+			LinkedHashMap<String, ArrayList<double []>> trainW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTrainData( preprocessedContainer.HmTrainDocsLabelBody, hmW2Vec);
+			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(preprocessedContainer.AlTestDocsBodyLabel, hmW2Vec);
 			
 			ClusterResultConatainerVector clusterResultConatainer = semiSupervisedClusteringVector.PerformSemiSeuperVisedClustering(trainW2Vecs, testW2Vecs);
 		

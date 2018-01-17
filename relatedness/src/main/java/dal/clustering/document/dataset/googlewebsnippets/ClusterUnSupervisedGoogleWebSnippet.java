@@ -30,17 +30,17 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
 		semiSupervisedClusteringW2Vec = new SemiSupervisedClusteringW2Vec();
 		
-		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(googlewebSnippetUtil.getUniqueWords(),
-				googlewebSnippetUtil.getDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.getDocsGoogleWebSnippetList(), 
-				googlewebSnippetUtil.docClusterUtil);
+//		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(googlewebSnippetUtil.GetUniqueWords(),
+//				googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.GetDocsGoogleWebSnippetList(), 
+//				googlewebSnippetUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
+		unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
 	}
 	
 	public void ClusterDocsNGramBasedSimilarityGtm() {
 		try{
-			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
-			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.GetDocsGoogleWebSnippetList();
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
 					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
@@ -73,8 +73,8 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	public void ClusterDocsSimilarityByW2VecFollowingGtm() {
 		try{
 			
-			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
-			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.GetDocsGoogleWebSnippetList();
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
 					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
@@ -93,8 +93,8 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	public void ClusterDocsSimilarityByW2VecAverageVector() {
 		try{
 			
-			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
-			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.GetDocsGoogleWebSnippetList();
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = googlewebSnippetUtil
 					.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
@@ -138,7 +138,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	
 	public void ClusterDocsNGramBasedSimilarityGtmAndW2Vec() {
 		try{
-			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.getDocsGoogleWebSnippetList();
+			LinkedHashMap<String, ArrayList<String>> docsLabelBody = googlewebSnippetUtil.GetDocsGoogleWebSnippetList();
 			
 			PreprocessedContainer preprocessedContainer = googlewebSnippetUtil.docClusterUtil.GetTrainTestDocsLabelBodyAndUniqueWords(docsLabelBody);
 
@@ -164,7 +164,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 //			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			//end
 			
-			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			//alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 700, 0);
 			
@@ -184,9 +184,13 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	
 	public void ClusterDocsBySimilarityMatrixTrWp(){
 		try{
-			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
-			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixTrwp(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixTrWP(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilTrWP);
+
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -203,7 +207,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 //			
 //			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 			alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 700, 0);
 			
@@ -213,7 +217,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, GoogleWebSnippetConstant.GoogleWebSnippetDocsFile, "\t");
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, GoogleWebSnippetConstant.GoogleWebSnippetDocsFile, "\t");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -230,7 +234,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 //			
 //			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
 //			alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 700, 0);
 //			

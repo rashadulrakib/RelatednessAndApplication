@@ -7,12 +7,12 @@ import dal.clustering.document.shared.PairSim;
 import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
 
-public class TextRelatednessUtilW2Vec {
+public class TextRelatednessW2VecUtil {
 	
 	HashMap<String, double[]> w2vec;
 	HashMap<String, Double> hmWordPairSim;
 	
-	public TextRelatednessUtilW2Vec(HashMap<String, double[]> w2vec){
+	public TextRelatednessW2VecUtil(HashMap<String, double[]> w2vec){
 		this.w2vec = w2vec;
 		hmWordPairSim = new HashMap<String, Double>();
 	}

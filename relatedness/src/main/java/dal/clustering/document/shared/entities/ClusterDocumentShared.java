@@ -12,6 +12,7 @@ public class ClusterDocumentShared {
 	public ClusterDocumentShared(){
 		
 		docClusterUtil = new DocClusterUtil();
+		phraseRelatednessTokenized = new PhraseRelatednessTokenized();
 		
 	}
 }
