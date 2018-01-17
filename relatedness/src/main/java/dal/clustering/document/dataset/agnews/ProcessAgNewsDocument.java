@@ -17,7 +17,7 @@ import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.PairSim;
 import dal.clustering.document.shared.entities.ClusterDocumentShared;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
-import dal.relatedness.text.utils.TextRelatednessUtilCommon;
+import dal.relatedness.text.utils.TextRelatednessComputeUtil;
 
 public class ProcessAgNewsDocument extends ClusterDocumentShared {
 	ArrayList<String> phrasesOfAText;
@@ -389,7 +389,7 @@ public class ProcessAgNewsDocument extends ClusterDocumentShared {
 		                   double textSImscore=0;
 		                   
 		                   if(t1t2simPairList!=null){
-		                   textSImscore = TextRelatednessUtilCommon.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.GetCommonWeight(commonPhWords), 
+		                   textSImscore = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.GetCommonWeight(commonPhWords), 
 		                		   docClusterUtil.GetTextSize(newPhWordList1), docClusterUtil.GetTextSize(newPhWordList2), false);
 		       			
 			       			if (Double.isNaN(textSImscore)){

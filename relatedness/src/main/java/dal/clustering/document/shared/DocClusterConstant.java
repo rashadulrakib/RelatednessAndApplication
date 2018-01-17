@@ -25,7 +25,7 @@ public class DocClusterConstant {
 	public static final int W2VecDimension = 300;
 	
 	public static final int KMeansMaxIteration = 500;
-	public static final int KMedoidMaxIteration = 100;
+	public static final int KMedoidMaxIteration = 500;
 	
 	public static final String GTM_UNIGRAM_BIN_PATH = "gtmdata/corpus.uni";
 	public static final String GTM_TRIGRAM_BIN_PATH = "gtmdata/corpus.tri";

@@ -21,8 +21,8 @@ public class ProcessStackOverflow {
 	
 	public void Process() {
 		try{
-			//loadAllDocsStackOverflowByW2VecListAndWriteToArff();
-			WriteToArffFile();
+			loadAllDocsStackOverflowByW2VecListAndWriteToArff();
+			//WriteToArffFile();
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -52,11 +52,14 @@ public class ProcessStackOverflow {
 			   
 			   body = stackOverflowUtil.docClusterUtil.PerformPreprocess(body);
 		        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.RemoveStopWord(body);
+		        body = stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
+		        
+		        if(body.isEmpty()) continue;
 			   
 		        uniquewords.addAll(processed); //populate the unique words from the text corpus
 			   
 		        String arr[] = new String[2];
-		        arr[0]= stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
+		        arr[0]= body;
 		        arr[1] = label;
 			   
 		        aldocsBodeyLabel.add(arr);
@@ -108,11 +111,14 @@ public class ProcessStackOverflow {
 				   
 				   body = stackOverflowUtil.docClusterUtil.PerformPreprocess(body);
 			        ArrayList<String> processed = stackOverflowUtil.docClusterUtil.RemoveStopWord(body);
+			        body = stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
+			        
+			        if(body.isEmpty()) continue;
 				   
 			        uniquewords.addAll(processed); //populate the unique words from the text corpus
 				   
 			        String arr[] = new String[2];
-			        arr[0]= stackOverflowUtil.docClusterUtil.ConvertArrayListToString(processed);
+			        arr[0]= body;
 			        arr[1] = label;
 				   
 			        aldocsBodeyLabel.add(arr);

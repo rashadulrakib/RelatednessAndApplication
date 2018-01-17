@@ -1,18 +1,22 @@
 package dal.clustering.document.shared;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.textsim.textrt.preproc.SinglethreadTextrtPreprocessor;
 import org.textsim.textrt.preproc.tokenizer.PennTreeBankTokenizer;
 import org.textsim.textrt.proc.singlethread.SinglethreadTextRtProcessor;
 import org.textsim.util.token.DefaultTokenFilter;
+import org.textsim.wordrt.proc.DefaultWordRtProcessor;
 
-public class DocClusterUtilText {
+public class DocClusterUtilGTM {
 	
 	SinglethreadTextrtPreprocessor tpp = null;
 	SinglethreadTextRtProcessor tp = null;
 	
-	public DocClusterUtilText() throws IOException{
+	DefaultWordRtProcessor wp = null;
+	
+	public DocClusterUtilGTM() throws IOException{
 		 	tpp = new SinglethreadTextrtPreprocessor(
 			        DocClusterConstant.GTM_UNIGRAM_BIN_PATH,
 			        null,
@@ -21,6 +25,21 @@ public class DocClusterUtilText {
 			        new DefaultTokenFilter()
 			        );
 		 	tp = new SinglethreadTextRtProcessor(DocClusterConstant.GTM_TRIGRAM_BIN_PATH);
+		 	
+		    wp = new DefaultWordRtProcessor(
+		    		Paths.get(DocClusterConstant.GTM_TRIGRAM_BIN_PATH)
+	        );
+	}
+	
+	public double ComputeWordSimGTM(String w1, String w2){
+		double sim = 0;
+		try{
+			sim = wp.sim(tpp.getWordID(w1), tpp.getWordID(w2));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sim;
 	}
 
 	public double ComputeTextSimGTM(String centerText, String body) {

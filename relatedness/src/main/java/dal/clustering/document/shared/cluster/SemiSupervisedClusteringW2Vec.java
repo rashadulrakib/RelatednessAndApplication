@@ -10,11 +10,11 @@ import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.compute.ComputeUtil;
 
-public class SemiSupervisedClusteringVector {
+public class SemiSupervisedClusteringW2Vec {
 	
 	DocClusterUtil docClusterUtil;
 	
-	public SemiSupervisedClusteringVector(){
+	public SemiSupervisedClusteringW2Vec(){
 		docClusterUtil = new DocClusterUtil();
 	}
 

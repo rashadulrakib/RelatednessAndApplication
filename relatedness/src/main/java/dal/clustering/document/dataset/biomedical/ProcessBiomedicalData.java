@@ -51,16 +51,19 @@ public class ProcessBiomedicalData {
 			   if(arrLabelBody.length!=2)
 				   continue;
 			   
-			   String label = arrLabelBody[0];
-			   String body =  arrLabelBody[1];
+			   String label = arrLabelBody[0].trim();
+			   String body =  arrLabelBody[1].trim();
 			   
 			   body = docClusterUtil.PerformPreprocess(body);
 		        ArrayList<String> processed = docClusterUtil.RemoveStopWord(body);
+		        body = docClusterUtil.ConvertArrayListToString(processed);
+		        
+		        if(body.isEmpty()) continue;
 			   
 		        uniquewords.addAll(processed); //populate the unique words from the text corpus
 			   
 		        String arr[] = new String[2];
-		        arr[0]= docClusterUtil.ConvertArrayListToString(processed);
+		        arr[0]= body;
 		        arr[1] = label;
 			   
 		        aldocsBodeyLabel.add(arr);

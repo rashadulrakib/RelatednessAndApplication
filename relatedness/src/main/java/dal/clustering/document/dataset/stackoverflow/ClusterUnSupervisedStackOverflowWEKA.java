@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
-import dal.clustering.document.shared.entities.ClusterResultConatainerText;
+import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.tools.weka.KMeansClusteringArff;
 import dal.utils.common.compute.ComputeUtil;
 
@@ -15,15 +14,56 @@ public class ClusterUnSupervisedStackOverflowWEKA {
 	
 	StackOverflowUtil stackOverflowUtil;
 	KMeansClusteringArff kMeansClusteringArff;
+	//UnSupervisedClusteringText unSupervisedClusteringText;
+	//ClusterEvaluation clusterEvaluation;
+	
+	UnSupervisedClusteringW2Vec unSupervisedClusteringW2Vec;
 	UnSupervisedClusteringText unSupervisedClusteringText;
-	ClusterEvaluation clusterEvaluation;
+	
+	double [] clusterAssignments;
+	
+	public double [] GetClusterAssignments(){
+		return clusterAssignments;
+	}
 	
 	public ClusterUnSupervisedStackOverflowWEKA() throws IOException{
 		stackOverflowUtil = new StackOverflowUtil();
 		kMeansClusteringArff = new KMeansClusteringArff();
-		clusterEvaluation = new ClusterEvaluation(stackOverflowUtil.docClusterUtil);
-		unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, null);
+		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(stackOverflowUtil.getUniqueWords(),
+				stackOverflowUtil.getDocsStackOverflowFlat(), stackOverflowUtil.getDocsStackOverflowList(), 
+				stackOverflowUtil.docClusterUtil);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil);
 	}
+	
+//	public void ConstructDocsSimilarityMatrixSparsificationByKMeansW2VecGtm(){
+//		try{
+//			ArrayList<String []> alDocLabel = stackOverflowUtil.getDocsStackOverflowFlat();
+//			
+//			initializeKMeans();
+//			
+//			String res = kMeansClusteringArff.ClusterAndEvaluate();
+//			
+//			ArrayList<double []> instances = kMeansClusteringArff.getInstances();
+//			clusterAssignments =  kMeansClusteringArff.getClusterAssignments();
+//			
+////			if(alDocLabel.size()==clusterAssignments.length && clusterAssignments.length ==instances.size()){
+////				
+////				//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabel, unSupervisedClusteringW2Vec.docClusterUtilW2Vec, clusterAssignments);
+////				double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabel, unSupervisedClusteringText.docClusterUtilText, clusterAssignments);
+////				
+////				double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+////				UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix", saprsifyMatrix, " ");
+////				
+////				System.out.println(alDocLabel.size());
+////			}
+//			
+//			System.out.println(res);
+//			System.out.println("ConstructDocsSimilarityMatrixSparsificationByKMeansW2Vec finished.");
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA() {
 		try{
@@ -86,11 +126,11 @@ public class ClusterUnSupervisedStackOverflowWEKA {
 					}
 				}
 				
-				ClusterResultConatainerText clusterResultConatainerText = unSupervisedClusteringText.PerformUnSeupervisedSeededClusteringByGtmWordSim
-						(hmTrainDocsLabelBody, alDocLabel);
+//				ClusterResultConatainerText clusterResultConatainerText = unSupervisedClusteringText.PerformUnSeupervisedSeededClusteringByGtmWordSim
+//						(hmTrainDocsLabelBody, alDocLabel);
 				
-				clusterEvaluation.EvalSemiSupervisedByAccOneToOneText(clusterResultConatainerText.FinalCluster);
-				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingText(clusterResultConatainerText.FinalCluster);
+				//clusterEvaluation.EvalSemiSupervisedByAccOneToOneText(clusterResultConatainerText.FinalCluster);
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingText(clusterResultConatainerText.FinalCluster);
 				
 			}
 			else{

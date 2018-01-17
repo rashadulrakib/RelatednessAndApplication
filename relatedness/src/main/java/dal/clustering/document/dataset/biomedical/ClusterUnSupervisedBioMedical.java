@@ -144,15 +144,15 @@ public class ClusterUnSupervisedBioMedical {
 			
 			ArrayList<String []> alDocLabelFlat = bioMedicalUtil.getDocsBiomedicalFlat();
 			
-			alDocLabelFlat = bioMedicalUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 150, 0);
+			//alDocLabelFlat = bioMedicalUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 150, 0);
 			
-			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
 
 			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, BioMedicalConstant.BiomedicalDocsFile, "\t");
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, BioMedicalConstant.BiomedicalDocsFile, "\t");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -163,7 +163,7 @@ public class ClusterUnSupervisedBioMedical {
 		try{
 			ArrayList<String []> alDocLabelFlat = bioMedicalUtil.getDocsBiomedicalFlat();
 			
-			alDocLabelFlat = bioMedicalUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 150, 0);
+			//alDocLabelFlat = bioMedicalUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 150, 0);
 			
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
@@ -171,7 +171,7 @@ public class ClusterUnSupervisedBioMedical {
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, BioMedicalConstant.BiomedicalDocsFile, "\t");
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, BioMedicalConstant.BiomedicalDocsFile, "\t");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -13,7 +13,7 @@ import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenized;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 import dal.relatedness.text.constants.TextFileNames;
 import dal.relatedness.text.processor.TextExtractorUtil;
-import dal.relatedness.text.utils.TextRelatednessUtilCommon;
+import dal.relatedness.text.utils.TextRelatednessComputeUtil;
 
 public class TextRelatednessTokenized {
 
@@ -99,7 +99,7 @@ public class TextRelatednessTokenized {
 				if (getRestPhWords1.size() > 0 && getRestPhWords2.size() > 0) {
 					t1t2simPairList = getWeightedSimilarityMatrix(getRestPhWords1, getRestPhWords2, notUsefulWPhPairsStemmed);
 
-					textSimscore = TextRelatednessUtilCommon.ComputeSimilarityFromWeightedMatrixBySTD(
+					textSimscore = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(
 							t1t2simPairList,
 							docClusterUtil.GetCommonWeight(commonPhWords),
 							docClusterUtil.GetTextSize(phWordList1),
@@ -273,7 +273,7 @@ public class TextRelatednessTokenized {
 								getRestPhWords1, getRestPhWords2);
 					}
 
-					double score = TextRelatednessUtilCommon.ComputeSimilarityFromWeightedMatrixBySTD(
+					double score = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(
 							t1t2simPairList,
 							docClusterUtil.GetCommonWeight(commonPhWords),
 							docClusterUtil.GetTextSize(phWordList1),

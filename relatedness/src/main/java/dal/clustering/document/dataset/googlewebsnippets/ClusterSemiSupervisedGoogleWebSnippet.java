@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.DocClusterUtil;
-import dal.clustering.document.shared.cluster.SemiSupervisedClusteringVector;
+import dal.clustering.document.shared.cluster.SemiSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
@@ -15,13 +15,13 @@ public class ClusterSemiSupervisedGoogleWebSnippet {
 
 	GooglewebSnippetUtil googlewebSnippetUtil;
 	DocClusterUtil docClusterUtil;
-	SemiSupervisedClusteringVector semiSupervisedClusteringVector;
+	SemiSupervisedClusteringW2Vec semiSupervisedClusteringVector;
 	ClusterEvaluation clusterEvaluation;
 	
 	public ClusterSemiSupervisedGoogleWebSnippet(){
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
 		docClusterUtil = new DocClusterUtil();
-		semiSupervisedClusteringVector = new SemiSupervisedClusteringVector();
+		semiSupervisedClusteringVector = new SemiSupervisedClusteringW2Vec();
 		clusterEvaluation = new ClusterEvaluation(docClusterUtil);
 	}
 	

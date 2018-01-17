@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
-import dal.clustering.document.shared.cluster.SemiSupervisedClusteringVector;
+import dal.clustering.document.shared.cluster.SemiSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
@@ -17,17 +17,18 @@ import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedGoogleWebSnippet {
 	
-	SemiSupervisedClusteringVector semiSupervisedClusteringVector;
+	SemiSupervisedClusteringW2Vec semiSupervisedClusteringW2Vec;
 
 	UnSupervisedClusteringText unSupervisedClusteringText;
 	UnSupervisedClusteringW2Vec unSupervisedClusteringW2Vec;
+	
 	ClusterEvaluation clusterEvaluation;
 	GooglewebSnippetUtil googlewebSnippetUtil;
 	
 	public ClusterUnSupervisedGoogleWebSnippet() throws IOException{
 		googlewebSnippetUtil = new GooglewebSnippetUtil();
 		clusterEvaluation = new ClusterEvaluation(googlewebSnippetUtil.docClusterUtil);
-		semiSupervisedClusteringVector = new SemiSupervisedClusteringVector();
+		semiSupervisedClusteringW2Vec = new SemiSupervisedClusteringW2Vec();
 		
 		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(googlewebSnippetUtil.getUniqueWords(),
 				googlewebSnippetUtil.getDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.getDocsGoogleWebSnippetList(), 
@@ -167,7 +168,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 			//alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 700, 0);
 			
-			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
 
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
@@ -175,6 +176,17 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 			
 			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, GoogleWebSnippetConstant.GoogleWebSnippetDocsFile, "\t");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void ClusterDocsBySimilarityMatrixTrWp(){
+		try{
+			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.getDocsGoogleWebSnippetFlat();
+			
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixTrwp(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -296,7 +308,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(preprocessedContainer.AlTestDocsBodyLabel, hmW2Vec);
 			
-			clusterResultConatainer = semiSupervisedClusteringVector.PerformSemiSeuperVisedClustering(trainW2Vecs, testW2Vecs);
+			clusterResultConatainer = semiSupervisedClusteringW2Vec.PerformSemiSeuperVisedClustering(trainW2Vecs, testW2Vecs);
 		
 			clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(clusterResultConatainer.FinalCluster);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(clusterResultConatainer.FinalCluster);

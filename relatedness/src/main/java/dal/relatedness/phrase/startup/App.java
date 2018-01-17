@@ -213,6 +213,7 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixGtm();
+    	new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixTrWp();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixEuclidianW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new WebSnippetExternalEvaluation().ExternalEvaluate();    	
@@ -221,9 +222,11 @@ public class App
     	//new ProcessStackOverflow().Process();
     	//new ProcessStackOverflowSTC2().ProcessBySTC2();
     	//new ClusterUnSupervisedStackOverflowWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
+    	//new ClusterUnSupervisedStackOverflowWEKA().ConstructDocsSimilarityMatrixSparsificationByKMeansW2VecGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsSimilarityByW2VecAverageVector();
+    	//new ClusterUnSupervisedStackOverflow().ConstructDocsSimilarityMatrixSparsificationByKMeansW2VecGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsBySimilarityMatrixGtm();
     	//new ClusterUnSupervisedStackOverflow().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();

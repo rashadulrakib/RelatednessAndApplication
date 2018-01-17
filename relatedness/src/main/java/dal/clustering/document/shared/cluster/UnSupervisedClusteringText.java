@@ -9,25 +9,30 @@ import java.util.Random;
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
-import dal.clustering.document.shared.DocClusterUtilText;
+import dal.clustering.document.shared.DocClusterUtilGTM;
+import dal.clustering.document.shared.DocClusterUtilTrWP;
 import dal.clustering.document.shared.DocClusterUtilW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 
 public class UnSupervisedClusteringText {
-	public DocClusterUtilText docClusterUtilText;
+	public DocClusterUtilGTM docClusterUtilGtm;
+	public DocClusterUtilTrWP docClusterUtilTrWP;
+	
 	DocClusterUtil docClusterUtil;
 	DocClusterUtilW2Vec docClusterUtilW2Vec;
 	
 	public UnSupervisedClusteringText(DocClusterUtil docClusterUtil, DocClusterUtilW2Vec docClusterUtilW2Vec) throws IOException{
-		docClusterUtilText = new DocClusterUtilText();
+		docClusterUtilGtm = new DocClusterUtilGTM();
+		docClusterUtilTrWP = new DocClusterUtilTrWP();
 		this.docClusterUtil = docClusterUtil;
 		this.docClusterUtilW2Vec = docClusterUtilW2Vec;
 	}
 	
 	public UnSupervisedClusteringText(DocClusterUtil docClusterUtil) throws IOException{
-		docClusterUtilText = new DocClusterUtilText();
+		docClusterUtilGtm = new DocClusterUtilGTM();
+		docClusterUtilTrWP = new DocClusterUtilTrWP();
 		this.docClusterUtil = docClusterUtil;
 	}
 	
@@ -69,7 +74,7 @@ public class UnSupervisedClusteringText {
 						String centerText = allCentes.get(allCentes.size()-1);
 						
 						//double dist = 1.0-docClusterUtilText.ComputeTextSimGTM(centerText, body);
-						double similarity = docClusterUtilText.ComputeTextSimGTM(centerText, body);
+						double similarity = docClusterUtilGtm.ComputeTextSimGTM(centerText, body);
 						
 						if(mostSimilarity<similarity){
 							mostSimilarity = similarity;
@@ -168,7 +173,7 @@ public class UnSupervisedClusteringText {
 						String centerText = allCentes.get(allCentes.size()-1);
 						
 						//double dist = 1.0-docClusterUtilText.ComputeTextSimGTM(centerText, body);
-						double similarity = docClusterUtilText.ComputeTextSimGTM(centerText, body);
+						double similarity = docClusterUtilGtm.ComputeTextSimGTM(centerText, body);
 						
 						if(mostSimilarity<similarity){
 							mostSimilarity = similarity;
@@ -286,7 +291,7 @@ public class UnSupervisedClusteringText {
 						String centerText = allCentes.get(allCentes.size()-1);
 						
 						//double dist = 1.0-docClusterUtilText.ComputeTextSimGTM(centerText, body);
-						double similarity = docClusterUtilText.ComputeTextSimGTM(centerText, body);
+						double similarity = docClusterUtilGtm.ComputeTextSimGTM(centerText, body);
 						
 						if(mostSimilarity<similarity){
 							mostSimilarity = similarity;
@@ -537,7 +542,7 @@ public class UnSupervisedClusteringText {
 					ArrayList<String> allCentes = hmTEMPTrainDocsLabelBody.get(centerLabel);
 					String centerText = allCentes.get(allCentes.size()-1);
 					
-					double dist = 1.0-docClusterUtilText.ComputeTextSimGTM(centerText, body);
+					double dist = 1.0-docClusterUtilGtm.ComputeTextSimGTM(centerText, body);
 					
 					if(closestDist>dist){
 						closestDist = dist;

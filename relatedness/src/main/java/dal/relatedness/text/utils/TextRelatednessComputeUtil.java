@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import dal.clustering.document.shared.PairSim;
 
-public class TextRelatednessUtilCommon {
+public class TextRelatednessComputeUtil {
 
 	public static double ComputeSimilarityFromWeightedMatrixBySTD(
 			ArrayList<ArrayList<PairSim>> t1t2simPairList, double commonSize, double t1Size,

@@ -22,6 +22,12 @@ public class UnSupervisedClusteringW2Vec {
 	DocClusterUtil docClusterUtil;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	
+	double [] clusterAssignments;
+	
+	public double [] GetClusterAssignments(){
+		return clusterAssignments;
+	}
+	
 	public UnSupervisedClusteringW2Vec(HashSet<String> uniqueWords, ArrayList<String[]> aldocsBodeyLabelFlat,
 			LinkedHashMap<String, ArrayList<String>> docsLabelBodyList, DocClusterUtil docClusterUtil){
 		this.uniqueWords = uniqueWords;
@@ -36,6 +42,8 @@ public class UnSupervisedClusteringW2Vec {
 		
 		ClusterResultConatainerText clusterResultConatainerText = new ClusterResultConatainerText();
 		
+		ArrayList<InstanceText> alInstanceText = new ArrayList<InstanceText>();
+		
 		try{
 			
 			ClusterEvaluation tempclusterEvaluation = new ClusterEvaluation(docClusterUtil);
@@ -46,16 +54,16 @@ public class UnSupervisedClusteringW2Vec {
 			
 			double minimumSSE = Double.MAX_VALUE;
 			
-			HashSet<String> usedMedoidTexts = new HashSet<String>();
+			//HashSet<String> usedMedoidTexts = new HashSet<String>();
 			
 			while(!converge && iter++< DocClusterConstant.KMedoidMaxIteration){
 				LinkedHashMap<String, ArrayList<InstanceText>> newClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 			
 				double newSSE = 0;
 				
-				for(String key: hmTrainDocsLabelBody.keySet()){
-					usedMedoidTexts.addAll(hmTrainDocsLabelBody.get(key));
-				}
+//				for(String key: hmTrainDocsLabelBody.keySet()){
+//					usedMedoidTexts.addAll(hmTrainDocsLabelBody.get(key));
+//				}
 				
 				for(String[] bodyLabel: alDocLabelFlat){
 					String body = bodyLabel[0];
@@ -77,9 +85,9 @@ public class UnSupervisedClusteringW2Vec {
 						}
 					}
 					
-					if(closestLabel.trim().length()<=0){
-						continue;
-					}
+//					if(closestLabel.trim().length()<=0){
+//						continue;
+//					}
 					
 					newSSE = newSSE + closestDist;
 					
@@ -87,6 +95,8 @@ public class UnSupervisedClusteringW2Vec {
 					newInst.OriginalLabel = label;
 					newInst.Text = body;
 					newInst.ClusteredLabel = closestLabel;
+					
+					alInstanceText.add(newInst);
 					
 					if(!newClusters.containsKey(closestLabel)){
 						ArrayList<InstanceText> newAl = new ArrayList<InstanceText>();
@@ -118,6 +128,7 @@ public class UnSupervisedClusteringW2Vec {
 			}
 			
 			clusterResultConatainerText.FinalCluster = lastClusters;
+			clusterAssignments = docClusterUtil.PopulateClusterAssignment(lastClusters.keySet(), alInstanceText);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -154,7 +165,9 @@ public class UnSupervisedClusteringW2Vec {
 			boolean converge = false;
 			int iter = 0;
 			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
-			LinkedHashMap<String, double[]> lastCenters = new LinkedHashMap<String, double[]>();
+			//LinkedHashMap<String, double[]> lastCenters = new LinkedHashMap<String, double[]>();
+			
+			//ArrayList<InstanceW2Vec> alInstanceW2Vec = new ArrayList<InstanceW2Vec>();
 			
 			while(!converge && iter++< DocClusterConstant.KMeansMaxIteration){
 				
@@ -206,21 +219,22 @@ public class UnSupervisedClusteringW2Vec {
 				LinkedHashMap<String, double[]> newCenetrs = docClusterUtil.ReComputeCenters(newClusters);
 				
 				System.out.println("totalMinDist="+totalMinDist+",itr="+iter);
-				clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(newClusters);
+				//clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(newClusters);
 				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(newClusters);
 				
 				converge = docClusterUtil.IsConverge(newCenetrs, centers);
 				centers = newCenetrs;
 				
 				lastClusters = newClusters;
-				lastCenters = newCenetrs;
+				//lastCenters = newCenetrs;
 			}
 			
-			LinkedHashMap<String, InstanceW2Vec> InstanceClosestToCenters = docClusterUtil.GetInstanceClosestToCentersW2Vec(lastClusters, lastCenters);
+			//LinkedHashMap<String, InstanceW2Vec> InstanceClosestToCenters = docClusterUtil.GetInstanceClosestToCentersW2Vec(lastClusters, lastCenters);
 			
-			clusterResultConatainer.ClusteredInstancesTest = testW2Vecs;
+			//clusterResultConatainer.ClusteredInstancesTest = testW2Vecs;
 			clusterResultConatainer.FinalCluster = lastClusters;
-			clusterResultConatainer.InstanceClosestToCenter = InstanceClosestToCenters;
+			clusterAssignments = docClusterUtil.PopulateClusterAssignment(testW2Vecs, lastClusters.keySet());
+			//clusterResultConatainer.InstanceClosestToCenter = InstanceClosestToCenters;
 		}
 		catch(Exception e){
 			e.printStackTrace();

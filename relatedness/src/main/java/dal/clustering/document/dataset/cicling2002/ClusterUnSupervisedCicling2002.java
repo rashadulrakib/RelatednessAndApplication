@@ -42,7 +42,7 @@ public class ClusterUnSupervisedCicling2002 {
 		try{
 			ArrayList<String []> alDocLabelFlat = cicling2002Util.getDocsCicling2002Flat();
 			
-			double [][] docSimMatrix= cicling2002Util.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+			double [][] docSimMatrix= cicling2002Util.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
 
 			double [][] saprsifyMatrix = cicling2002Util.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			

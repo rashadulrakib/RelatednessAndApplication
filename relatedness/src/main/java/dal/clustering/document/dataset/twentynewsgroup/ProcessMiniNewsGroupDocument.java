@@ -17,7 +17,7 @@ import dal.clustering.document.shared.PairSim;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.entities.ClusterDocumentShared;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
-import dal.relatedness.text.utils.TextRelatednessUtilCommon;
+import dal.relatedness.text.utils.TextRelatednessComputeUtil;
 import dal.utils.common.compute.ComputeUtil;
 
 public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
@@ -301,7 +301,7 @@ public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
 		                   double textSImscore=0;
 		                   
 		                   if(t1t2simPairList!=null){
-		                   textSImscore = TextRelatednessUtilCommon.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.GetCommonWeight(commonPhWords), 
+		                   textSImscore = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(t1t2simPairList, docClusterUtil.GetCommonWeight(commonPhWords), 
 		                		   docClusterUtil.GetTextSize(newPhWordList1), docClusterUtil.GetTextSize(newPhWordList2), false);
 		       			
 			       			if (Double.isNaN(textSImscore)){

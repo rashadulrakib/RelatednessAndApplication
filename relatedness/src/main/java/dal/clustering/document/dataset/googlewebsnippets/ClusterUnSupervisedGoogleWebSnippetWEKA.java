@@ -50,7 +50,7 @@ public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 				//System.out.println(alDocLabel.size());
 				
 				//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabel, unSupervisedClusteringW2Vec.docClusterUtilW2Vec, clusterAssignments);
-				double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabel, unSupervisedClusteringText.docClusterUtilText, clusterAssignments);
+				double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabel, unSupervisedClusteringText.docClusterUtilGtm, clusterAssignments);
 				
 				double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix", saprsifyMatrix, " ");

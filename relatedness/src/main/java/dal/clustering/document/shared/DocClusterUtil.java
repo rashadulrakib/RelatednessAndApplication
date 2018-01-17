@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import net.sourceforge.jdistlib.disttest.NormalityTest;
 import dal.clustering.document.shared.entities.InstanceText;
@@ -29,34 +30,6 @@ public class DocClusterUtil {
 	
 	public DocClusterUtil(){
 		PopulateStopWords(DocClusterConstant.StopWordFile);
-	}
-	
-	public double ComputeCosineSImilarity(HashMap<String, Double> v1, 	HashMap<String, Double> v2) {
-		double sim = 0;
-		try{
-			
-			double v1v2Sum = 0.0;
-			
-			double v1Sq = 0.0;
-			for(String v1Key: v1.keySet()){
-				if(v2.containsKey(v1Key)){
-					v1v2Sum = v1v2Sum+ v1.get(v1Key)* v2.get(v1Key);
-				}
-				
-				v1Sq = v1Sq+Math.pow( v1.get(v1Key), 2);
-			}
-			
-			double v2Sq = 0.0;
-			for(String v2Key: v2.keySet()){
-				v2Sq = v2Sq+Math.pow( v2.get(v2Key), 2);
-			}
-			
-			return v1v2Sum/Math.sqrt(v1Sq)/Math.sqrt(v2Sq);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		return sim;
 	}
 	
 	public void LoadGTMWordPairSimilarities() {
@@ -97,6 +70,37 @@ public class DocClusterUtil {
 		}
 		
 	}
+
+	
+	public double ComputeCosineSImilarity(HashMap<String, Double> v1, 	HashMap<String, Double> v2) {
+		double sim = 0;
+		try{
+			
+			double v1v2Sum = 0.0;
+			
+			double v1Sq = 0.0;
+			for(String v1Key: v1.keySet()){
+				if(v2.containsKey(v1Key)){
+					v1v2Sum = v1v2Sum+ v1.get(v1Key)* v2.get(v1Key);
+				}
+				
+				v1Sq = v1Sq+Math.pow( v1.get(v1Key), 2);
+			}
+			
+			double v2Sq = 0.0;
+			for(String v2Key: v2.keySet()){
+				v2Sq = v2Sq+Math.pow( v2.get(v2Key), 2);
+			}
+			
+			return v1v2Sum/Math.sqrt(v1Sq)/Math.sqrt(v2Sq);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return sim;
+	}
+	
+	
 	 
    public ArrayList<String> SplitPhrases(ArrayList<String> phs) {
        ArrayList<String> bads = new ArrayList<String>();
@@ -490,7 +494,6 @@ public class DocClusterUtil {
 			doc = doc.toLowerCase();
 			pDoc = doc.replaceAll("&amp;", " ").trim();
 			pDoc = pDoc.replaceAll("[^a-zA-Z ]", " ").trim().replaceAll("\\s+", " ").trim();
-			//pDoc = StemmingUtil.stemPhrase(pDoc);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -1152,7 +1155,7 @@ public class DocClusterUtil {
 	}
 
 	public double[][] ComputeSimilarityMatrixGtm(ArrayList<String[]> alDocLabelFlat,
-			DocClusterUtilText docClusterUtilText, double[] clusterAssignments) {
+			DocClusterUtilGTM docClusterUtilTextGtm, double[] clusterAssignments) {
 		
 		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
 		
@@ -1171,7 +1174,7 @@ public class DocClusterUtil {
 					
 					String text2 = alDocLabelFlat.get(j)[0];
 					
-					docSimMatrix[i][j] = docClusterUtilText.ComputeTextSimGTM(text1, text2);
+					docSimMatrix[i][j] = docClusterUtilTextGtm.ComputeTextSimGTM(text1, text2);
 					
 					docSimMatrix[j][i] = docSimMatrix[i][j];
 				}
@@ -1185,7 +1188,7 @@ public class DocClusterUtil {
 	}
 	
 	public double[][] ComputeSimilarityMatrixGtm(ArrayList<String[]> alDocLabelFlat,
-			DocClusterUtilText docClusterUtilText) {
+			DocClusterUtilGTM docClusterUtilText) {
 		
 		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
 		
@@ -1510,6 +1513,77 @@ public class DocClusterUtil {
 		}
 		
 		return clusterGroups;
+	}
+
+	public LinkedHashMap<String, ArrayList<String>> GetRandomDocuments(	ArrayList<String []> alDocLabelFlat, int seed, int numberofclusters) {
+		LinkedHashMap<String, ArrayList<String>> trainDocs = new LinkedHashMap<String, ArrayList<String>>();
+		
+		try{
+			
+			ArrayList<String []> newList = new ArrayList<String[]>(alDocLabelFlat);
+			Collections.shuffle(newList, new Random(seed));
+			
+			for(int i=0;i<numberofclusters;i++){
+				
+				ArrayList<String> al = new ArrayList<String>();
+				al.add(newList.get(i)[0]);
+				
+				trainDocs.put(Integer.toString(i), al);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return trainDocs;
+	}
+
+	public double[] PopulateClusterAssignment(Set<String> keySet,
+			ArrayList<InstanceText> alInstanceText) {
+		
+		double[] assigns = new double[alInstanceText.size()];
+		
+		try{
+			HashMap<String, Integer> hmKeyInds = new LinkedHashMap<String, Integer>();
+			int kid = 0;
+			for(String key: keySet){
+				hmKeyInds.put(key, kid++);
+			}
+			
+			int insId = 0;
+			for(InstanceText instTex: alInstanceText){
+				int keyId = hmKeyInds.get(instTex.ClusteredLabel);
+				assigns[insId++] = keyId;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return assigns;
+	}
+
+	public double[] PopulateClusterAssignment(ArrayList<InstanceW2Vec> alInstanceW2Vec, Set<String> keySet) {
+		double[] assigns = new double[alInstanceW2Vec.size()];
+		
+		try{
+			HashMap<String, Integer> hmKeyInds = new LinkedHashMap<String, Integer>();
+			int kid = 0;
+			for(String key: keySet){
+				hmKeyInds.put(key, kid++);
+			}
+			
+			int insId = 0;
+			for(InstanceW2Vec instW2Vec: alInstanceW2Vec){
+				int keyId = hmKeyInds.get(instW2Vec.ClusteredLabel);
+				assigns[insId++] = keyId;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return assigns;
 	}
 
 }

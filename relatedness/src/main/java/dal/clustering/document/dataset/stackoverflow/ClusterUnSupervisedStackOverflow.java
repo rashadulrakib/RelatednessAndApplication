@@ -113,8 +113,11 @@ public class ClusterUnSupervisedStackOverflow {
 			//for(int seed=1;seed<=20;seed++)
 			{
 				//System.out.println("Seed="+0);
+//				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = stackOverflowUtil
+//						.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
+				
 				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = stackOverflowUtil
-						.docClusterUtil.GetTrainSeedDocuments(docsLabelBody, 1, 0);
+						.docClusterUtil.GetRandomDocuments(alDocLabelFlat, 0, StackOverflowConstant.NumberOfClusters);
 				
 //				LinkedHashMap<String, ArrayList<String>> hmTrainDocsLabelBody = new LinkedHashMap<String, ArrayList<String>>();
 //				
@@ -142,9 +145,21 @@ public class ClusterUnSupervisedStackOverflow {
 				ClusterResultConatainerVector clusterResultConatainer = unSupervisedClusteringW2Vec.PerformUnSeuperVisedSeededClusteringByW2VecAverageVec
 						(hmTrainDocsLabelBody, alDocLabelFlat);
 				
-				clusterEvaluation.ClusterEvaluationGeneratorVector(clusterResultConatainer.FinalCluster);
-				clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(clusterResultConatainer.FinalCluster);
-				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(clusterResultConatainer.FinalCluster);
+				double [] clusterAssignments = unSupervisedClusteringW2Vec.GetClusterAssignments();
+				
+//				if(alDocLabelFlat.size()==clusterAssignments.length){
+//					//System.out.println(alDocLabel.size());
+//					
+//					double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec, clusterAssignments);
+//					//double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText, clusterAssignments);
+//					
+//					double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+//					UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix", saprsifyMatrix, " ");
+//				}
+				
+				//clusterEvaluation.ClusterEvaluationGeneratorVector(clusterResultConatainer.FinalCluster);
+				//clusterEvaluation.EvalSemiSupervisedByAccOneToOneVector(clusterResultConatainer.FinalCluster);
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(clusterResultConatainer.FinalCluster);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -155,15 +170,15 @@ public class ClusterUnSupervisedStackOverflow {
 		try{
 			ArrayList<String []> alDocLabelFlat = stackOverflowUtil.getDocsStackOverflowFlat();
 			
-			alDocLabelFlat = stackOverflowUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 250, 0);
+			//alDocLabelFlat = stackOverflowUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 250, 0);
 			
-			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilText);
+			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
 
 			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, StackOverflowConstant.StackOverflowDocsFile, "\t");
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, StackOverflowConstant.StackOverflowDocsFile, "\t");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -174,7 +189,7 @@ public class ClusterUnSupervisedStackOverflow {
 		try{
 			ArrayList<String []> alDocLabelFlat = stackOverflowUtil.getDocsStackOverflowFlat();
 			
-			alDocLabelFlat = stackOverflowUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 250, 0);
+			//alDocLabelFlat = stackOverflowUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 250, 0);
 			
 			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
@@ -182,7 +197,7 @@ public class ClusterUnSupervisedStackOverflow {
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
-			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, StackOverflowConstant.StackOverflowDocsFile, "\t");
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, StackOverflowConstant.StackOverflowDocsFile, "\t");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

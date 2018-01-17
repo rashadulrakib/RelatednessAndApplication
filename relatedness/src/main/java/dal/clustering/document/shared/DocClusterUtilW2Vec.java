@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.entities.InstanceW2Vec;
-import dal.relatedness.text.utils.TextRelatednessUtilCommon;
+import dal.relatedness.text.utils.TextRelatednessComputeUtil;
 import dal.relatedness.text.utils.TextRelatednessUtilW2Vec;
 
 public class DocClusterUtilW2Vec {
@@ -163,7 +163,7 @@ public class DocClusterUtilW2Vec {
 			if (restDoc1.size() > 0 && restDoc2.size() > 0) {
 				t1t2simPairList = textRelatednessUtilW2Vec.GetWeightedSimilarityMatrix(restDoc1, restDoc2);
 
-				sim = TextRelatednessUtilCommon.ComputeSimilarityFromWeightedMatrixBySTD(
+				sim = TextRelatednessComputeUtil.ComputeSimilarityFromWeightedMatrixBySTD(
 						t1t2simPairList,
 						commonWords.size(),
 						doc1.size(),

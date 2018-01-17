@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.DocClusterUtil;
-import dal.clustering.document.shared.cluster.SemiSupervisedClusteringVector;
+import dal.clustering.document.shared.cluster.SemiSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
@@ -14,13 +14,13 @@ import dal.clustering.document.shared.entities.PreprocessedContainer;
 public class ClusterSemiSupervisedAgNews {
 	AgNewsUtil agNewsUtil;
 	DocClusterUtil docClusterUtil;
-	SemiSupervisedClusteringVector semiSupervisedClustering;
+	SemiSupervisedClusteringW2Vec semiSupervisedClustering;
 	ClusterEvaluation clusterEvaluation;
 	
 	public ClusterSemiSupervisedAgNews(){
 		agNewsUtil = new AgNewsUtil();
 		docClusterUtil = new DocClusterUtil();
-		semiSupervisedClustering = new SemiSupervisedClusteringVector();
+		semiSupervisedClustering = new SemiSupervisedClusteringW2Vec();
 		clusterEvaluation = new ClusterEvaluation(docClusterUtil);
 	}
 	
