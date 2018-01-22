@@ -30,7 +30,7 @@ public class ClusterUnSupervisedCicling2002 {
 			
 			double [][] docSimMatrix= cicling2002Util.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
-			double [][] saprsifyMatrix = cicling2002Util.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			double [][] saprsifyMatrix = cicling2002Util.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 		}catch(Exception e){
@@ -44,7 +44,7 @@ public class ClusterUnSupervisedCicling2002 {
 			
 			double [][] docSimMatrix= cicling2002Util.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
 
-			double [][] saprsifyMatrix = cicling2002Util.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			double [][] saprsifyMatrix = cicling2002Util.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			

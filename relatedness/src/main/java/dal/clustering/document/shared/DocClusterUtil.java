@@ -14,6 +14,7 @@ import java.util.Set;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
+import dal.clustering.document.shared.sparsification.SparsificationUtil;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.utils.common.compute.ComputeUtil;
@@ -24,10 +25,14 @@ public class DocClusterUtil {
 	
 	public TextUtilShared textUtilShared;
 	public TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil;
+	public DocClusterUtilTrWpParallel docClusterUtilParallelTrwp;
+	public SparsificationUtil sparsificationUtil;
 	
 	public DocClusterUtil(){
 		textUtilShared = new TextUtilShared();
 		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
+		docClusterUtilParallelTrwp = new DocClusterUtilTrWpParallel();
+		sparsificationUtil = new SparsificationUtil(); 
 	}
 	
 //	public double ComputeSimilarityFromWeightedMatrixBySTD(ArrayList<ArrayList<PairSim>> t1t2simPairList, double common,
@@ -643,6 +648,19 @@ public class DocClusterUtil {
 		return docSimMatrix;
 	}
 	
+	public double[][] ComputeSimilarityMatrixTrWPParallel(ArrayList<String[]> alDocLabelFlat,
+			DocClusterUtilTrWP docClusterUtilTrWP, int threads){
+		
+		double[][] docSimMatrix = null;
+		try{
+			docSimMatrix = docClusterUtilParallelTrwp.ComputeDocumentSimMatrixTrWpParallel(alDocLabelFlat, docClusterUtilTrWP, threads);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
 	public double[][] ComputeEuclidianDistanceMatrixW2Vec(ArrayList<String[]> alDocLabelFlat,
 			DocClusterUtilW2Vec docClusterUtilW2Vec) {
 		
@@ -686,6 +704,8 @@ public class DocClusterUtil {
 			for(int i=0;i< insts.size();i++){
 				
 				InstanceW2Vec inst1 = insts.get(i);
+				
+				System.out.println("doc="+i);
 				
 				docDistanceMatrix[i][i] = 1;
 				
@@ -743,117 +763,7 @@ public class DocClusterUtil {
 		
 		return docDistanceMatrix;
 	}
-
-	public double[][] SparsifyDocDisSimilarityMatrix(double[][] docSimMatrix) {
-		double[][] sparsifySimMatrix = new double[docSimMatrix.length][];
-		
-		try{
-			int mulConst = 1;
-			int pvalCount = 0;
-			int WvalCount = 0;
-			int bothCOunt =0;
-			
-			int pvalAndersonCount = 0;
-			int wvalAndersonCount = 0;
-			int bothAndersonCount = 0;
-			
-			for(int i=0;i<docSimMatrix.length;i++){
-				double simArr [] = docSimMatrix[i];
-				
-				double simSim = 0.0;
-				for(int j=0;j<simArr.length;j++){
-					simSim= simSim + simArr[j]*mulConst;
-				}
-				
-				double simArrTest [] = new double[simArr.length];
-				ArrayList<Integer> alsimArrTest = new  ArrayList<Integer>();
-				for(int j=0;j<simArr.length;j++){
-					//simArrTest[j] = (int)(simArr[j]*mulConst);
-					alsimArrTest.add((int)(simArr[j]*mulConst));
-				}
-				
-				Collections.sort(alsimArrTest);
-				
-				for(int j=0;j<alsimArrTest.size();j++){
-					simArrTest[j] = alsimArrTest.get(j);
-				}
-				
-				//check normally distributed or not
-				double Wval = 0;//NormalityTest.shapiro_wilk_statistic(simArrTest);
-				double Pval = 0;//NormalityTest.shapiro_wilk_pvalue(Wval, simArr.length);
-				
-				
-				double WvalAnderson = 0;//NormalityTest.anderson_darling_statistic(simArrTest);
-				double PvalAnderson = 0;//NormalityTest.anderson_darling_pvalue(WvalAnderson, simArr.length);
-				
-				
-				if(Pval>=0.05){
-					pvalCount++;
-				}
-				if(Wval>=0.99){
-					WvalCount++;
-				}
-				if(Pval>=0.05 && WvalCount>=0.99){
-					bothCOunt++;
-				}
-				
-				if(PvalAnderson>=0.05){
-					pvalAndersonCount++;
-				}
-				if(WvalAnderson>=0.99){
-					wvalAndersonCount++;
-				}
-				
-				if(PvalAnderson>=0.05 && WvalAnderson>=0.99){
-					bothAndersonCount++;
-				}
-				
-				//
-				
-				double avgSimSum = simSim/ simArr.length;
-				
-				double varianceSum = 0;
-				
-				for(int j=0;j<simArr.length;j++){
-					varianceSum = varianceSum + (simArr[j]*mulConst-avgSimSum)*(simArr[j]*mulConst-avgSimSum);
-				}
-				
-				double sd = Math.sqrt(varianceSum/simArr.length);
-				
-				//filter sim
-				int zeroCount = 0;
-				for(int j=0;j<simArr.length;j++){
-					
-					//double newSim = simArr[j];
-					//if(Pval>=0.5 || Wval>=0.99)
-					
-					//double newSim = simArr[j]*mulConst> avgSimSum*0.01+ sd*0 ? simArr[j]: 0; //0.7 best for stack
-						//System.out.println("newSim="+newSim);
-					
-					//double newSim = simArr[j]*mulConst> avgSimSum+ sd*1.3 ? simArr[j]: 0; //0.7 best for stack
-					//double newSim = simArr[j]*mulConst> avgSimSum- sd*0.0 ? Double.MAX_VALUE: simArr[j];
-					 double newSim = simArr[j];
-					 if( newSim==0){
-						 zeroCount++;
-					 }
-					 simArr[j] = 1-newSim;
-					 //simArr[j] = newSim;
-				}
-				
-				System.out.println("total="+simArr.length+", zero count="+ zeroCount+",Wval="+Wval+",Pval="+Pval);
-				//System.out.println("total="+simArr.length+", zero count="+ zeroCount+",Wval="+Wval);
-				sparsifySimMatrix[i] = simArr;
-			}
-			
-			System.out.println("pcount="+ pvalCount+", wcount="+ WvalCount+", bothcount="+ bothCOunt+": pander="+  pvalAndersonCount+", wvalander="+ wvalAndersonCount+", bothAnder="+ bothAndersonCount);
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return sparsifySimMatrix;
-	}
-
+	
 	public ArrayList<String[]> SampledDocsPerCategory(ArrayList<String[]> alDocLabelFlat, int docsPerCategory, int seed) {
 		
 		ArrayList<String[]> sampledList = new ArrayList<String[]>();

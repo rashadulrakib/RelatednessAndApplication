@@ -32,7 +32,7 @@ public class TextRelatednessTrwp {
 		this.textRelatednessGtm = textRelatednessGtm;
 		this.textUtilShared = textUtilShared;
 		this.textRelatednessGoogleNgUtil = textRelatednessGoogleNgUtil;
-		phraseRelatednessTokenized = new PhraseRelatednessTokenized();
+		//phraseRelatednessTokenized = new PhraseRelatednessTokenized();
 		textRelFunctionalUtil = new TextRelatednessFunctionalUtil(phraseRelatednessTokenized, textRelatednessGtm, textUtilShared);
 	}
 
@@ -65,6 +65,64 @@ public class TextRelatednessTrwp {
 //			e.printStackTrace();
 //		}
 //	}
+	
+	public double ComputeTextRelatednessExternalTrwp(String text1, String text2){
+		double sim =0;
+		try{
+			
+			text1 = text1.trim();
+			text2 = text2.trim();
+			
+			if(text1.isEmpty() || text2.isEmpty()) return 0;
+
+			
+			ArrayList<String> cands1 = textUtilShared.convertAarryToArrayList(text1.split("\\s+"));
+			ArrayList<String> cands2 =  textUtilShared.convertAarryToArrayList(text2.split("\\s+"));
+
+			if (cands1.size() <= 0 || cands2.size() <= 0) {
+				return 0;
+			}
+
+			if (cands1.size() > cands2.size()) {
+				ArrayList<String> temp = cands1;
+				cands1 = cands2;
+				cands2 = temp;
+			}
+
+			ArrayList<String> commonPhWords = textUtilShared.GetCommonPhWordsByStemming(cands1, cands2);
+			ArrayList<String> getRestPhWords1 = textUtilShared.GetRestPhWords(cands1, commonPhWords);
+			ArrayList<String> getRestPhWords2 = textUtilShared.GetRestPhWords(cands2, commonPhWords);
+			
+//			if(commonPhWords.size()>0){
+//				 System.out.println("commonPhWords="+commonPhWords);
+//				 System.out.println("getRestPhWords1="+getRestPhWords1);
+//				 System.out.println("getRestPhWords2="+getRestPhWords2);
+//			}
+
+//			HashSet<String> notUsefulWPhPairsStemmed = getNotUsefulWPhPairsStemmed(
+//					getRestPhWords1, getRestPhWords2);
+
+			// get weight sim matrix
+			ArrayList<ArrayList<PairSim>> t1t2simPairList = null;
+			if (getRestPhWords1.size() > 0 && getRestPhWords2.size() > 0) {
+				t1t2simPairList = textRelFunctionalUtil.GetWeightedSimilarityMatrix(getRestPhWords1, getRestPhWords2, null);
+
+				sim = textRelatednessGoogleNgUtil.ComputeSimilarityFromWeightedMatrixBySTD(
+						t1t2simPairList,
+						commonPhWords.size()*2,
+						cands1.size()*2,
+						cands2.size()*2, false);
+
+				if (Double.isNaN(sim)) {
+					sim = 0.0;
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sim;
+	}
 	
 	public double ComputeTextRelatednessExternal(String text1, String text2){
 		double sim =0;
@@ -216,6 +274,69 @@ public class TextRelatednessTrwp {
 		}
 
 		return notUsefulWPhPairs;
+	}
+
+	public ArrayList<ArrayList<String>> GetPhWordLists(ArrayList<String> bodies) {
+		
+		ArrayList<ArrayList<String>> alBodies = new ArrayList<ArrayList<String>>();
+		
+		try{
+			for(String body: bodies){
+				ArrayList<String> wordPhs = GetPhWordSingleDoc(body);
+				System.out.println(wordPhs);
+				alBodies.add(wordPhs);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return alBodies;
+	}
+
+	private ArrayList<String> GetPhWordSingleDoc(String body) {
+		ArrayList<String> wordPhs = null;
+		
+		try{
+			ArrayList<String> cands = textRelatednessGoogleNgUtil.splitByStopWord(body);
+			ArrayList<String> phs = textRelatednessGoogleNgUtil.SplitPhrases(textRelFunctionalUtil.GeneratePhsByFreq(cands));
+			wordPhs = textUtilShared.CombineWordPhs(phs, cands);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return wordPhs;
+	}
+	
+	public void GeneratePhWordPairs(ArrayList<ArrayList<String>> docsByPhWords) {
+		try{
+			for(int i=0;i<docsByPhWords.size();i++){
+				for(int j=i+1;j<docsByPhWords.size();j++){
+					
+					ArrayList<String> phWordList1 = docsByPhWords.get(i);
+					ArrayList<String> phWordList2 = docsByPhWords.get(j);
+					
+					ArrayList<String> newPhWordList1 = textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList1, phWordList2);
+					ArrayList<String> newPhWordList2 = textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList2, phWordList1);
+
+					if (newPhWordList1.size() > newPhWordList2.size()) {
+						ArrayList<String> temp = newPhWordList1;
+						newPhWordList1 = newPhWordList2;
+						newPhWordList2 = temp;
+					}
+
+					ArrayList<String> commonPhWords = textUtilShared.GetCommonPhWordsByStemming(newPhWordList1, newPhWordList2);
+					ArrayList<String> getRestPhWords1 = textUtilShared.GetRestPhWords(newPhWordList1, commonPhWords);
+					ArrayList<String> getRestPhWords2 = textUtilShared.GetRestPhWords(newPhWordList2, commonPhWords);
+					
+					System.out.println(commonPhWords);
+					System.out.println(getRestPhWords1);
+					System.out.println(getRestPhWords2);
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 //	private void ComputeTextRel() {

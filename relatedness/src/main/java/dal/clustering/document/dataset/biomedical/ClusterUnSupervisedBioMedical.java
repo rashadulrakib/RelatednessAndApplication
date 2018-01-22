@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
+import dal.clustering.document.dataset.stackoverflow.StackOverflowConstant;
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
@@ -147,7 +148,7 @@ public class ClusterUnSupervisedBioMedical {
 			
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
 
-			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
@@ -166,11 +167,40 @@ public class ClusterUnSupervisedBioMedical {
 			
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
-			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 			
 			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\2018\\jan\\sparseMatrix", saprsifyMatrix, " ");
 			
 			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, BioMedicalConstant.BiomedicalDocsFile, "\t");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification(){
+		try{
+			ArrayList<String []> alDocLabelFlat = bioMedicalUtil.getDocsBiomedicalFlat();
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters);
+			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixGtmFixedSparsification(){
+		try{
+			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
+			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
+
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters);
+			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

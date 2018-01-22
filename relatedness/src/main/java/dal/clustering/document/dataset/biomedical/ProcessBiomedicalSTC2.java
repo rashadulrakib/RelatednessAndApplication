@@ -3,7 +3,7 @@ package dal.clustering.document.dataset.biomedical;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import dal.clustering.document.method.stc2.STC2ProcessUtil;
+import dal.clustering.document.externalmethod.stc2.STC2ProcessUtil;
 import dal.utils.common.general.UtilsShared;
 
 public class ProcessBiomedicalSTC2 {

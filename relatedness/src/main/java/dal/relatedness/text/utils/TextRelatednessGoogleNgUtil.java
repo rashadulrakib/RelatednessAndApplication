@@ -59,6 +59,11 @@ public class TextRelatednessGoogleNgUtil {
             	score = (allMeanSum + commonSize) * (t1Size + t2Size) / 2.0 / t1Size / t2Size;
             }
             
+            if(score>1){
+            	System.out.println("bad score="+ score);
+            	score = 1;
+            }
+            
         } catch (Exception e) {
         	e.printStackTrace();
         }
@@ -180,7 +185,7 @@ public class TextRelatednessGoogleNgUtil {
 
 	            for (String s : supers) {
 	                phs.remove(s);
-	                //ArrayList<String> arr = new ArrayList(Arrays.asList(s.split("\\s+")));
+	               
 					ArrayList<String> arr = textUtilShared.convertAarryToArrayList(s.split("\\s+"));
 	                phs.addAll(arr);
 	            }

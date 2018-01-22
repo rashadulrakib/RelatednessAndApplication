@@ -51,7 +51,7 @@ public class ClusterUnSupervisedGoogleWebSnippetWEKA {
 				//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabel, unSupervisedClusteringW2Vec.docClusterUtilW2Vec, clusterAssignments);
 				double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabel, unSupervisedClusteringText.docClusterUtilGtm, clusterAssignments);
 				
-				double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
+				double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrix(docSimMatrix);
 				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix", saprsifyMatrix, " ");
 			}
 			

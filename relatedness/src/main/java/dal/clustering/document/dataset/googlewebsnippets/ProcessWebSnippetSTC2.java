@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import dal.clustering.document.method.stc2.STC2ProcessUtil;
+import dal.clustering.document.externalmethod.stc2.STC2ProcessUtil;
 import dal.utils.common.general.UtilsShared;
 
 public class ProcessWebSnippetSTC2 {

@@ -180,21 +180,41 @@ public class TextUtilShared {
 	public ArrayList<String> GetCommonPhWordsByStemming(ArrayList<String> phWordList1, ArrayList<String> phWordList2) {
 		ArrayList<String> commonPhWords = new ArrayList<String>();
 		try {
-			for (int i = 0; i < phWordList1.size(); i++) {
-				for (int j = 0; j < phWordList2.size(); j++) {
-					if (equalStemmedPhrases(phWordList1.get(i),
-							phWordList2.get(j))) {
-						commonPhWords.add(phWordList1.get(i));
-						break;
-					}
+			HashSet<String> hmlist1 = ConvertStringListToHashSetStemming(phWordList1);
+			
+			for(int i=0;i< phWordList2.size();i++){
+				if(hmlist1.contains(StemmingUtil.stemPhrase(phWordList2.get(i)))){
+					commonPhWords.add(phWordList2.get(i));
 				}
 			}
+			
+//			for (int i = 0; i < phWordList1.size(); i++) {
+//				for (int j = 0; j < phWordList2.size(); j++) {
+//					if (equalStemmedPhrases(phWordList1.get(i),
+//							phWordList2.get(j))) {
+//						commonPhWords.add(phWordList1.get(i));
+//						break;
+//					}
+//				}
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return commonPhWords;
 	}
 	
+	private HashSet<String> ConvertStringListToHashSetStemming(ArrayList<String> phWordList) {
+		HashSet<String> hmlist = new HashSet<String>();
+		try{
+			for(String str: phWordList){
+				hmlist.add(StemmingUtil.stemPhrase(str));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return hmlist;
+	}
+
 	public ArrayList<String> GetRestPhWords(ArrayList<String> phWordList, ArrayList<String> commonPhWords) {
         ArrayList<String> restPhWords = new ArrayList<String>();
         try {

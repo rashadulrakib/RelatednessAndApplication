@@ -17,6 +17,7 @@ public class TextRelatednessGtm {
 	DefaultWordRtProcessor wp = null;
 	
 	public TextRelatednessGtm() throws IOException{
+		System.out.println("TextRelatednessGtm load start");
 		tpp = new SinglethreadTextrtPreprocessor(
 				TextRelatednessGtmConstant.GTM_UNIGRAM_BIN_PATH,
 		        null,
@@ -29,6 +30,7 @@ public class TextRelatednessGtm {
 	    wp = new DefaultWordRtProcessor(
 	    		Paths.get(TextRelatednessGtmConstant.GTM_TRIGRAM_BIN_PATH)
         );
+	    System.out.println("TextRelatednessGtm load end");
 	}
 	
 	public double ComputeWordSimGTM(String w1, String w2){
@@ -56,7 +58,10 @@ public class TextRelatednessGtm {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
+//		if(sim<1)
+//			return sim/2;
+//		else 
+//			return 1;
 		return sim;
 	}
 }

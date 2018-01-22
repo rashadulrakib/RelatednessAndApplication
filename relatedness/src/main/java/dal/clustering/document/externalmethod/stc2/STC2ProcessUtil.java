@@ -1,4 +1,4 @@
-package dal.clustering.document.method.stc2;
+package dal.clustering.document.externalmethod.stc2;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

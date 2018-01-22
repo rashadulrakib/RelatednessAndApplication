@@ -18,7 +18,6 @@ import dal.clustering.document.shared.entities.ClusterDocumentShared;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 import dal.relatedness.text.compute.trwp.TextRelatednessTrwpConstant;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
-import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 
 public class ProcessAgNewsDocument extends ClusterDocumentShared {
 	ArrayList<String> phrasesOfAText;

@@ -14,15 +14,21 @@ public class GooglewebSnippetUtil {
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
+	ArrayList<String> alBodies;
 	
 	public GooglewebSnippetUtil(){
 		docClusterUtil = new DocClusterUtil();
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
+		alBodies = new ArrayList<String>();
 		
 		loadAllDocsGoogleWebSnippet();
 
+	}
+	
+	public ArrayList<String> GetBodies(){
+		return alBodies;
 	}
 	
 	public HashSet<String> GetUniqueWords(){
@@ -64,6 +70,8 @@ public class GooglewebSnippetUtil {
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(noStopWords);
 		        
 		        if(body.isEmpty()) continue;
+		        
+		        alBodies.add(body);
 		        
 		        uniqueWords.addAll(noStopWords);
 		        

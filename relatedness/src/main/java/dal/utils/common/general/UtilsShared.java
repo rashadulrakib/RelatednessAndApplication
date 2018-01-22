@@ -3,6 +3,7 @@ package dal.utils.common.general;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class UtilsShared {
@@ -20,7 +21,7 @@ public class UtilsShared {
 		}
 		
 		return false;	
- }
+	}
 
 	public static HashSet<Integer> ConvertIntArrayToHashSet(int[] array) {
 		 HashSet<Integer> hs = new HashSet<Integer>();
@@ -74,6 +75,21 @@ public class UtilsShared {
 		return matrix;
 	}
 	
+	public static double [][] InitializeMatrix(int rows, int cols, double initialVal){
+		double [][] matrix = new double [rows][];
+		try{
+			for(int i=0;i<rows;i++){
+				double [] arr = new double[cols];
+				Arrays.fill(arr, initialVal);
+				matrix[i] = arr;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return matrix;
+	}
+	
 	public static void WriteMatrixToFile(String outFile, double [][] m, String seperator){
 		try{		
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
@@ -90,6 +106,8 @@ public class UtilsShared {
 			 }
 			 
 			 bw.close();
+			 
+			 System.out.println("End WriteMatrixToFile");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -3,7 +3,6 @@ package dal.relatedness.text.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.PairSim;
 import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenized;
@@ -18,7 +17,7 @@ public class TextRelatednessFunctionalUtil {
 	
 	PhraseRelatednessTokenized phraseRelatednessTokenized;
 	TextUtilShared textUtilShared;
-	HashMap<String, Double> hmWordPhPairSim;
+	static HashMap<String, Double> hmWordPhPairSim = new HashMap<String, Double>();
 	TextRelatednessGtm textRelatednessGtm;
 	
 	public TextRelatednessFunctionalUtil(PhraseRelatednessTokenized phraseRelatednessTokenized, TextRelatednessGtm textRelatednessGtm, 
@@ -26,6 +25,7 @@ public class TextRelatednessFunctionalUtil {
 		this.phraseRelatednessTokenized = phraseRelatednessTokenized;
 		this.textUtilShared = textUtilShared;
 		this.textRelatednessGtm = textRelatednessGtm;
+		//hmWordPhPairSim = new HashMap<String, Double>();
 	}
 	
 	public ArrayList<String> GeneratePhsByFreq(ArrayList<String> candStrs) {
@@ -57,12 +57,12 @@ public class TextRelatednessFunctionalUtil {
 			ArrayList<String> restPhWords1,	ArrayList<String> restPhWords2, HashSet<String> notUsefulWPhPairsStemmed) {
 		ArrayList<ArrayList<PairSim>> t1t2simPairList = new ArrayList<ArrayList<PairSim>>();
 		
-		if(hmWordPhPairSim!=null){
-			hmWordPhPairSim.clear();
-			hmWordPhPairSim = null;
-		}
-		
-		hmWordPhPairSim = new HashMap<String, Double>();
+//		if(hmWordPhPairSim!=null){
+//			hmWordPhPairSim.clear();
+//			hmWordPhPairSim = null;
+//		}
+//		
+		//hmWordPhPairSim = new HashMap<String, Double>();
 		
 		try {
 
@@ -82,7 +82,7 @@ public class TextRelatednessFunctionalUtil {
 
 					double simOverlap = 0.0;
 
-					if (stemwph1.equals(stemwph1)) {
+					if (stemwph1.equals(stemwph2)) {
 						simOverlap = 1.0 * weightForWords * weightForWords;
 					} else {
 						
@@ -92,28 +92,30 @@ public class TextRelatednessFunctionalUtil {
 //						else
 						{
 							if(weightForWords ==1.0){
-								String wordKey = wordsInPh1+"," +wordsInPh2;
-								if(hmWordPhPairSim.containsKey(wordKey)){
-									simOverlap = hmWordPhPairSim.get(wordKey);
-								}
-								else if(hmWordPhPairSim.containsKey(wordsInPh2+"," +wordsInPh1)){
-									simOverlap = hmWordPhPairSim.get(wordsInPh2+"," +wordsInPh1);
-								}else{
+								//String wordKey = wordsInPh1+"," +wordsInPh2;
+//								if(hmWordPhPairSim.containsKey(stemkey)){
+//									simOverlap = hmWordPhPairSim.get(stemkey);
+//								}
+//								else if(hmWordPhPairSim.containsKey(stemwph2 + "," + stemwph1)){
+//									simOverlap = hmWordPhPairSim.get(stemwph2 + "," + stemwph1);
+//								}else
+								{
 									simOverlap = textRelatednessGtm.ComputeWordSimGTM(phWord1, phWord2);
 								}
 								
-								hmWordPhPairSim.put(phWord1+","+phWord2, simOverlap);
+								//hmWordPhPairSim.put(stemkey, simOverlap);
 							}
 							else{
-								if(hmWordPhPairSim.containsKey(stemkey)){
-									simOverlap = hmWordPhPairSim.get(stemkey);
-								}else if(hmWordPhPairSim.containsKey( stemwph2 + "," + stemwph1)){
-									simOverlap = hmWordPhPairSim.get(stemwph2 + "," + stemwph1);
-								}else{
+//								if(hmWordPhPairSim.containsKey(stemkey)){
+//									simOverlap = hmWordPhPairSim.get(stemkey);
+//								}else if(hmWordPhPairSim.containsKey( stemwph2 + "," + stemwph1)){
+//									simOverlap = hmWordPhPairSim.get(stemwph2 + "," + stemwph1);
+//								}else
+								{
 									simOverlap = phraseRelatednessTokenized.ComputeFastRelExternal(stemwph1, stemwph2)* weightForWords * weightForWords;
 								}
-								
-								hmWordPhPairSim.put(stemkey, simOverlap);
+								System.out.println(stemkey);
+								//hmWordPhPairSim.put(stemkey, simOverlap);
 							}
 						}
 					}
