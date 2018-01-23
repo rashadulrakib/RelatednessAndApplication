@@ -26,12 +26,14 @@ public class DocClusterUtil {
 	public TextUtilShared textUtilShared;
 	public TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil;
 	public DocClusterUtilTrWpParallel docClusterUtilParallelTrwp;
+	public DocClusterUtilW2VecParallel docClusterUtilParallelW2vec;
 	public SparsificationUtil sparsificationUtil;
 	
 	public DocClusterUtil(){
 		textUtilShared = new TextUtilShared();
 		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
 		docClusterUtilParallelTrwp = new DocClusterUtilTrWpParallel();
+		docClusterUtilParallelW2vec = new DocClusterUtilW2VecParallel();
 		sparsificationUtil = new SparsificationUtil(); 
 	}
 	
@@ -654,6 +656,18 @@ public class DocClusterUtil {
 		double[][] docSimMatrix = null;
 		try{
 			docSimMatrix = docClusterUtilParallelTrwp.ComputeDocumentSimMatrixTrWpParallel(alDocLabelFlat, docClusterUtilTrWP, threads);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
+	public double[][] ComputeCosineMatrixW2VecParallel(ArrayList<InstanceW2Vec> testW2Vecs, int threads){
+		
+		double[][] docSimMatrix = null;
+		try{
+			docSimMatrix = docClusterUtilParallelW2vec.ComputeDocumentSimMatrixW2VecParallel(testW2Vecs, threads);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -201,7 +201,7 @@ public class App
     	//new ClusterUnSupervisedAgNews().ClusterDocsSimilarityByW2VecAverageVector();
     	//new ClusterUnSupervisedAgNews().ClusterDocsBySimilarityMatrixGtm();
     	//new ClusterUnSupervisedAgNews().ClusterDocsBySimilarityMatrixCosineW2Vec();
-    	new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
@@ -220,7 +220,7 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
-    	//new WebSnippetExternalEvaluation().ExternalEvaluate();    	
+    	new WebSnippetExternalEvaluation().ExternalEvaluate();    	
     	
     	
     	//new ProcessStackOverflow().Process();

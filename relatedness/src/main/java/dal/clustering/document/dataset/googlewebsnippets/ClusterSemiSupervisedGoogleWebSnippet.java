@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
-import dal.clustering.document.shared.DocClusterUtil;
 import dal.clustering.document.shared.cluster.SemiSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;

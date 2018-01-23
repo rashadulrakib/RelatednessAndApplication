@@ -61,7 +61,7 @@ public class SparsificationUtil {
 			    }
 			});
 			
-			List<Alpha> AlAlphaSublist = alAlpha.subList(alAlpha.size()-itemsToKeep/2, alAlpha.size());
+			List<Alpha> AlAlphaSublist = alAlpha.subList(alAlpha.size()-itemsToKeep/3, alAlpha.size());
 			//List<Alpha> AlAlphaSublist = alAlpha;
 			
 			for(int i=0;i<docSimMatrix.length;i++){

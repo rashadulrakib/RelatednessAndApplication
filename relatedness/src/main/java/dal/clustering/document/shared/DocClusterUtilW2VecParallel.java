@@ -7,44 +7,43 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import dal.clustering.document.shared.entities.InstanceW2Vec;
+import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
 
-public class DocClusterUtilTrWpParallel {
+public class DocClusterUtilW2VecParallel {
+
+	public double[][] ComputeDocumentSimMatrixW2VecParallel(ArrayList<InstanceW2Vec> testW2Vecs, int totalThreads){
+		double[][] docSimMatrix = UtilsShared.InitializeMatrix(testW2Vecs.size(), testW2Vecs.size());
 	
-	public double[][] ComputeDocumentSimMatrixTrWpParallel(ArrayList<String[]> alDocLabelFlat,
-			DocClusterUtilTrWP docClusterUtilTrWP, int totalThreads){
-		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
-		
 		try{
-			
 			 ExecutorService executor = Executors.newFixedThreadPool(totalThreads);
 			 List <Future<ArrayList<ArrayList<Double>>>> list = new ArrayList<Future<ArrayList<ArrayList<Double>>>>();
 			 
-			 int itemsPerThread = alDocLabelFlat.size()/totalThreads;
+			 int itemsPerThread = testW2Vecs.size()/totalThreads;
 			 
 			 for(int t=0;t<totalThreads;t++){
 				 
 				 int startIndex = t*itemsPerThread;
-				 int endIndex = (startIndex+itemsPerThread-1)>=alDocLabelFlat.size()? 
-						 alDocLabelFlat.size()-1: startIndex+itemsPerThread-1;
+				 int endIndex = (startIndex+itemsPerThread-1)>=testW2Vecs.size()? 
+						 testW2Vecs.size()-1: startIndex+itemsPerThread-1;
 				
 				System.out.println("startIndex="+startIndex+","+ " endIndex="+endIndex);
 				
 				 if(startIndex>=endIndex || startIndex<0 || endIndex<0) break;
 						 
 				 Future<ArrayList<ArrayList<Double>>> future = executor.submit(
-						 new PartialDocSimMatrixCalculatorTrWp(alDocLabelFlat,docClusterUtilTrWP, startIndex, endIndex, t));
+						 new PartialDocSimMatrixCalculatorW2Vec(testW2Vecs, startIndex, endIndex, t));
 	             list.add(future);
 			 }
 			 
-             
-	         for(Future<ArrayList<ArrayList<Double>>> fut : list){
+			 for(Future<ArrayList<ArrayList<Double>>> fut : list){
 	        	 ArrayList<ArrayList<Double>> listSims = fut.get();
 	        	 System.out.println("listSims="+listSims.size());
 	        	 for(ArrayList<Double> alSims: listSims){
 	        		 //System.out.println("alSims="+alSims.size()+"="+alSims);
-	        		 int stIndex = alDocLabelFlat.size()-alSims.size();
-	        		 int enIndex = alDocLabelFlat.size()-1;
+	        		 int stIndex = testW2Vecs.size()-alSims.size();
+	        		 int enIndex = testW2Vecs.size()-1;
 	        		 //System.out.println("st="+stIndex+", en="+ enIndex);
 	        		 for(int i=stIndex;i<=enIndex;i++){
 	        			 double val = alSims.get(i-stIndex);
@@ -62,7 +61,7 @@ public class DocClusterUtilTrWpParallel {
 	         }
 	         
 	         executor.shutdown();
-			
+			 
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -71,19 +70,17 @@ public class DocClusterUtilTrWpParallel {
 	}
 }
 
-class PartialDocSimMatrixCalculatorTrWp implements Callable<ArrayList<ArrayList<Double>>> {
+class PartialDocSimMatrixCalculatorW2Vec implements Callable<ArrayList<ArrayList<Double>>> {
     
-	ArrayList<String[]> alDocLabelFlat;
-	DocClusterUtilTrWP docClusterUtilTrWP;
+	ArrayList<InstanceW2Vec> testW2Vecs;
 	int startDocIndex;
 	int endDocIndex;
 	int thId;
 	
-	public PartialDocSimMatrixCalculatorTrWp(ArrayList<String[]> alDocLabelFlat,
-			DocClusterUtilTrWP docClusterUtilTrWP, int startDocIndex, int endDocIndex, int thId){
+	public PartialDocSimMatrixCalculatorW2Vec(ArrayList<InstanceW2Vec> testW2Vecs,
+			 int startDocIndex, int endDocIndex, int thId){
 		
-		this.alDocLabelFlat = alDocLabelFlat;
-		this.docClusterUtilTrWP = docClusterUtilTrWP;
+		this.testW2Vecs = testW2Vecs;
 		this.startDocIndex = startDocIndex;
 		this.endDocIndex = endDocIndex;
 		this.thId = thId;
@@ -97,16 +94,16 @@ class PartialDocSimMatrixCalculatorTrWp implements Callable<ArrayList<ArrayList<
     	
     	for(int i=startDocIndex; i<=endDocIndex;i++){
     		System.out.println("doc="+i);
-			String text1 = alDocLabelFlat.get(i)[0];
+			double [] ftr1 = testW2Vecs.get(i).Features;
 			
 			ArrayList<Double> simScores = new ArrayList<Double>();
 			simScores.add(1.0);
 			
-			for(int j=i+1;j<alDocLabelFlat.size();j++){
+			for(int j=i+1;j<testW2Vecs.size();j++){
 				
-				String text2 = alDocLabelFlat.get(j)[0];
+				double [] ftr2 = testW2Vecs.get(j).Features;
 				
-				double score = docClusterUtilTrWP.ComputeTextSimTrWp(text1, text2);
+				double score = ComputeUtil.ComputeCosineSimilarity(ftr1, ftr2);
 				if(Double.isNaN(score)){
 					score = 0;
 				}
@@ -122,5 +119,3 @@ class PartialDocSimMatrixCalculatorTrWp implements Callable<ArrayList<ArrayList<
         return listSimScores;
     }
 }
-
-

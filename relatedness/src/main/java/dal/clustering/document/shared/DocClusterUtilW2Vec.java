@@ -10,7 +10,6 @@ import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
-import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.relatedness.text.utils.TextRelatednessW2VecUtil;
 
 public class DocClusterUtilW2Vec {

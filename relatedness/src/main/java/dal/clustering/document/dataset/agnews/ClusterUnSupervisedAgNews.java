@@ -3,6 +3,7 @@ package dal.clustering.document.dataset.agnews;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
@@ -10,6 +11,7 @@ import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
+import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedAgNews {
@@ -22,9 +24,9 @@ public class ClusterUnSupervisedAgNews {
 	public ClusterUnSupervisedAgNews() throws IOException{
 		agNewsUtil = new AgNewsUtil();	
 		clusterEvaluation = new ClusterEvaluation(agNewsUtil.docClusterUtil);
-		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
-				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
-				agNewsUtil.docClusterUtil);
+//		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
+//				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
+//				agNewsUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil);
 	}
@@ -140,14 +142,19 @@ public class ClusterUnSupervisedAgNews {
 	public void GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification(){
 		try{
 			ArrayList<String []> alDocLabelFlat =agNewsUtil.getAgNewsFlat();
-			//alDocLabelFlat = agNewsUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 10000, 0);
 			
-			double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2Vec(agNewsUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);
+			
+			//alDocLabelFlat = agNewsUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 5000, 0);
+			
+			//double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters);
 			
 //			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, AgNewsConstant.AgNewsDocsFile, "\t");
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, AgNewsConstant.AgNewsDocsFile, "\t");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
