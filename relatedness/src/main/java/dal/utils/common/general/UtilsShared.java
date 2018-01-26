@@ -92,6 +92,7 @@ public class UtilsShared {
 	
 	public static void WriteMatrixToFile(String outFile, double [][] m, String seperator){
 		try{		
+			System.out.println("start writing:"+m.length);
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 			
 			 for (int i = 0; i < m.length; i++){

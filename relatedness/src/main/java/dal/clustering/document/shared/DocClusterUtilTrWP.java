@@ -18,8 +18,8 @@ public class DocClusterUtilTrWP {
 	public double ComputeTextSimTrWp(String text1, String text2){ 
 		double sim=0;
 		try{
-			sim = textRelatednessTrwp.ComputeTextRelatednessExternalTrwp(text1, text2);
-			//sim = docClusterUtilGTM.ComputeTextSimGTM(text1, text2);
+			//sim = textRelatednessTrwp.ComputeTextRelatednessExternalTrwp(text1, text2);
+			sim = docClusterUtilGTM.ComputeTextSimGTM(text1, text2);
 					
 		}catch(Exception e){
 			e.printStackTrace();

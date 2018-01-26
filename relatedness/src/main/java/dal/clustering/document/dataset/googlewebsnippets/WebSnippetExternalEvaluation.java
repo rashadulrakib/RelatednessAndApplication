@@ -21,7 +21,7 @@ public class WebSnippetExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\python-labels-w2vec-cos-2280";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			
@@ -33,7 +33,14 @@ public class WebSnippetExternalEvaluation {
 		        if(line.isEmpty()) continue;
 		        
 		        String clusterGroups [] = line.split(",");
-		        clusterLables.addAll(Arrays.asList(clusterGroups));
+		        
+		        ArrayList<String> labelGr = new ArrayList<String>();
+		        for(String gr: clusterGroups){
+		        	labelGr.add(Integer.toString((int)Double.parseDouble(gr)));
+		        }
+		        
+		        //clusterLables.addAll(Arrays.asList(clusterGroups));
+		        clusterLables.addAll(labelGr);
 			}
 			br.close();
 			

@@ -257,11 +257,20 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	public void GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification(){
 		try{
 			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
-			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
-			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+			
+			/*double [][] nonSaprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, false);
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			*/
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -270,13 +279,41 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	public void GenerateDocsDisSimilarityMatrixGtmFixedSparsification(){
 		try{
 			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
+			//alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 380, 0);
 			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
 
 			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
-			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
 			
-			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			//double [][] nonSaprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, false);
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, GoogleWebSnippetConstant.GoogleWebSnippetDocsFile, "\t");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification() {
+		try{
+
+			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
+			
+			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			InstanceW2Vec centerVec = googlewebSnippetUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-CenterBased", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();

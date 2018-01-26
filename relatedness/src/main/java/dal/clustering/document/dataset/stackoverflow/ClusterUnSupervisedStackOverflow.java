@@ -2,6 +2,7 @@ package dal.clustering.document.dataset.stackoverflow;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.ClusterEvaluation;
@@ -205,11 +206,21 @@ public class ClusterUnSupervisedStackOverflow {
 	public void GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification(){
 		try{
 			ArrayList<String []> alDocLabelFlat = stackOverflowUtil.getDocsStackOverflowFlat();
-			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters);
 			
+			HashMap<String, double[]> hmW2Vec = stackOverflowUtil.docClusterUtil.PopulateW2Vec(stackOverflowUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = stackOverflowUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);
+
+			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+			/*double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			 */
+			 
+			/*double [][] nonSaprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, false);
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-nonAplha-Fixed", nonSaprsifyMatrix, " ");
+			*/
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, true);
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-Aplha-Fixed", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -221,10 +232,34 @@ public class ClusterUnSupervisedStackOverflow {
 			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
 
 			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
-			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters);
 			
+			double [][] nonSaprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, false);			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, true);			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification() {
+		try{
+
+			ArrayList<String []> alDocLabelFlat =stackOverflowUtil.getDocsStackOverflowFlat();
+			
+			HashMap<String, double[]> hmW2Vec = stackOverflowUtil.docClusterUtil.PopulateW2Vec(stackOverflowUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = stackOverflowUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			InstanceW2Vec centerVec = stackOverflowUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-CenterBased", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();

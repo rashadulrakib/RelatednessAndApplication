@@ -69,7 +69,9 @@ public class GooglewebSnippetUtil {
 		        ArrayList<String> noStopWords = docClusterUtil.textUtilShared.RemoveStopWord(body);
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(noStopWords);
 		        
-		        if(body.isEmpty()) continue;
+		        if(body.isEmpty()){
+		        	continue;
+		        }
 		        
 		        alBodies.add(body);
 		        
@@ -93,6 +95,10 @@ public class GooglewebSnippetUtil {
 		        }
 			}
 			br.close();
+			
+			for(String key: docsLabelBodyList.keySet()){
+				System.out.println(key+","+docsLabelBodyList.get(key).size());
+			}
 		}
 		catch(Exception e){
 			e.printStackTrace();

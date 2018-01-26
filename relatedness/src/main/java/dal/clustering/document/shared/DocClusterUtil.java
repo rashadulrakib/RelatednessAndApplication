@@ -937,4 +937,28 @@ public class DocClusterUtil {
 		return assigns;
 	}
 
+	public InstanceW2Vec ComputeCenterInstanceW2Vec(ArrayList<InstanceW2Vec> instancew2Vecs) {
+		InstanceW2Vec center = new InstanceW2Vec();
+		try{
+			int vecSize = instancew2Vecs.get(0).Features.length;
+			double centerVec [] = new double[vecSize];
+			for(InstanceW2Vec inst: instancew2Vecs){
+				for(int i=0;i<inst.Features.length;i++){
+					centerVec[i]=centerVec[i]+inst.Features[i];
+				}
+			}
+			
+			for(int i=0;i<vecSize;i++){
+				centerVec[i]=centerVec[i]/instancew2Vecs.size();
+			}
+			
+			center.Features = centerVec;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return center;
+	}
+
 }

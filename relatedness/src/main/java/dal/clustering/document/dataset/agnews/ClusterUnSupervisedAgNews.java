@@ -24,9 +24,9 @@ public class ClusterUnSupervisedAgNews {
 	public ClusterUnSupervisedAgNews() throws IOException{
 		agNewsUtil = new AgNewsUtil();	
 		clusterEvaluation = new ClusterEvaluation(agNewsUtil.docClusterUtil);
-//		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
-//				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
-//				agNewsUtil.docClusterUtil);
+		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
+				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
+				agNewsUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil);
 	}
@@ -146,15 +146,21 @@ public class ClusterUnSupervisedAgNews {
 			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2Vec(agNewsUtil.getUniqueWords());
 			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);
 			
-			//alDocLabelFlat = agNewsUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 5000, 0);
+			//alDocLabelFlat = agNewsUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 2000, 0);
 			
 			//double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
-			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters);
-			
+
+			/*double [][] nonSaprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters, false);			
 //			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, AgNewsConstant.AgNewsDocsFile, "\t");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			*/
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters, true);			
+//			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			
+			
+			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, AgNewsConstant.AgNewsDocsFile, "\t");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -166,10 +172,35 @@ public class ClusterUnSupervisedAgNews {
 			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
 
 			double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
-			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters);
+			//double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeSimilarityMatrixTrWPParallel(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilTrWP, 10);
 			
+			double [][] nonSaprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters, false);			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters, true);			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification() {
+		try{
+
+			ArrayList<String []> alDocLabelFlat =agNewsUtil.getAgNewsFlat();
+			
+			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2Vec(agNewsUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			InstanceW2Vec centerVec = agNewsUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
+			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-CenterBased", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();

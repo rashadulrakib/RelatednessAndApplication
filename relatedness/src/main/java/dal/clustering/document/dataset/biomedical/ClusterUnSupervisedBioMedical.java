@@ -180,10 +180,14 @@ public class ClusterUnSupervisedBioMedical {
 		try{
 			ArrayList<String []> alDocLabelFlat = bioMedicalUtil.getDocsBiomedicalFlat();
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 			
+			double [][] nonSaprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters, false);
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-sd-nonAplha-Fixed", nonSaprsifyMatrix, " ");
+			
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters, true);
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-sd-Aplha-Fixed", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -195,10 +199,15 @@ public class ClusterUnSupervisedBioMedical {
 			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
 
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
-			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters);
-			
+
+			double [][] nonSaprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters, false);			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			
+			
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters, true);			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
