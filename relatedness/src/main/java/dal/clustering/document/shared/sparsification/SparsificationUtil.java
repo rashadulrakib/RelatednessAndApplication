@@ -20,8 +20,8 @@ public class SparsificationUtil {
 		try{
 			
 			int itemsPerCluster = docSimMatrix.length/numberOfclusters;
-			//int itemsToKeep = itemsPerCluster*docSimMatrix.length-docSimMatrix.length;
-			int itemsToKeep = itemsPerCluster*docSimMatrix.length;
+			int itemsToKeep = itemsPerCluster*docSimMatrix.length-docSimMatrix.length;
+			//int itemsToKeep = itemsPerCluster*docSimMatrix.length;
 			
 			int mulConst = 1;
 			

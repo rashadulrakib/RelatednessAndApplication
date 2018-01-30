@@ -1,6 +1,8 @@
 package dal.utils.common.general;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,6 +143,51 @@ public class UtilsShared {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public static double[][] LoadSimMatrixFromFile(String file){
+		double[][] simMatrix = null; 
+		
+		try{
+			
+			String line;
+			
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			line = br.readLine();
+			int size = line.split("\\s+").length;
+			br.close();
+			
+			simMatrix = new double[size][];
+			
+			br = new BufferedReader(new FileReader(file));
+	        int i=0;
+	        while ((line = br.readLine()) != null) {
+	           line = line.trim();
+	           if(line.isEmpty()) continue;
+	           
+	           double row [] = ConvertStringArrayToDoubleArray(line.split("\\s+"));
+	           simMatrix[i++]= row;
+	        }
+	        br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return simMatrix;
+	}
+
+	public static double[] ConvertStringArrayToDoubleArray(String[] arr) {
+		double[] vals = new double[arr.length];
+		
+		try{
+			for(int i=0; i< arr.length;i++){
+				vals[i] = Double.parseDouble(arr[i]);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return vals;
 	}
 	
 }

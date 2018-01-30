@@ -24,11 +24,11 @@ public class ClusterUnSupervisedAgNews {
 	public ClusterUnSupervisedAgNews() throws IOException{
 		agNewsUtil = new AgNewsUtil();	
 		clusterEvaluation = new ClusterEvaluation(agNewsUtil.docClusterUtil);
-		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
-				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
-				agNewsUtil.docClusterUtil);
+//		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
+//				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
+//				agNewsUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-		//unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil);
+		unSupervisedClusteringText = new UnSupervisedClusteringText(agNewsUtil.docClusterUtil);
 	}
 
 	public void ClusterDocsNGramBasedSimilarityGtm() {

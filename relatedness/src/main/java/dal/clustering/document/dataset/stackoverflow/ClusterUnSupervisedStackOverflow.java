@@ -24,9 +24,9 @@ public class ClusterUnSupervisedStackOverflow {
 		
 		stackOverflowUtil = new StackOverflowUtil();
 		clusterEvaluation = new ClusterEvaluation(stackOverflowUtil.docClusterUtil);
-		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(stackOverflowUtil.getUniqueWords(),
-				stackOverflowUtil.getDocsStackOverflowFlat(), stackOverflowUtil.getDocsStackOverflowList(), 
-				stackOverflowUtil.docClusterUtil);
+//		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(stackOverflowUtil.getUniqueWords(),
+//				stackOverflowUtil.getDocsStackOverflowFlat(), stackOverflowUtil.getDocsStackOverflowList(), 
+//				stackOverflowUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(stackOverflowUtil.docClusterUtil);
 		
@@ -260,6 +260,21 @@ public class ClusterUnSupervisedStackOverflow {
 					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
 			
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-CenterBased", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void GenerateDocsDisSimilarityMatrixFromFileSparsification() {
+		try{
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-nonAlpha-Fixed";
+			
+			double [][] docSimMatrix= UtilsShared.LoadSimMatrixFromFile(simFile);
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, true);			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
