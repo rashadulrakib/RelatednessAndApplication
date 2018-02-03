@@ -145,10 +145,12 @@ public class UtilsShared {
 		}
 	}
 	
-	public static double[][] LoadSimMatrixFromFile(String file){
-		double[][] simMatrix = null; 
+	public static double[][] LoadMatrixFromFile(String file){
+		double[][] distMatrix = null; 
 		
 		try{
+			
+			System.out.println("Start LoadMatrixFromFile");
 			
 			String line;
 			
@@ -157,7 +159,7 @@ public class UtilsShared {
 			int size = line.split("\\s+").length;
 			br.close();
 			
-			simMatrix = new double[size][];
+			distMatrix = new double[size][];
 			
 			br = new BufferedReader(new FileReader(file));
 	        int i=0;
@@ -166,12 +168,61 @@ public class UtilsShared {
 	           if(line.isEmpty()) continue;
 	           
 	           double row [] = ConvertStringArrayToDoubleArray(line.split("\\s+"));
-	           simMatrix[i++]= row;
+	           distMatrix[i++]= row;
+	           
+	           System.out.println("Start LoadMatrixFromFile="+i);
 	        }
 	        br.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		System.out.println("End LoadMatrixFromFile");
+		
+		return distMatrix;
+	}
+	
+
+	public static double[][] LoadSimilarityMatrixFromDistanceFile(String distFile) {
+		double[][] simMatrix = null; 
+		
+		try{
+			
+			System.out.println("Start LoadSimilarityMatrixFromDistanceFile");
+			
+			String line;
+			
+			BufferedReader br = new BufferedReader(new FileReader(distFile));
+			line = br.readLine();
+			int size = line.split("\\s+").length;
+			br.close();
+			
+			simMatrix = new double[size][];
+			
+			br = new BufferedReader(new FileReader(distFile));
+	        int i=0;
+	        while ((line = br.readLine()) != null) {
+	           line = line.trim();
+	           if(line.isEmpty()) continue;
+	           
+	           String[] arr = line.split("\\s+");
+	           
+	           double[] vals = new double[arr.length];
+	           
+	           for(int j=0;j<arr.length;j++){
+	        	   vals[j] = 1 - Double.parseDouble(arr[j]);
+	           }
+	           
+	           simMatrix[i++]= vals;
+	           
+	           System.out.println("Start LoadSimilarityMatrixFromDistanceFile="+i);
+	        }
+	        br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		System.out.println("End LoadSimilarityMatrixFromDistanceFile");
 		
 		return simMatrix;
 	}
@@ -188,6 +239,34 @@ public class UtilsShared {
 		}
 		
 		return vals;
+	}
+
+	public static double[][] CopyMatrix(double[][] docSimMatrix, boolean byIsDistance) {
+		double [][] matrix = new double [docSimMatrix.length][];
+		try{
+			if(byIsDistance){
+				for(int i=0;i<docSimMatrix.length;i++){
+					matrix[i] = new double[docSimMatrix.length];
+					
+					for(int j=0;j<docSimMatrix.length;j++){
+						matrix[i][j] = 1-docSimMatrix[i][j];
+					}
+				}
+			}else{
+				for(int i=0;i<docSimMatrix.length;i++){
+					matrix[i] = new double[docSimMatrix.length];
+					
+					for(int j=0;j<docSimMatrix.length;j++){
+						matrix[i][j] = docSimMatrix[i][j];
+					}
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return matrix;
 	}
 	
 }

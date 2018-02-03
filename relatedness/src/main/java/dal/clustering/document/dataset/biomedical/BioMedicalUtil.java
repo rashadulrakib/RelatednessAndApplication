@@ -82,6 +82,10 @@ public class BioMedicalUtil {
 			   
 		   br.close();
 		   
+		   for(String key: docsLabelBodyList.keySet()){
+				System.out.println(key+","+docsLabelBodyList.get(key).size());
+			}
+		   
 		}catch(Exception e){
 			e.printStackTrace();
 		}

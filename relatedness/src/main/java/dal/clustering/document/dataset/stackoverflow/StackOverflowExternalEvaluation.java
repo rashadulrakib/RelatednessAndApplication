@@ -20,7 +20,7 @@ public class StackOverflowExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-w2vec-sd-Aplha-Fixed-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-Alpha-Fixed-labels";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			

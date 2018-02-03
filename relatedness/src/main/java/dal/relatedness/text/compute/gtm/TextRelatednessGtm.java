@@ -6,12 +6,13 @@ import java.nio.file.Paths;
 import org.textsim.textrt.preproc.SinglethreadTextrtPreprocessor;
 import org.textsim.textrt.preproc.tokenizer.PennTreeBankTokenizer;
 import org.textsim.textrt.proc.singlethread.SinglethreadTextRtProcessor;
+import org.textsim.textrt.proc.singlethread.TextInstance;
 import org.textsim.util.token.DefaultTokenFilter;
 import org.textsim.wordrt.proc.DefaultWordRtProcessor;
 
 public class TextRelatednessGtm {
 
-	SinglethreadTextrtPreprocessor tpp = null;
+	public SinglethreadTextrtPreprocessor tpp = null;
 	SinglethreadTextRtProcessor tp = null;
 	
 	DefaultWordRtProcessor wp = null;
@@ -43,6 +44,16 @@ public class TextRelatednessGtm {
 		
 		return sim;
 	}
+	
+	public double ComputeTextSimGTM(TextInstance text1, TextInstance text2) {
+		double sim = 0;
+		try{
+			sim = tp.computeTextRT(text1, text2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return sim;
+	}
 
 	public double ComputeTextSimGTM(String text1, String text2) {
 		double sim = 0;
@@ -53,6 +64,8 @@ public class TextRelatednessGtm {
 			
 			if(text1.isEmpty() || text2.isEmpty()) return 0;
 	    
+			  TextInstance ti = tpp.createSingleTextInstance(text1).deepClone();
+			
 			sim = tp.computeTextRT(tpp.createSingleTextInstance(text1), tpp.createSingleTextInstance(text2)); 
 		
 		}catch(Exception e){

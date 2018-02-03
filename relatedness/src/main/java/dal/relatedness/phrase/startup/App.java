@@ -204,6 +204,7 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessGoogleWebSnippet().Process();
@@ -219,9 +220,12 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixTrWp();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixEuclidianW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
-    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
+    	new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities();S
     	//new WebSnippetExternalEvaluation().ExternalEvaluate();    	
     	
     	
@@ -238,7 +242,9 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsification();
+    	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsification();
+	    //new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsificationFixedNumberOfSimilarities();
+	    //new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();

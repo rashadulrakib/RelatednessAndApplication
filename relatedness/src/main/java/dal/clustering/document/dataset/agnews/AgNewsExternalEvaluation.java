@@ -20,7 +20,7 @@ public class AgNewsExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-gtm-sd-Alpha-Fixed-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-gtm-sd-Alpha-8000-NbyK-labels";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			

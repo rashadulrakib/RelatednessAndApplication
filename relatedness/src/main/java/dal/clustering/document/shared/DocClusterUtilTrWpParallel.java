@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.textsim.textrt.proc.singlethread.TextInstance;
+
 import dal.utils.common.general.UtilsShared;
 
 public class DocClusterUtilTrWpParallel {
@@ -16,6 +18,10 @@ public class DocClusterUtilTrWpParallel {
 		double[][] docSimMatrix = UtilsShared.InitializeMatrix(alDocLabelFlat.size(), alDocLabelFlat.size());
 		
 		try{
+			
+			//docClusterUtilTrWP.docClusterUtilGTM.textRelatednessGtm.tpp.createSingleTextInstance("").d
+			ArrayList<TextInstance> altxtInsts = GetGTMTextInstances(alDocLabelFlat, docClusterUtilTrWP);
+			
 			
 			 ExecutorService executor = Executors.newFixedThreadPool(totalThreads);
 			 List <Future<ArrayList<ArrayList<Double>>>> list = new ArrayList<Future<ArrayList<ArrayList<Double>>>>();
@@ -33,7 +39,7 @@ public class DocClusterUtilTrWpParallel {
 				 if(startIndex>=endIndex || startIndex<0 || endIndex<0) break;
 						 
 				 Future<ArrayList<ArrayList<Double>>> future = executor.submit(
-						 new PartialDocSimMatrixCalculatorTrWp(alDocLabelFlat,docClusterUtilTrWP, startIndex, endIndex, t));
+						 new PartialDocSimMatrixCalculatorTrWp(altxtInsts,docClusterUtilTrWP, startIndex, endIndex, t));
 	             list.add(future);
 			 }
 			 
@@ -69,20 +75,35 @@ public class DocClusterUtilTrWpParallel {
 		
 		return docSimMatrix;
 	}
+
+	private ArrayList<TextInstance> GetGTMTextInstances(ArrayList<String[]> alDocLabelFlat, DocClusterUtilTrWP docClusterUtilTrWP) {
+		ArrayList<TextInstance> al = new ArrayList<TextInstance>();
+		try{
+			for(String [] docLabel: alDocLabelFlat){
+				String text = docLabel[0];
+				TextInstance ti = docClusterUtilTrWP.docClusterUtilGTM.textRelatednessGtm.tpp.createSingleTextInstance(text).deepClone();
+				al.add(ti);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return al;
+	}
 }
 
 class PartialDocSimMatrixCalculatorTrWp implements Callable<ArrayList<ArrayList<Double>>> {
     
-	ArrayList<String[]> alDocLabelFlat;
+	ArrayList<TextInstance> altxtInsts;
 	DocClusterUtilTrWP docClusterUtilTrWP;
 	int startDocIndex;
 	int endDocIndex;
 	int thId;
 	
-	public PartialDocSimMatrixCalculatorTrWp(ArrayList<String[]> alDocLabelFlat,
+	public PartialDocSimMatrixCalculatorTrWp(ArrayList<TextInstance> altxtInsts,
 			DocClusterUtilTrWP docClusterUtilTrWP, int startDocIndex, int endDocIndex, int thId){
 		
-		this.alDocLabelFlat = alDocLabelFlat;
+		this.altxtInsts = altxtInsts;
 		this.docClusterUtilTrWP = docClusterUtilTrWP;
 		this.startDocIndex = startDocIndex;
 		this.endDocIndex = endDocIndex;
@@ -96,15 +117,15 @@ class PartialDocSimMatrixCalculatorTrWp implements Callable<ArrayList<ArrayList<
     	int zeroCount =0;
     	
     	for(int i=startDocIndex; i<=endDocIndex;i++){
-    		System.out.println("doc="+i);
-			String text1 = alDocLabelFlat.get(i)[0];
+    		System.out.println("doc="+i+", thId="+thId);
+    		TextInstance text1 = altxtInsts.get(i);
 			
 			ArrayList<Double> simScores = new ArrayList<Double>();
 			simScores.add(1.0);
 			
-			for(int j=i+1;j<alDocLabelFlat.size();j++){
+			for(int j=i+1;j<altxtInsts.size();j++){
 				
-				String text2 = alDocLabelFlat.get(j)[0];
+				TextInstance text2 = altxtInsts.get(j);
 				
 				double score = docClusterUtilTrWP.ComputeTextSimTrWp(text1, text2);
 				if(Double.isNaN(score)){
@@ -117,7 +138,7 @@ class PartialDocSimMatrixCalculatorTrWp implements Callable<ArrayList<ArrayList<
 			listSimScores.add(simScores);
     	}
     	
-    	System.out.println("Zeroa="+zeroCount+", thid="+thId);
+    	System.out.println("Zerocount="+zeroCount+", thid="+thId);
     	
         return listSimScores;
     }

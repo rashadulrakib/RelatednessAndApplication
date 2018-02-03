@@ -34,7 +34,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 //				googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat(), googlewebSnippetUtil.GetDocsGoogleWebSnippetList(), 
 //				googlewebSnippetUtil.docClusterUtil);
 		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
-		unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
+		//unSupervisedClusteringText = new UnSupervisedClusteringText(googlewebSnippetUtil.docClusterUtil);
 	}
 	
 	public void ClusterDocsNGramBasedSimilarityGtm() {
@@ -262,13 +262,23 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
 			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
 			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
 			
-			/*double [][] nonSaprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, false);
-			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
-			*/
+			alDocLabelFlat.clear();
+			alDocLabelFlat = null;
+			hmW2Vec.clear();
+			hmW2Vec=null;
+			testW2Vecs.clear();
+			testW2Vecs=null;
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280", docSimMatrix, " ");
+			
+			double [][] nonSaprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, false);
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-nonAlpha-2280-Fixed", nonSaprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-Alpha-Fixed", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
@@ -276,22 +286,57 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 		}
 	}
 	
+//	public void GenerateDocsDisSimilarityMatrixGtmFixedSparsification(){
+//		try{
+//			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
+//			//alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 380, 0);
+//			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
+//
+//			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
+//			unSupervisedClusteringText= null;
+//			alDocLabelFlat.clear();
+//			alDocLabelFlat = null;
+//			
+//			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280", docSimMatrix, " ");
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-gtm-sim-2280", docSimMatrix, " ");
+//			
+//			double [][] nonSaprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, false);
+//			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-nonAlpha-2280-Fixed", nonSaprsifyMatrix, " ");
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-nonAlpha-2280-Fixed", nonSaprsifyMatrix, " ");
+//			
+//			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
+//			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
+//			
+//			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, GoogleWebSnippetConstant.GoogleWebSnippetDocsFile, "\t");
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
+	
 	public void GenerateDocsDisSimilarityMatrixGtmFixedSparsification(){
 		try{
 			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			//alDocLabelFlat = googlewebSnippetUtil.docClusterUtil.SampledDocsPerCategory(alDocLabelFlat, 380, 0);
 			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
 
-			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixTrWPParallel(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilTrWP, 10);
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
+			unSupervisedClusteringText= null;
+			alDocLabelFlat.clear();
+			alDocLabelFlat = null;
+			
+			/*//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280", docSimMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-gtm-sim-2280", docSimMatrix, " ");
 			
 			double [][] nonSaprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, false);
-			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-nonAlpha-12340-Fixed", nonSaprsifyMatrix, " ");
-			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-nonAlpha-2280-Fixed", nonSaprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-nonAlpha-2280-Fixed", nonSaprsifyMatrix, " ");
+			*/
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
-			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-Alpha-12340-Fixed", saprsifyMatrix, " ");
-			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
 			
 			//UtilsShared.ReWriteDocBodyLabelFile(alDocLabelFlat, GoogleWebSnippetConstant.GoogleWebSnippetDocsFile, "\t");
 			
@@ -418,5 +463,57 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 		}
 		
 		return clusterResultConatainer;
-	}	
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixFromFileSparsification() {
+		try{
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-gtm-sim-12340";
+			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
+			
+			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);			
+			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-sd-Alpha-12340-Fixed", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
+		try{
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280";
+			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
+			
+			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-sd-Alpha-2280-NbyK", saprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-NbyK", saprsifyMatrix, " "); 
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
+	}
+
+//	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities() {
+//		try{
+//			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280";
+//			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
+//			
+//			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+//			
+//			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixStandardDevNbyKSimilarities(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
+//			
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-Alpha-2280-SDNbyK", saprsifyMatrix, " ");
+//			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-NbyK", saprsifyMatrix, " "); 
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		
+//	}
 }

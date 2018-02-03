@@ -213,14 +213,15 @@ public class ClusterUnSupervisedStackOverflow {
 			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 			/*double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			 */
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-w2vec-sim-20000", docSimMatrix, " ");
 			 
-			/*double [][] nonSaprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, false);
+			double [][] nonSaprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, false);
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-nonAplha-Fixed", nonSaprsifyMatrix, " ");
-			*/
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-nonAplha-20000-Fixed", nonSaprsifyMatrix, " ");
+			
 			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, true);
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-Aplha-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-Aplha-20000-Fixed", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -228,18 +229,26 @@ public class ClusterUnSupervisedStackOverflow {
 	
 	public void GenerateDocsDisSimilarityMatrixGtmFixedSparsification(){
 		try{
+						
 			ArrayList<String []> alDocLabelFlat =stackOverflowUtil.getDocsStackOverflowFlat();
 			//ArrayList<String []> alDocLabelFlat = new ArrayList<String []>(googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat().subList(0, 20));
 
-			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
+			//double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixGtm(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilGtm);
+			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeSimilarityMatrixTrWPParallel(alDocLabelFlat, unSupervisedClusteringText.docClusterUtilTrWP, 10);
+			
+			unSupervisedClusteringText= null;
+			alDocLabelFlat.clear();
+			alDocLabelFlat = null;
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-gtm-sim-20000", docSimMatrix, " ");
 			
 			double [][] nonSaprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, false);			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-nonAlpha-Fixed", nonSaprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-nonAlpha-20000-Fixed", nonSaprsifyMatrix, " ");
 			
 			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, true);			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-20000-Fixed", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -268,16 +277,46 @@ public class ClusterUnSupervisedStackOverflow {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsification() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-nonAlpha-Fixed";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-w2vec-sim-20000";
 			
-			double [][] docSimMatrix= UtilsShared.LoadSimMatrixFromFile(simFile);
+			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, StackOverflowConstant.NumberOfClusters, true);			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-sd-Alpha-20000-Fixed", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+
+//	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationFixedNumberOfSimilarities() {
+//		try{
+//			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-nonAlpha-Fixed";
+//			
+//			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+//			
+//			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNumberOfSimilarities(docSimMatrix, StackOverflowConstant.NumberOfClusters);
+//			
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-Fixed-Number-Similarities", saprsifyMatrix, " ");
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
+
+	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
+		try{
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-gtm-sim-20000";
+			
+			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, StackOverflowConstant.NumberOfClusters);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-20000-NbyK", saprsifyMatrix, " ");
+						
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
 	}
 }
