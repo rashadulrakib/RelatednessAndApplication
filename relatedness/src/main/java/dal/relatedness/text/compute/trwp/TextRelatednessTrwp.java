@@ -16,24 +16,24 @@ public class TextRelatednessTrwp {
 	PhraseRelatednessTokenized phraseRelatednessTokenized;
 	TextUtilShared textUtilShared;
 	TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil;
-	TextRelatednessFunctionalUtil textRelFunctionalUtil;
+	public TextRelatednessFunctionalUtil textRelFunctionalUtil;
 	TextRelatednessGtm textRelatednessGtm;
 	
-	public TextRelatednessTrwp(TextRelatednessGtm textRelatednessGtm) {
-		this.textRelatednessGtm = textRelatednessGtm;
-		phraseRelatednessTokenized = new PhraseRelatednessTokenized();
-		textUtilShared = new TextUtilShared();
-		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
-		textRelFunctionalUtil = new TextRelatednessFunctionalUtil(phraseRelatednessTokenized, textRelatednessGtm, textUtilShared);
-	}
+//	public TextRelatednessTrwp(TextRelatednessGtm textRelatednessGtm) {
+//		this.textRelatednessGtm = textRelatednessGtm;
+//		phraseRelatednessTokenized = new PhraseRelatednessTokenized();
+//		textUtilShared = new TextUtilShared();
+//		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
+//		textRelFunctionalUtil = new TextRelatednessFunctionalUtil(phraseRelatednessTokenized, this.textRelatednessGtm, textUtilShared);
+//	}
 	
 	public TextRelatednessTrwp(TextRelatednessGtm textRelatednessGtm, TextUtilShared textUtilShared, 
 			TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil) {
 		this.textRelatednessGtm = textRelatednessGtm;
 		this.textUtilShared = textUtilShared;
 		this.textRelatednessGoogleNgUtil = textRelatednessGoogleNgUtil;
-		//phraseRelatednessTokenized = new PhraseRelatednessTokenized();
-		textRelFunctionalUtil = new TextRelatednessFunctionalUtil(phraseRelatednessTokenized, textRelatednessGtm, textUtilShared);
+		phraseRelatednessTokenized = new PhraseRelatednessTokenized();
+		textRelFunctionalUtil = new TextRelatednessFunctionalUtil(phraseRelatednessTokenized, this.textRelatednessGtm, this.textUtilShared);
 	}
 
 //	public void ComputeTextRelUsingTokenizedNGram() {
@@ -181,6 +181,56 @@ public class TextRelatednessTrwp {
 					sim = 0.0;
 				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sim;
+	}
+	
+	public double ComputeTextRelatednessExternal(ArrayList<String> phWordList1,
+			ArrayList<String> phWordList2) {
+		
+		double sim = 0;
+		
+		try{
+			ArrayList<String> newPhWordList1 = phWordList1;//textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList1, phWordList2);
+			ArrayList<String> newPhWordList2 = phWordList2;//textRelatednessGoogleNgUtil.SplitSuperPhrases(phWordList2, phWordList1);
+
+			if (newPhWordList1.size() > newPhWordList2.size()) {
+				ArrayList<String> temp = newPhWordList1;
+				newPhWordList1 = newPhWordList2;
+				newPhWordList2 = temp;
+			}
+
+			ArrayList<String> commonPhWords = textUtilShared.GetCommonPhWordsByStemming(newPhWordList1, newPhWordList2);
+			ArrayList<String> getRestPhWords1 = textUtilShared.GetRestPhWords(newPhWordList1, commonPhWords);
+			ArrayList<String> getRestPhWords2 = textUtilShared.GetRestPhWords(newPhWordList2, commonPhWords);
+
+//			 System.out.println("commonPhWords="+commonPhWords);
+//			 System.out.println("getRestPhWords1="+getRestPhWords1);
+//			 System.out.println("getRestPhWords2="+getRestPhWords2);
+
+//			HashSet<String> notUsefulWPhPairsStemmed = getNotUsefulWPhPairsStemmed(
+//					getRestPhWords1, getRestPhWords2);
+
+			// get weight sim matrix
+			ArrayList<ArrayList<PairSim>> t1t2simPairList = null;
+			if (getRestPhWords1.size() > 0 && getRestPhWords2.size() > 0) {
+				//t1t2simPairList = textRelFunctionalUtil.GetWeightedSimilarityMatrix(getRestPhWords1, getRestPhWords2, notUsefulWPhPairsStemmed);
+				t1t2simPairList = textRelFunctionalUtil.GetWeightedSimilarityMatrix(getRestPhWords1, getRestPhWords2, null);
+
+				sim = textRelatednessGoogleNgUtil.ComputeSimilarityFromWeightedMatrixBySTD(
+						t1t2simPairList,
+						textRelatednessGoogleNgUtil.GetCommonWeight(commonPhWords),
+						textRelatednessGoogleNgUtil.GetTextSize(phWordList1),
+						textRelatednessGoogleNgUtil.GetTextSize(phWordList2), false);
+
+				if (Double.isNaN(sim)) {
+					sim = 0.0;
+				}
+			}
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

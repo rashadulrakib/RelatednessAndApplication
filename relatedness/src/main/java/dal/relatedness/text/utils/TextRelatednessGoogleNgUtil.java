@@ -42,7 +42,7 @@ public class TextRelatednessGoogleNgUtil {
                 double count = 0.0;
                 for (PairSim ocPS : simPairList) {
                     cellValue = cellValue + ocPS.value;
-                    if (ocPS.value > (mean + sd)) {
+                    if (ocPS.value >= (mean + sd)) {
                         filteredMeanSum = filteredMeanSum + ocPS.value;
                         count++;
                     }

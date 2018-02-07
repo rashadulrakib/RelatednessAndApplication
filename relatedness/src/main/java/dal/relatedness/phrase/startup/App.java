@@ -84,6 +84,9 @@ import dal.relatedness.text.compute.trwp.TextRelatednessTrwp;
 
 //rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ javac  -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar:./../../../lib/commons-lang3-3.2.1.jar:./../../../lib/gtm.jar:./../../../lib/jdistlib-0.4.5.jar:./../../../lib/stanford-corenlp-3.3.1.jar:./../../../lib/stanford-parser-3.2.0.jar:./../../../lib/trove4j-3.0.3.jar" **/*.java
 //rakib@cgm6:~/java/RelatednessSolution/relatedness/src/main/java$ java -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar:./../../../lib/commons-lang3-3.2.1.jar:./../../../lib/gtm.jar:./../../../lib/jdistlib-0.4.5.jar:./../../../lib/stanford-corenlp-3.3.1.jar:./../../../lib/stanford-parser-3.2.0.jar:./../../../lib/trove4j-3.0.3.jar" dal.relatedness.phrase.startup.App
+
+//background proces
+//nohup java -cp ".:./../../../lib/JavaFastPFOR-0.1.9.jar:./../../../lib/weka.jar:./../../../lib/commons-lang3-3.2.1.jar:./../../../lib/gtm.jar:./../../../lib/jdistlib-0.4.5.jar:./../../../lib/stanford-corenlp-3.3.1.jar:./../../../lib/stanford-parser-3.2.0.jar:./../../../lib/trove4j-3.0.3.jar" dal.relatedness.phrase.startup.App > backlog.txt &
  
 public class App 
 {
@@ -204,7 +207,11 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineTfIdfCenterBasedSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsification();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineTfIdf();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessGoogleWebSnippet().Process();
@@ -220,13 +227,16 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixTrWp();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixEuclidianW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().ClusterDocsBySimilarityMatrixCosineW2Vec();
-    	new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixTrwpFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
-    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities();S
-    	//new WebSnippetExternalEvaluation().ExternalEvaluate();    	
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineTfIdf();
+    	new WebSnippetExternalEvaluation().ExternalEvaluate();    	
     	
     	
     	//new ProcessStackOverflow().Process();
@@ -242,9 +252,10 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
+    	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsification();
-	    //new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsificationFixedNumberOfSimilarities();
 	    //new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
+    	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineTfIdf();
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();

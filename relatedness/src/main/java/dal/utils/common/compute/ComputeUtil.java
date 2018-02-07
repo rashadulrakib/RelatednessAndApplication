@@ -36,7 +36,7 @@ public class ComputeUtil {
         return score;
 	 }
 	 
-	public static double ComputeCosineSimilarity(HashMap<String, Double> v1, 	HashMap<String, Double> v2) {
+	public static double ComputeCosineSimilarity(HashMap<String, Double> v1, HashMap<String, Double> v2) {
 		double sim = 0;
 		try{
 			

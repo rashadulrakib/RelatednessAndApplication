@@ -26,6 +26,8 @@ public class DocClusterUtil {
 	public TextUtilShared textUtilShared;
 	public TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil;
 	public DocClusterUtilTrWpParallel docClusterUtilParallelTrwp;
+	public DocClusterUtilTrWpByGtmParallel docClusterUtilTrWpByGtmParallel;
+	public DocClusterUtilTfIdfParallel docClusterUtilTfIdfParallel;
 	public DocClusterUtilW2VecParallel docClusterUtilParallelW2vec;
 	public SparsificationUtil sparsificationUtil;
 	
@@ -34,6 +36,8 @@ public class DocClusterUtil {
 		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
 		docClusterUtilParallelTrwp = new DocClusterUtilTrWpParallel();
 		docClusterUtilParallelW2vec = new DocClusterUtilW2VecParallel();
+		docClusterUtilTrWpByGtmParallel = new DocClusterUtilTrWpByGtmParallel();
+		docClusterUtilTfIdfParallel = new DocClusterUtilTfIdfParallel();
 		sparsificationUtil = new SparsificationUtil(); 
 	}
 	
@@ -663,11 +667,36 @@ public class DocClusterUtil {
 		return docSimMatrix;
 	}
 	
+	public double[][] ComputeSimilarityMatrixTrWPParallelByGtm(ArrayList<ArrayList<String>> wordsPhrasesEachText,
+			DocClusterUtilTrWP docClusterUtilTrWP, int threads){
+		double[][] docSimMatrix = null;
+		
+		try{
+			docSimMatrix = docClusterUtilTrWpByGtmParallel.ComputeDocumentSimMatrixTrWpParallelByGtm(wordsPhrasesEachText, docClusterUtilTrWP, threads);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
 	public double[][] ComputeCosineMatrixW2VecParallel(ArrayList<InstanceW2Vec> testW2Vecs, int threads){
 		
 		double[][] docSimMatrix = null;
 		try{
 			docSimMatrix = docClusterUtilParallelW2vec.ComputeDocumentSimMatrixW2VecParallel(testW2Vecs, threads);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
+	public double[][] ComputeSimilarityMatrixTfIdfParallel(ArrayList<HashMap<String, Double>> docsTfIdfs, int threads){
+		
+		double[][] docSimMatrix = null;
+		try{
+			docSimMatrix = docClusterUtilTfIdfParallel.ComputeDocumentSimMatrixTfIdfParallel(docsTfIdfs, threads);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -959,6 +988,80 @@ public class DocClusterUtil {
 		}
 		
 		return center;
+	}
+
+	public InstanceW2Vec ComputeMaxInstanceW2Vec(ArrayList<InstanceW2Vec> instancew2Vecs) {
+		InstanceW2Vec maxVec = new InstanceW2Vec();
+		try{
+			int vecSize = instancew2Vecs.get(0).Features.length;
+			double max [] = new double[vecSize];
+			
+			for(InstanceW2Vec inst: instancew2Vecs){
+				for(int i=0;i<inst.Features.length;i++){
+					if(max[i]<inst.Features[i]){
+						max[i]= inst.Features[i];
+					}
+				}
+			}
+			
+			maxVec.Features = max;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return maxVec;
+	}
+
+	public InstanceW2Vec ComputeWeightCenterInstanceW2Vec(InstanceW2Vec centerVec, InstanceW2Vec maxVec) {
+		InstanceW2Vec avgMaxVec = new InstanceW2Vec();
+		try{
+			int vecSize = centerVec.Features.length;
+			double vec [] = new double[vecSize];
+			
+			for(int i=0;i<centerVec.Features.length && i< maxVec.Features.length;i++){
+				vec[i] = 2*centerVec.Features[i]*maxVec.Features[i]/(centerVec.Features[i]+maxVec.Features[i]);
+			}
+			
+			avgMaxVec.Features = vec;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return avgMaxVec;
+	}
+
+	public ArrayList<InstanceW2Vec> CreateTfIdfVecForTestData(ArrayList<HashMap<String, Double>> docsTfIdfs,
+			HashSet<String> uniqueWords) {
+		
+		ArrayList<InstanceW2Vec> insts = new ArrayList<InstanceW2Vec>();
+		
+		try{
+		
+			for(int i=0;i<docsTfIdfs.size();i++){
+				HashMap<String, Double> hmtfidfs = docsTfIdfs.get(i);
+				double ftrs [] = new double [uniqueWords.size()];
+				
+				int j=0;
+				for(String ftrWord: uniqueWords){
+					if(hmtfidfs.containsKey(ftrWord)){
+						ftrs[j] = hmtfidfs.get(ftrWord); 
+					}
+					j++;
+				}
+				
+				InstanceW2Vec inst = new InstanceW2Vec();
+				inst.Features = ftrs;
+				
+				insts.add(inst);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return insts;
 	}
 
 }

@@ -1,8 +1,10 @@
 package dal.relatedness.text.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import dal.clustering.document.shared.PairSim;
 import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenized;
@@ -26,6 +28,38 @@ public class TextRelatednessFunctionalUtil {
 		this.textUtilShared = textUtilShared;
 		this.textRelatednessGtm = textRelatednessGtm;
 		//hmWordPhPairSim = new HashMap<String, Double>();
+	}
+	
+//	public TextRelatednessFunctionalUtil(PhraseRelatednessTokenized phraseRelatednessTokenized, TextUtilShared textUtilShared){
+//		this.phraseRelatednessTokenized = phraseRelatednessTokenized;
+//		this.textUtilShared = textUtilShared;
+//	}
+	
+	public ArrayList<ArrayList<String>> GenerateWordsPhrasesEachText(
+			ArrayList<String> alDocLabelFlatWithStopWords, TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil) {
+		ArrayList<ArrayList<String>> wordsPhrasesEachText = new ArrayList<ArrayList<String>>();
+		
+		try{
+			for(String text: alDocLabelFlatWithStopWords){
+//				ArrayList<String > candStrs = textRelatednessGoogleNgUtil.splitByStopWord(text);
+//				
+//				ArrayList<String> phs = textRelatednessGoogleNgUtil.SplitPhrases(GeneratePhsByFreq(candStrs));
+//				
+//				ArrayList<String> phWordList = textUtilShared.CombineWordPhs(phs, candStrs);
+				
+				ArrayList<String> phWordList = textUtilShared.convertAarryToArrayList(text.split("\\s+"));
+				
+				System.out.println(phWordList);
+				
+				wordsPhrasesEachText.add(phWordList);
+			}
+			
+			System.out.println("wordsPhrasesEachText="+wordsPhrasesEachText.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return wordsPhrasesEachText;
 	}
 	
 	public ArrayList<String> GeneratePhsByFreq(ArrayList<String> candStrs) {
@@ -70,8 +104,11 @@ public class TextRelatednessFunctionalUtil {
 				ArrayList<PairSim> simPairList = new ArrayList<PairSim>();
 				for (String phWord2 : restPhWords2) {
 
-					int wordsInPh1 = phWord1.split("\\s+").length;
-					int wordsInPh2 = phWord2.split("\\s+").length;
+					String phWord1arr1[] = phWord1.split("\\s+");
+					String phWord1arr2[] = phWord2.split("\\s+");
+					
+					int wordsInPh1 = phWord1arr1.length;
+					int wordsInPh2 = phWord1arr2.length;
 					double totalWords = wordsInPh1 + wordsInPh2;
 					double weightForWords = totalWords / 2;
 
@@ -105,7 +142,21 @@ public class TextRelatednessFunctionalUtil {
 								
 								//hmWordPhPairSim.put(stemkey, simOverlap);
 							}
-							else{
+							else if(weightForWords==1.5){
+								double maxSim = 0;
+								
+								for(String w1: phWord1arr1){
+									for(String w2: phWord1arr2){
+										double interSim = textRelatednessGtm.ComputeWordSimGTM(w1, w2);
+										if(maxSim < interSim){
+											maxSim = interSim;
+										}
+									}
+								}
+								
+								simOverlap = maxSim * weightForWords * weightForWords;
+								
+							}else if(weightForWords==2.0){
 //								if(hmWordPhPairSim.containsKey(stemkey)){
 //									simOverlap = hmWordPhPairSim.get(stemkey);
 //								}else if(hmWordPhPairSim.containsKey( stemwph2 + "," + stemwph1)){
@@ -114,8 +165,10 @@ public class TextRelatednessFunctionalUtil {
 								{
 									simOverlap = phraseRelatednessTokenized.ComputeFastRelExternal(stemwph1, stemwph2)* weightForWords * weightForWords;
 								}
-								System.out.println(stemkey);
+								System.out.println(stemkey+", ");
 								//hmWordPhPairSim.put(stemkey, simOverlap);
+							}else{
+								System.out.println(stemkey+", bad weight factror="+ weightForWords);
 							}
 						}
 					}
@@ -201,4 +254,5 @@ public class TextRelatednessFunctionalUtil {
 
 		return bgFreq;
 	}
+	
 }

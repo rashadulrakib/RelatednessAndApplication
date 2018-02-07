@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import dal.clustering.document.shared.entities.InstanceW2Vec;
@@ -422,6 +423,224 @@ public class SparsificationUtil {
 		return lastSparsifyDistMatrix;
 	}
 	
+	public double [][] SparsifyDocDisSimilarityMatrixAlgorithomicClever(double[][] docSimMatrix, int numberOfclusters){
+
+		double [][] sparsifyDistMatrix = null;
+		double[][] lastSparsifyDistMatrix = null;
+		try{
+			
+			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicClever");
+			
+			int itemsPerCluster = docSimMatrix.length/numberOfclusters;
+			int itemsToKeep = itemsPerCluster*docSimMatrix.length-docSimMatrix.length;
+			
+			List<Alpha> alAlpha = PrepareAlphaValues(docSimMatrix, false);
+		
+			boolean isGoodAvg = false;
+			double alphaFactor = 1.0;
+			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
+			
+			//while(!isGoodAvg)
+			{
+				
+				sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);	
+			
+				for(int i=0;i<sparsifyDistMatrix.length;i++){
+					sparsifyDistMatrix[i][i]= 0;
+				}
+				
+				List<Alpha> alAlphaSelected = SelectAlphaValues(alAlpha, itemsToKeep);
+				
+				sparsifyDistMatrix = PrepareSparsifiedMatrix(docSimMatrix, alAlphaSelected);
+				
+				lastSparsifyDistMatrix = sparsifyDistMatrix;
+				
+				double sumAvgCount = 0;
+				//double arrAvgCount [] = new double [sparsifyDistMatrix.length];
+				for(int i=0;i<sparsifyDistMatrix.length;i++){
+					int count =0;
+					for(int j=0;j<sparsifyDistMatrix.length;j++){
+						if(sparsifyDistMatrix[i][j]!=SparsificationConstant.LargeDistValue){
+							count++;
+						}
+					}
+					//arrAvgCount[i]= count;
+					sumAvgCount=sumAvgCount+count;
+					//System.out.println("sparsified count="+count);
+				}
+				
+				double avgAvgCount = sumAvgCount/sparsifyDistMatrix.length;
+				
+				double diff = Math.abs(avgAvgCount-(double)itemsPerCluster);
+				
+				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", Math.abs(avgAvgCount-(double)itemsPerCluster)="+diff);
+				
+				if(isEnd(diff, uniqueDiffs)){
+					isGoodAvg = true;
+				}else{
+					if(avgAvgCount>(double)itemsPerCluster){
+							alphaFactor=alphaFactor-0.05;
+					}else if(avgAvgCount<(double)itemsPerCluster){
+							alphaFactor=alphaFactor+0.01;
+					}
+					lastSparsifyDistMatrix = sparsifyDistMatrix;
+					sparsifyDistMatrix = null;
+				}
+				uniqueDiffs.add( Math.ceil(diff));
+				
+				itemsToKeep = (int)(itemsToKeep*alphaFactor);
+			}
+			
+			for(int i=0;i<lastSparsifyDistMatrix.length;i++){
+				lastSparsifyDistMatrix[i][i]=0;
+			}
+			
+			System.out.println("End SparsifyDocDisSimilarityMatrixAlgorithomicClever");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		//return sparsifyDistMatrix;
+		return lastSparsifyDistMatrix;
+	}
+	
+	private double[][] PrepareSparsifiedMatrix(double[][] docSimMatrix,
+			List<Alpha> alAlphaSelected) {
+		double [][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
+		
+		try{
+			for(Alpha ap: alAlphaSelected){
+				int row = ap.getRow();
+				int col = ap.getCol();
+				
+				sparsifyDistMatrix[row][col] = 1-docSimMatrix[row][col];
+				sparsifyDistMatrix[col][row] = 1-docSimMatrix[row][col];
+			}
+			
+			for(int i=0;i<sparsifyDistMatrix.length;i++){
+				sparsifyDistMatrix[i][i]=0;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sparsifyDistMatrix;
+	}
+
+	private List<Alpha> SelectAlphaValues(List<Alpha> alAlpha, int itemsToKeep) {
+		List<Alpha> alAlphaSelected = new ArrayList<Alpha>();
+		
+		try{
+			LinkedHashMap<String, Integer> hmCellCount = new LinkedHashMap<String, Integer>();
+			
+			for(int i=0;i<alAlpha.size();i++){
+				Alpha ap = alAlpha.get(i);
+				
+				int row = ap.getRow();
+				int col = ap.getCol();
+				
+				if(row == col){
+					System.out.println("bad alpha row==col"+row);
+				}
+				
+				if(row> col){
+					int temp = row;
+					row = col;
+					col = temp;
+				}
+				
+				String celInd = row+","+col;
+				
+				if(hmCellCount.containsKey(celInd)){
+					hmCellCount.put(celInd, hmCellCount.get(celInd)+1);
+				}else{
+					hmCellCount.put(celInd, 1);
+				}
+				
+				if(hmCellCount.get(celInd)==2)
+				{
+					alAlphaSelected.add(ap);
+				}
+				else if(hmCellCount.get(celInd)>2){
+					System.out.println("celInd="+celInd+","+hmCellCount.get(celInd));
+				}
+				
+				if(alAlphaSelected.size()>=itemsToKeep*2){
+					break;
+				}
+			}
+			
+			System.out.println("alAlphaSelected="+alAlphaSelected.size()+ ", itemsToKeep="+itemsToKeep*2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return alAlphaSelected;
+	}
+
+	private List<Alpha> PrepareAlphaValues(double[][] docSimMatrix, boolean sortOrderAsc) {
+		
+		List<Alpha> sortedAlphaValues = new ArrayList<Alpha>();
+		
+		try{
+			int mulConst = 1;
+			
+			for(int i=0;i<docSimMatrix.length;i++){
+				double simArr [] = docSimMatrix[i];
+				
+				double simSim = 0.0;
+				for(int j=0;j<simArr.length;j++){
+					if(j==i) continue;
+					simSim= simSim + simArr[j]*mulConst;
+				}
+				
+				double avgSimSum = simSim/ simArr.length;
+				
+				double varianceSum = 0;
+				
+				for(int j=0;j<simArr.length;j++){
+					if(j==i) continue;
+					varianceSum = varianceSum + (simArr[j]*mulConst-avgSimSum)*(simArr[j]*mulConst-avgSimSum);
+				}
+				
+				double sd = Math.sqrt(varianceSum/simArr.length);
+				
+				for(int j=0;j<simArr.length;j++){
+					if(j==i) continue;
+					double alphaVal = (simArr[j]-avgSimSum)/sd;
+					Alpha objAlpha = new Alpha(alphaVal, i, j);
+					sortedAlphaValues.add(objAlpha);
+				}
+			}
+			
+			System.out.println("Sorting alpha values");
+			
+			if(sortOrderAsc){
+				Collections.sort(sortedAlphaValues, new Comparator<Alpha>() {
+				    @Override
+				    public int compare(Alpha o1, Alpha o2) { 
+				        return o1.getValue().compareTo(o2.getValue());
+				    }
+				});
+			}else{
+				Collections.sort(sortedAlphaValues, new Comparator<Alpha>() {
+				    @Override
+				    public int compare(Alpha o1, Alpha o2) {
+				        return o2.getValue().compareTo(o1.getValue());
+				    }
+				});
+			}
+			
+			System.out.println("end Sorting alpha values");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sortedAlphaValues;
+	}
+
 	private boolean isEnd(double diff, HashSet<Double> uniqueDiffs) {
 		try{
 			if((diff>=0 && diff<=5) || uniqueDiffs.contains(diff)){
@@ -591,19 +810,7 @@ public class SparsificationUtil {
 		
 		return sparsifyDistMatrix;
 	}
-	public double[][] SparsifyDocDisSimilarityMatrixFixedNumberOfSimilarities(
-			double[][] docSimMatrix, int numberofclusters) {
-		
-		double[][] sparsifyDistMatrix = null;
-		
-		try{
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return sparsifyDistMatrix;
-	}
+	
 //	public double[][] SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(
 //			double[][] docSimMatrix, int numberofclusters) {
 //		

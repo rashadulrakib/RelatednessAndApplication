@@ -1,5 +1,7 @@
 package dal.clustering.document.shared;
 
+import java.util.ArrayList;
+
 import org.textsim.textrt.proc.singlethread.TextInstance;
 
 import dal.relatedness.text.compute.trwp.TextRelatednessTrwp;
@@ -14,7 +16,7 @@ public class DocClusterUtilTrWP {
 	public DocClusterUtilTrWP(DocClusterUtilGTM docClusterUtilGTM, TextUtilShared textUtilShared,
 			TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil){
 		this.docClusterUtilGTM = docClusterUtilGTM;
-		//textRelatednessTrwp = new TextRelatednessTrwp(docClusterUtilGTM.textRelatednessGtm, textUtilShared, textRelatednessGoogleNgUtil);
+		textRelatednessTrwp = new TextRelatednessTrwp(docClusterUtilGTM.textRelatednessGtm, textUtilShared, textRelatednessGoogleNgUtil);
 	}
 	
 	public double ComputeTextSimTrWp(String text1, String text2){ 
@@ -38,6 +40,18 @@ public class DocClusterUtilTrWP {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		return sim;
+	}
+
+	public double ComputeTextSimTrWp(ArrayList<String> wordsPhs1, ArrayList<String> wordsPhs2) {
+		double sim=0;
+		
+		try{
+			sim = textRelatednessTrwp.ComputeTextRelatednessExternal(wordsPhs1, wordsPhs2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 		return sim;
 	}
 }

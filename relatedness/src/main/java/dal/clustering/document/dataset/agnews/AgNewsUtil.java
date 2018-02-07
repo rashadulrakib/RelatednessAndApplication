@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import dal.clustering.document.shared.DocClusterUtil;
 
@@ -12,6 +13,7 @@ public class AgNewsUtil {
 	
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	List<List<String>> documents;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	public DocClusterUtil docClusterUtil;
 	
@@ -20,6 +22,7 @@ public class AgNewsUtil {
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
+		documents = new ArrayList<List<String>>();
 		docClusterUtil = new DocClusterUtil();
 		
 		loadAllAgNews();
@@ -31,6 +34,10 @@ public class AgNewsUtil {
 	
 	public ArrayList<String[]> getAgNewsFlat(){
 		return aldocsBodeyLabelFlat;
+	}
+	
+	public List<List<String>> GetAgNewsDocuments(){
+		return documents;
 	}
 	
 	public LinkedHashMap<String, ArrayList<String>> getAgNewsList(){
@@ -70,6 +77,8 @@ public class AgNewsUtil {
 		        if(body.isEmpty()) continue;
 		        
 		        uniqueWords.addAll(processed);
+		        
+		        documents.add(processed);
 		        
 		        String arr[] = new String[2];
 		        arr[0]= body;

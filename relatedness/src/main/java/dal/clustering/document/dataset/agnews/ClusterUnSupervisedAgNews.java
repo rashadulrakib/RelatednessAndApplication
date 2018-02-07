@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 
 import dal.clustering.document.dataset.googlewebsnippets.GoogleWebSnippetConstant;
 import dal.clustering.document.shared.ClusterEvaluation;
+import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
@@ -220,6 +221,46 @@ public class ClusterUnSupervisedAgNews {
 		}
 	}
 	
+	public void GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification(){
+		try{
+
+			ArrayList<String []> alDocLabelFlat =agNewsUtil.getAgNewsFlat();
+			
+			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2Vec(agNewsUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			InstanceW2Vec centerVec = agNewsUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
+			InstanceW2Vec maxVec = agNewsUtil.docClusterUtil.ComputeMaxInstanceW2Vec(testW2Vecs);
+			InstanceW2Vec weightCenterVec = agNewsUtil.docClusterUtil.ComputeWeightCenterInstanceW2Vec(centerVec, maxVec);
+			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVector(weightCenterVec, testW2Vecs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-wightCenterBased", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineTfIdfCenterBasedSparsification() {
+		try{
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = new TfIdfMatrixGenerator().ConstructTfIdfList(agNewsUtil.GetAgNewsDocuments(), agNewsUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateTfIdfVecForTestData(docsTfIdfs, agNewsUtil.getUniqueWords());
+			
+			InstanceW2Vec centerVec = agNewsUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
+			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-CenterBased", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
 		try{
 			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-gtm-sim-8000";
@@ -237,4 +278,33 @@ public class ClusterUnSupervisedAgNews {
 		}	
 	}
 
+	public void GenerateDocsDisSimilarityMatrixCosineTfIdf() {
+		try{
+			ArrayList<HashMap<String, Double>> docsTfIdfs = new TfIdfMatrixGenerator().ConstructTfIdfList(agNewsUtil.GetAgNewsDocuments(), agNewsUtil.getUniqueWords());
+			double [][] docSimMatrix = agNewsUtil.docClusterUtil.ComputeSimilarityMatrixTfIdfParallel(docsTfIdfs, 10);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-tfidf-sim-8000", docSimMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void GenerateDocsDisSimilarityMatrixFromFileSparsification() {
+		try{
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-tfidf-sim-8000";
+			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-2280";
+			
+			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+			
+			//double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters, true);
+			
+			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-centerAvg", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

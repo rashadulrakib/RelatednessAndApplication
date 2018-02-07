@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import dal.clustering.document.shared.DocClusterUtil;
 
@@ -13,12 +14,16 @@ public class GooglewebSnippetUtil {
 	public DocClusterUtil docClusterUtil;
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	ArrayList<String> aldocsBodeyLabelFlatWithStopWords;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
+	List<List<String>> documents;
 	ArrayList<String> alBodies;
 	
 	public GooglewebSnippetUtil(){
 		docClusterUtil = new DocClusterUtil();
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
+		aldocsBodeyLabelFlatWithStopWords = new ArrayList<String>();
+		documents = new ArrayList<List<String>>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
 		alBodies = new ArrayList<String>();
@@ -37,6 +42,14 @@ public class GooglewebSnippetUtil {
 	
 	public ArrayList<String[]> GetDocsGoogleWebSnippetFlat(){
 		return aldocsBodeyLabelFlat;
+	}
+	
+	public List<List<String>> GetWebSnippetNewsDocuments() {
+		return documents;
+	}
+	
+	public ArrayList<String> GetDocsGoogleWebSnippetFlatWithStopWords(){
+		return aldocsBodeyLabelFlatWithStopWords;
 	}
 	
 	public LinkedHashMap<String, ArrayList<String>> GetDocsGoogleWebSnippetList(){
@@ -66,6 +79,13 @@ public class GooglewebSnippetUtil {
 			   String body =  arrLabelBody[1].trim();
 		        
 		        body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        
+		        if(body.isEmpty()){
+		        	continue;
+		        }
+		        
+		        aldocsBodeyLabelFlatWithStopWords.add(body);
+		        
 		        ArrayList<String> noStopWords = docClusterUtil.textUtilShared.RemoveStopWord(body);
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(noStopWords);
 		        
@@ -74,6 +94,8 @@ public class GooglewebSnippetUtil {
 		        }
 		        
 		        alBodies.add(body);
+
+		        documents.add(noStopWords);
 		        
 		        uniqueWords.addAll(noStopWords);
 		        
@@ -104,4 +126,5 @@ public class GooglewebSnippetUtil {
 			e.printStackTrace();
 		}
 	}
+	
 }

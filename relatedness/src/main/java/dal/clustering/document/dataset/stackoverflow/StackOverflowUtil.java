@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import dal.clustering.document.shared.DocClusterUtil;
 
@@ -13,6 +14,7 @@ public class StackOverflowUtil {
 	public DocClusterUtil docClusterUtil;
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	List<List<String>> documents;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	
 	public StackOverflowUtil(){
@@ -20,6 +22,7 @@ public class StackOverflowUtil {
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
+		documents = new ArrayList<List<String>>();
 		
 		loadAllDocsStackOverflow();
 	}
@@ -30,6 +33,10 @@ public class StackOverflowUtil {
 	
 	public ArrayList<String[]> getDocsStackOverflowFlat(){
 		return aldocsBodeyLabelFlat;
+	}
+	
+	public List<List<String>> GetStackOverflowDocuments() {
+		return documents;
 	}
 	
 	public LinkedHashMap<String, ArrayList<String>> getDocsStackOverflowList(){
@@ -62,6 +69,8 @@ public class StackOverflowUtil {
 		        
 		        uniqueWords.addAll(processed);
 		        
+		        documents.add(processed);
+		        
 		        String arr[] = new String[2];
 		        arr[0]= body;
 		        arr[1] = label;
@@ -89,4 +98,6 @@ public class StackOverflowUtil {
 			e.printStackTrace();
 		}
 	}
+
+	
 }
