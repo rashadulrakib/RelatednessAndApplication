@@ -13,9 +13,6 @@ import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
 
 public class SparsificationUtil {
-	
-	public SparsificationUtil(){
-	}
 		
 //	public double[][] SparsifyDocDisSimilarityMatrixAlgorithomic(double[][] docSimMatrix, int numberOfclusters, boolean isSparsify) {
 //		double[][] sparsifyDistMatrix = null;
@@ -323,7 +320,7 @@ public class SparsificationUtil {
 					
 					double diff = Math.abs(avgAvgCount-(double)itemsPerCluster);
 					
-					if(isEnd(diff, uniqueDiffs)){
+					if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs)){
 						isGoodAvg = true;
 					}else{
 						//if(avgAvgCount>(double)itemsPerCluster && avgAvgCount-(double)itemsPerCluster>400){
@@ -475,7 +472,7 @@ public class SparsificationUtil {
 				
 				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", Math.abs(avgAvgCount-(double)itemsPerCluster)="+diff);
 				
-				if(isEnd(diff, uniqueDiffs)){
+				if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs)){
 					isGoodAvg = true;
 				}else{
 					if(avgAvgCount>(double)itemsPerCluster){
@@ -639,25 +636,6 @@ public class SparsificationUtil {
 		}
 		
 		return sortedAlphaValues;
-	}
-
-	private boolean isEnd(double diff, HashSet<Double> uniqueDiffs) {
-		try{
-			if((diff>=0 && diff<=5) || uniqueDiffs.contains(diff)){
-				return true;
-			}
-			
-			for(double val: uniqueDiffs){
-				if(diff>=val){
-					return true;
-				}
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return false;
 	}
 
 	public double[][] SparsifyDocDisSimilarityMatrix(double[][] docSimMatrix) {
@@ -1097,7 +1075,7 @@ public class SparsificationUtil {
 				System.out.println("total keycell="+hmCellCount.size()+", totalRealSparsed="+totalRealSparsed
 						+", totalItemsToBeSparsified="+totalItemsToBeSparsified+" ,alphaFactor="+alphaFactor+", diff="+diff);
 				
-				if(isEndNbyK(diff, uniqueDiffs, alphaFactor)){
+				if(SparsificationUtilHelper.IsEndNbyK(diff, uniqueDiffs, alphaFactor)){
 					isGoodTotalSparsified= true;
 				}else{
 					
@@ -1135,24 +1113,6 @@ public class SparsificationUtil {
 		
 		//return sparsifyDistMatrix;
 		return lastsparsifyDistMatrix;
-	}
-
-	private boolean isEndNbyK(double diff, HashSet<Double> uniqueDiffs,
-			double alphaFactor) {
-		
-		if(alphaFactor<0) return true;
-		
-		if(uniqueDiffs.contains(diff)){
-			return true;
-		}
-		
-		for(double val: uniqueDiffs){
-			if(diff>=val){
-				return true;
-			}
-		}
-		
-		return false;
 	}
 
 }

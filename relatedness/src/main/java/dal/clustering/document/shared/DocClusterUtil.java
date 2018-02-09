@@ -15,6 +15,7 @@ import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
 import dal.clustering.document.shared.sparsification.SparsificationUtil;
+import dal.clustering.document.shared.sparsification.SparsificationUtilIterative;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.utils.common.compute.ComputeUtil;
@@ -30,6 +31,8 @@ public class DocClusterUtil {
 	public DocClusterUtilTfIdfParallel docClusterUtilTfIdfParallel;
 	public DocClusterUtilW2VecParallel docClusterUtilParallelW2vec;
 	public SparsificationUtil sparsificationUtil;
+	public SparsificationUtilIterative sparsificationUtilIterative;
+	
 	
 	public DocClusterUtil(){
 		textUtilShared = new TextUtilShared();
@@ -39,6 +42,7 @@ public class DocClusterUtil {
 		docClusterUtilTrWpByGtmParallel = new DocClusterUtilTrWpByGtmParallel();
 		docClusterUtilTfIdfParallel = new DocClusterUtilTfIdfParallel();
 		sparsificationUtil = new SparsificationUtil(); 
+		sparsificationUtilIterative = new SparsificationUtilIterative();
 	}
 	
 //	public double ComputeSimilarityFromWeightedMatrixBySTD(ArrayList<ArrayList<PairSim>> t1t2simPairList, double common,

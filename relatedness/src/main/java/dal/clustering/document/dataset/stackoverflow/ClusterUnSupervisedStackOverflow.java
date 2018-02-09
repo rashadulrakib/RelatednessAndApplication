@@ -330,13 +330,13 @@ public class ClusterUnSupervisedStackOverflow {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-gtm-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-tfidf-sim";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, StackOverflowConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-gtm-sd-Alpha-20000-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-tfidf-sd-Alpha-20000-NbyK", saprsifyMatrix, " ");
 						
 		}catch(Exception e){
 			e.printStackTrace();

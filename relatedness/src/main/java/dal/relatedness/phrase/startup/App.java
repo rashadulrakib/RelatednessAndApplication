@@ -28,6 +28,7 @@ import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoog
 import dal.clustering.document.dataset.googlewebsnippets.ProcessGoogleWebSnippet;
 import dal.clustering.document.dataset.googlewebsnippets.ProcessWebSnippetSTC2;
 import dal.clustering.document.dataset.googlewebsnippets.WebSnippetExternalEvaluation;
+import dal.clustering.document.dataset.googlewebsnippets.WebSnippetInternalEvaluation;
 import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflow;
 import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
 import dal.clustering.document.dataset.stackoverflow.ProcessStackOverflow;
@@ -212,6 +213,7 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineTfIdf();
+    	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessGoogleWebSnippet().Process();
@@ -236,7 +238,9 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineTfIdf();
-    	new WebSnippetExternalEvaluation().ExternalEvaluate();    	
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new WebSnippetExternalEvaluation().ExternalEvaluate();
+    	//new WebSnippetInternalEvaluation().InternalEvaluateAndSelectModel();
     	
     	
     	//new ProcessStackOverflow().Process();
