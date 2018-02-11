@@ -142,5 +142,66 @@ public class SparsificationUtilIterative {
 		
 		return alSparseDists;
 	}
+
+	public List<double[][]> SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(
+			double[][] docSimMatrix, int numberofclusters) {
+		
+		List<double[][]> alSparseDists = new ArrayList<double[][]>();
+		
+		try{
+			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicExact");
+			
+			int itemsPerCluster = docSimMatrix.length/numberofclusters;
+			int itemsToKeep = (itemsPerCluster*docSimMatrix.length-docSimMatrix.length)/1;
+			
+			List<Alpha> alAlpha = SparsificationUtilHelper.PrepareAlphaValuesDiagonal(docSimMatrix, false);
+			
+			List<Alpha> AlAlphaSublist = null;
+			
+			boolean isGoodAvg = false;
+			double alphaFactor = 1.0;
+			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
+
+			while(!isGoodAvg){
+				
+				double [][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
+				
+				for(int i=0;i<docSimMatrix.length;i++){
+					sparsifyDistMatrix[i][i] = 0;
+				}
+				
+				AlAlphaSublist = alAlpha.subList(0, (int)(itemsToKeep*alphaFactor));
+				
+				System.out.println("populate dist matrix, AlAlphaSublist="+AlAlphaSublist.size());
+				
+				sparsifyDistMatrix = SparsificationUtilHelper.PrepareSparsifiedMatrix(docSimMatrix, AlAlphaSublist);
+				
+				double avgAvgCount = SparsificationUtilHelper.ComputeAverageSparsifyCount(sparsifyDistMatrix);
+				
+				double diff = Math.abs(avgAvgCount-(double)itemsPerCluster);
+				
+				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff);
+
+				if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs, alphaFactor)){
+					isGoodAvg = true;
+				}else{
+					
+					if(avgAvgCount>(double)itemsPerCluster){
+							alphaFactor=alphaFactor-0.05;
+					}else if(avgAvgCount<(double)itemsPerCluster){
+							alphaFactor=alphaFactor+0.01;
+					}
+				
+					alSparseDists.add(sparsifyDistMatrix);
+				}
+				uniqueDiffs.add( Math.ceil(diff));
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return alSparseDists;
+	}
 	
 }

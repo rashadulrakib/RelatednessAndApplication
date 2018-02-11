@@ -274,6 +274,38 @@ public class DocClusterUtil {
 		
 		return w2vec;
 	}
+	
+	public HashMap<String, double[]> PopulateW2VecGoogle(HashSet<String> uniqueWords) {
+		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGoogleWordEmbeddingFile));
+	           
+			String text="";
+			
+            while ((text = br.readLine()) != null) {
+            	text = text.trim().toLowerCase();
+            	
+            	String [] arr = text.split("\\s+");
+            	String EmbeddingWord = arr[0];
+            	
+            	if(uniqueWords.contains(EmbeddingWord)){
+            		String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
+            		double [] vecDoubles = new double[vecs.length];
+            		for(int i=0; i< vecs.length;i++){
+            			vecDoubles[i] = Double.parseDouble(vecs[i]);
+            		}
+            		w2vec.put(EmbeddingWord, vecDoubles);
+            	}
+            }
+           
+            br.close();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return w2vec;
+	}
 
 	public LinkedHashMap<String, ArrayList<double[]>> CreateW2VecForTrainData(LinkedHashMap<String, ArrayList<String>> hmTrainPerLabelBodyPreprocesed,
 			HashMap<String, double[]> hmW2Vec) {

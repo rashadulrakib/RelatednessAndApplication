@@ -13,196 +13,7 @@ import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
 
 public class SparsificationUtil {
-		
-//	public double[][] SparsifyDocDisSimilarityMatrixAlgorithomic(double[][] docSimMatrix, int numberOfclusters, boolean isSparsify) {
-//		double[][] sparsifyDistMatrix = null;
-//		List<Alpha> alAlpha = new ArrayList<Alpha>();
-//		
-//		try{
-//			
-//			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomic");
-//			
-//			int itemsPerCluster = docSimMatrix.length/numberOfclusters;
-//			int itemsToKeep = itemsPerCluster*docSimMatrix.length-docSimMatrix.length;
-//			//int itemsToKeep = itemsPerCluster*docSimMatrix.length;
-//			
-//			int mulConst = 1;
-//			
-//			for(int i=0;i<docSimMatrix.length;i++){
-//				double simArr [] = docSimMatrix[i];
-//				
-//				double simSim = 0.0;
-//				for(int j=0;j<simArr.length;j++){
-//					if(j==i) continue;
-//					simSim= simSim + simArr[j]*mulConst;
-//				}
-//				
-//				double avgSimSum = simSim/ simArr.length;
-//				
-//				double varianceSum = 0;
-//				
-//				for(int j=0;j<simArr.length;j++){
-//					if(j==i) continue;
-//					varianceSum = varianceSum + (simArr[j]*mulConst-avgSimSum)*(simArr[j]*mulConst-avgSimSum);
-//				}
-//				
-//				double sd = Math.sqrt(varianceSum/simArr.length);
-//				
-//				for(int j=0;j<simArr.length;j++){
-//					if(j==i) continue;
-//					double alphaVal = (simArr[j]-avgSimSum)/sd;
-//					Alpha objAlpha = new Alpha(alphaVal, i, j);
-//					alAlpha.add(objAlpha);
-//				}
-//				
-//				
-//			}
-//			
-//			
-//			System.out.println("Sorting alpha values");
-//			
-//			Collections.sort(alAlpha, new Comparator<Alpha>() {
-//			    @Override
-//			    public int compare(Alpha o1, Alpha o2) {
-//			        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-//			    	// return lhs.customInt > rhs.customInt ? -1 : (lhs.customInt < rhs.customInt) ? 1 : 0;
-//			        return o1.getValue().compareTo(o2.getValue());
-//			    }
-//			});
-//			
-//			System.out.println("end Sorting alpha values");
-//			
-//			List<Alpha> AlAlphaSublist = null;
-//			if(isSparsify){
-//				//
-//				
-//				boolean isGoodAvg = false;
-//				double alphaFactor = 1.0;
-//				while(!isGoodAvg){
-//					
-//					sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
-//					
-//					for(int i=0;i<docSimMatrix.length;i++){
-//						sparsifyDistMatrix[i][i] = 0;
-//					}
-//					
-//					AlAlphaSublist = alAlpha.subList(alAlpha.size()-(int)(itemsToKeep*alphaFactor), alAlpha.size());
-//					
-//					System.out.println("populate dist matrix");
-//					
-//					for(Alpha alObj: AlAlphaSublist){
-//						int row = alObj.getRow();
-//						int col = alObj.getCol();
-//						
-//						if(docSimMatrix[row][col]!=docSimMatrix[col][row]){
-//							System.out.println("not same="+row+","+col);
-//						}
-//						
-//						sparsifyDistMatrix[row][col] = (1-docSimMatrix[row][col])*SparsificationConstant.SimMultipleConstant;
-//						sparsifyDistMatrix[col][row] = (1-docSimMatrix[col][row])*SparsificationConstant.SimMultipleConstant;
-//					}
-//					
-//					System.out.println("end populate dist matrix");
-//					
-//					double sumAvgCount = 0;
-//					double arrAvgCount [] = new double [sparsifyDistMatrix.length];
-//					for(int i=0;i<sparsifyDistMatrix.length;i++){
-//						int count =0;
-//						for(int j=0;j<sparsifyDistMatrix.length;j++){
-//							if(sparsifyDistMatrix[i][j]!=SparsificationConstant.LargeDistValue){
-//								count++;
-//							}
-//						}
-//						arrAvgCount[i]= count;
-//						sumAvgCount=sumAvgCount+count;
-//						//System.out.println("sparsified count="+count);
-//					}
-//					
-//					double avgAvgCount = sumAvgCount/sparsifyDistMatrix.length;
-//					
-//					double sumVar = 0;
-//					for(double val: arrAvgCount){
-//						sumVar = sumVar + (val-avgAvgCount)*(val-avgAvgCount);
-//					}
-//					
-//					double sdAvgCount = Math.sqrt(sumVar/arrAvgCount.length);
-//					
-//					System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", sdAvgCount="+sdAvgCount);
-//					
-//					//if(avgAvgCount>(double)itemsPerCluster && avgAvgCount-(double)itemsPerCluster>400){
-//					//if(avgAvgCount>(double)itemsPerCluster && avgAvgCount-(double)itemsPerCluster>400){					
-//					if(avgAvgCount>(double)itemsPerCluster){
-//					//if(avgAvgCount>(double)itemsPerCluster && avgAvgCount-(double)itemsPerCluster>itemsPerCluster ){
-//						alphaFactor=alphaFactor-0.05;
-//						sparsifyDistMatrix = null;
-//					}else{
-//						isGoodAvg = true;
-//					}
-//				}
-//				
-//			}else{
-//				
-//				sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
-//
-//				AlAlphaSublist = alAlpha;
-//				
-//				for(Alpha alObj: AlAlphaSublist){
-//					int row = alObj.getRow();
-//					int col = alObj.getCol();
-//					
-//					if(docSimMatrix[row][col]!=docSimMatrix[col][row]){
-//						System.out.println("not same="+row+","+col);
-//					}
-//					
-//					sparsifyDistMatrix[row][col] = (1-docSimMatrix[row][col])*SparsificationConstant.SimMultipleConstant;
-//					sparsifyDistMatrix[col][row] = (1-docSimMatrix[col][row])*SparsificationConstant.SimMultipleConstant;
-//				}
-//				
-//				double sumAvgCount = 0;
-//				double arrAvgCount [] = new double [sparsifyDistMatrix.length];
-//				for(int i=0;i<sparsifyDistMatrix.length;i++){
-//					int count =0;
-//					for(int j=0;j<sparsifyDistMatrix.length;j++){
-//						if(sparsifyDistMatrix[i][j]!=SparsificationConstant.LargeDistValue){
-//							count++;
-//						}
-//					}
-//					arrAvgCount[i]= count;
-//					sumAvgCount=sumAvgCount+count;
-//					//System.out.println("sparsified count="+count);
-//				}
-//				
-//				double avgAvgCount = sumAvgCount/sparsifyDistMatrix.length;
-//				
-//				System.out.println("sparsified avg count="+avgAvgCount);
-//			}
-//			
-//			//System.out.println("avg spars count="+ sumAvgCount/sparsifyDistMatrix.length);
-//			
-////			double avgAvgCount = sumAvgCount/sparsifyDistMatrix.length;
-////			
-////			double sumVar = 0;
-////			for(double val: arrAvgCount){
-////				sumVar = sumVar + (val-avgAvgCount)*(val-avgAvgCount);
-////			}
-////			
-////			double sdAvgCount = Math.sqrt(sumVar/arrAvgCount.length); 
-////			
-////			for(int i=0;i< arrAvgCount.length;i++){
-////				if(arrAvgCount[i]> avgAvgCount+ sdAvgCount){
-////					System.out.println("arrAvgCount[i]="+arrAvgCount[i]+",i="+i+", mean="+avgAvgCount+", sd="+ sdAvgCount);
-////				}
-////			}
-//			
-//			
-//			
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		
-//		return sparsifyDistMatrix;
-//	}
-	
+			
 	public double[][] SparsifyDocDisSimilarityMatrixAlgorithomic(double[][] docSimMatrix, int numberOfclusters, boolean isSparsify) {
 		double[][] sparsifyDistMatrix = null;
 		double[][] lastSparsifyDistMatrix = null;
@@ -385,23 +196,6 @@ public class SparsificationUtil {
 				lastSparsifyDistMatrix = sparsifyDistMatrix;
 			}
 			
-			//System.out.println("avg spars count="+ sumAvgCount/sparsifyDistMatrix.length);
-			
-//			double avgAvgCount = sumAvgCount/sparsifyDistMatrix.length;
-//			
-//			double sumVar = 0;
-//			for(double val: arrAvgCount){
-//				sumVar = sumVar + (val-avgAvgCount)*(val-avgAvgCount);
-//			}
-//			
-//			double sdAvgCount = Math.sqrt(sumVar/arrAvgCount.length); 
-//			
-//			for(int i=0;i< arrAvgCount.length;i++){
-//				if(arrAvgCount[i]> avgAvgCount+ sdAvgCount){
-//					System.out.println("arrAvgCount[i]="+arrAvgCount[i]+",i="+i+", mean="+avgAvgCount+", sd="+ sdAvgCount);
-//				}
-//			}
-			
 			for(int i=0;i<sparsifyDistMatrix.length;i++){
 				sparsifyDistMatrix[i][i] = 0;
 			}
@@ -420,6 +214,54 @@ public class SparsificationUtil {
 		return lastSparsifyDistMatrix;
 	}
 	
+	public double[][] SparsifyDocDisSimilarityMatrixAlgorithomicExact(double[][] docSimMatrix, int numberOfclusters){
+		double [][] sparsifyDistMatrix = null;
+		
+		try{
+			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicExact");
+			
+			int itemsPerCluster = docSimMatrix.length/numberOfclusters;
+			int itemsToKeep = (itemsPerCluster*docSimMatrix.length-docSimMatrix.length)/1;
+			
+			List<Alpha> alAlpha = SparsificationUtilHelper.PrepareAlphaValuesDiagonal(docSimMatrix, false);
+			
+			List<Alpha> selectedAlpha = alAlpha.subList(0, itemsToKeep);
+			
+			System.out.println("alAlpha="+alAlpha.size()+", selectedAlpha="+selectedAlpha.size());
+			
+			sparsifyDistMatrix = SparsificationUtilHelper.PrepareSparsifiedMatrix(docSimMatrix, selectedAlpha);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sparsifyDistMatrix;
+	}
+	
+	public double[][] SparsifyDocDisSimilarityMatrixAlgorithomicAllUpperTriangleAlpha(double[][] docSimMatrix, int numberOfclusters){
+		double [][] sparsifyDistMatrix = null;
+		
+		try{
+			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicAllUpperTriangleAlpha");
+			
+			int itemsPerCluster = docSimMatrix.length/numberOfclusters;
+			int itemsToKeep = (itemsPerCluster*docSimMatrix.length-docSimMatrix.length)/1;
+			
+			List<Alpha> alAlpha = SparsificationUtilHelper.PrepareAlphaValuesAllUpperTriangle(docSimMatrix, false);
+			
+			List<Alpha> selectedAlpha = alAlpha.subList(0, itemsToKeep);
+			
+			System.out.println("alAlpha="+alAlpha.size()+", selectedAlpha="+selectedAlpha.size());
+			
+			sparsifyDistMatrix = SparsificationUtilHelper.PrepareSparsifiedMatrix(docSimMatrix, selectedAlpha);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sparsifyDistMatrix;
+	}
+	
 	public double [][] SparsifyDocDisSimilarityMatrixAlgorithomicClever(double[][] docSimMatrix, int numberOfclusters){
 
 		double [][] sparsifyDistMatrix = null;
@@ -431,7 +273,7 @@ public class SparsificationUtil {
 			int itemsPerCluster = docSimMatrix.length/numberOfclusters;
 			int itemsToKeep = itemsPerCluster*docSimMatrix.length-docSimMatrix.length;
 			
-			List<Alpha> alAlpha = PrepareAlphaValues(docSimMatrix, false);
+			List<Alpha> alAlpha = SparsificationUtilHelper.PrepareAlphaValues(docSimMatrix, false);
 		
 			boolean isGoodAvg = false;
 			double alphaFactor = 1.0;
@@ -448,7 +290,7 @@ public class SparsificationUtil {
 				
 				List<Alpha> alAlphaSelected = SelectAlphaValues(alAlpha, itemsToKeep);
 				
-				sparsifyDistMatrix = PrepareSparsifiedMatrix(docSimMatrix, alAlphaSelected);
+				sparsifyDistMatrix = SparsificationUtilHelper.PrepareSparsifiedMatrix(docSimMatrix, alAlphaSelected);
 				
 				lastSparsifyDistMatrix = sparsifyDistMatrix;
 				
@@ -502,29 +344,6 @@ public class SparsificationUtil {
 		return lastSparsifyDistMatrix;
 	}
 	
-	private double[][] PrepareSparsifiedMatrix(double[][] docSimMatrix,
-			List<Alpha> alAlphaSelected) {
-		double [][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
-		
-		try{
-			for(Alpha ap: alAlphaSelected){
-				int row = ap.getRow();
-				int col = ap.getCol();
-				
-				sparsifyDistMatrix[row][col] = 1-docSimMatrix[row][col];
-				sparsifyDistMatrix[col][row] = 1-docSimMatrix[row][col];
-			}
-			
-			for(int i=0;i<sparsifyDistMatrix.length;i++){
-				sparsifyDistMatrix[i][i]=0;
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return sparsifyDistMatrix;
-	}
-
 	private List<Alpha> SelectAlphaValues(List<Alpha> alAlpha, int itemsToKeep) {
 		List<Alpha> alAlphaSelected = new ArrayList<Alpha>();
 		
@@ -574,68 +393,6 @@ public class SparsificationUtil {
 		}
 		
 		return alAlphaSelected;
-	}
-
-	private List<Alpha> PrepareAlphaValues(double[][] docSimMatrix, boolean sortOrderAsc) {
-		
-		List<Alpha> sortedAlphaValues = new ArrayList<Alpha>();
-		
-		try{
-			int mulConst = 1;
-			
-			for(int i=0;i<docSimMatrix.length;i++){
-				double simArr [] = docSimMatrix[i];
-				
-				double simSim = 0.0;
-				for(int j=0;j<simArr.length;j++){
-					if(j==i) continue;
-					simSim= simSim + simArr[j]*mulConst;
-				}
-				
-				double avgSimSum = simSim/ simArr.length;
-				
-				double varianceSum = 0;
-				
-				for(int j=0;j<simArr.length;j++){
-					if(j==i) continue;
-					varianceSum = varianceSum + (simArr[j]*mulConst-avgSimSum)*(simArr[j]*mulConst-avgSimSum);
-				}
-				
-				double sd = Math.sqrt(varianceSum/simArr.length);
-				
-				for(int j=0;j<simArr.length;j++){
-					if(j==i) continue;
-					double alphaVal = (simArr[j]-avgSimSum)/sd;
-					Alpha objAlpha = new Alpha(alphaVal, i, j);
-					sortedAlphaValues.add(objAlpha);
-				}
-			}
-			
-			System.out.println("Sorting alpha values");
-			
-			if(sortOrderAsc){
-				Collections.sort(sortedAlphaValues, new Comparator<Alpha>() {
-				    @Override
-				    public int compare(Alpha o1, Alpha o2) { 
-				        return o1.getValue().compareTo(o2.getValue());
-				    }
-				});
-			}else{
-				Collections.sort(sortedAlphaValues, new Comparator<Alpha>() {
-				    @Override
-				    public int compare(Alpha o1, Alpha o2) {
-				        return o2.getValue().compareTo(o1.getValue());
-				    }
-				});
-			}
-			
-			System.out.println("end Sorting alpha values");
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return sortedAlphaValues;
 	}
 
 	public double[][] SparsifyDocDisSimilarityMatrix(double[][] docSimMatrix) {
@@ -789,194 +546,6 @@ public class SparsificationUtil {
 		return sparsifyDistMatrix;
 	}
 	
-//	public double[][] SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(
-//			double[][] docSimMatrix, int numberofclusters) {
-//		
-//		double[][] sparsifyDistMatrix = UtilsShared.CopyMatrix(docSimMatrix, true);
-//		int numberOfItemsPerCluster = docSimMatrix.length/numberofclusters-1;
-//		
-//		try{
-//			
-//			HashMap<String, Integer> hmCellCount= new HashMap<String, Integer>();
-//			
-//			for(int i=0;i<docSimMatrix.length;i++){
-//				
-//				List<Alpha> alAlpha = new ArrayList<Alpha>();
-//				
-//				for(int j=0;j<docSimMatrix.length;j++){
-//					if(j==i) continue;
-//					Alpha alpha = new Alpha(docSimMatrix[i][j], i, j);
-//					alAlpha.add(alpha);
-//				}
-//				
-//				Collections.sort(alAlpha, new Comparator<Alpha>() {
-//				    @Override
-//				    public int compare(Alpha o1, Alpha o2) {
-//				        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-//				    	// return lhs.customInt > rhs.customInt ? -1 : (lhs.customInt < rhs.customInt) ? 1 : 0;
-//				        return o2.getValue().compareTo(o1.getValue());
-//				    }
-//				});
-//				
-//				List<Alpha> alAlphaSublist = alAlpha.subList(0, numberOfItemsPerCluster);
-//				
-//				for(Alpha alp: alAlphaSublist){
-//					int minInd = alp.getRow();
-//					int maxInd = alp.getCol();
-//					
-//					if(minInd> maxInd){
-//						int temp = minInd;
-//						minInd = maxInd;
-//						maxInd = temp;
-//					}
-//					
-//					String cellIndex = minInd+","+maxInd;
-//					
-//					if(hmCellCount.containsKey(cellIndex)){
-//						hmCellCount.put(cellIndex, hmCellCount.get(cellIndex)+1);
-//					}else{
-//						hmCellCount.put(cellIndex,1);
-//					}
-//				}
-//				
-//				alAlpha.clear();
-//				alAlpha=null;
-//			}
-//			
-//			for(String cellIndex: hmCellCount.keySet()){
-//				//if(hmCellCount.get(cellIndex)==2)
-//				{
-//					int row = Integer.parseInt(cellIndex.split(",")[0]);
-//					int col = Integer.parseInt(cellIndex.split(",")[1]);
-//					
-//					sparsifyDistMatrix[row][col] = 0;
-//					//sparsifyDistMatrix[col][row] = 0;
-//				}
-//			}
-//			
-//			for(int i=0;i<sparsifyDistMatrix.length;i++){
-//				sparsifyDistMatrix[i][i] = 0;
-//			}
-//			
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		
-//		return sparsifyDistMatrix;
-//	}
-	
-//	public double[][] SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(
-//			double[][] docSimMatrix, int numberofclusters) {
-//		
-//		double[][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
-//		int numberOfItemsPerCluster = docSimMatrix.length/numberofclusters-1;
-//		
-//		try{
-//			
-//			HashMap<String, Integer> hmCellCount= new HashMap<String, Integer>();
-//			
-//			for(int i=0;i<docSimMatrix.length;i++){
-//				
-//				List<Alpha> alAlpha = new ArrayList<Alpha>();
-//				
-//				for(int j=0;j<docSimMatrix.length;j++){
-//					if(j==i) continue;
-//					Alpha alpha = new Alpha(docSimMatrix[i][j], i, j);
-//					alAlpha.add(alpha);
-//				}
-//				
-//				Collections.sort(alAlpha, new Comparator<Alpha>() {
-//				    @Override
-//				    public int compare(Alpha o1, Alpha o2) {
-//				        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-//				    	// return lhs.customInt > rhs.customInt ? -1 : (lhs.customInt < rhs.customInt) ? 1 : 0;
-//				        return o2.getValue().compareTo(o1.getValue());
-//				    }
-//				});
-//				
-//				List<Alpha> alAlphaSublist = alAlpha.subList(0, numberOfItemsPerCluster);
-//				
-//				for(Alpha alp: alAlphaSublist){
-//					int minInd = alp.getRow();
-//					int maxInd = alp.getCol();
-//					
-//					if(minInd> maxInd){
-//						int temp = minInd;
-//						minInd = maxInd;
-//						maxInd = temp;
-//					}
-//					
-//					String cellIndex = minInd+","+maxInd;
-//					
-//					if(hmCellCount.containsKey(cellIndex)){
-//						hmCellCount.put(cellIndex, hmCellCount.get(cellIndex)+1);
-//					}else{
-//						hmCellCount.put(cellIndex,1);
-//					}
-//				}
-//				
-//				alAlpha.clear();
-//				alAlpha=null;
-//			}
-//			
-//			for(String cellIndex: hmCellCount.keySet()){
-//				//if(hmCellCount.get(cellIndex)==2)
-//				{
-//					int row = Integer.parseInt(cellIndex.split(",")[0]);
-//					int col = Integer.parseInt(cellIndex.split(",")[1]);
-//					
-//					sparsifyDistMatrix[row][col] = 0;
-//					sparsifyDistMatrix[col][row] = 0;
-//				}
-//			}
-//			
-//			for(int i=0;i<sparsifyDistMatrix.length;i++){
-//				sparsifyDistMatrix[i][i] = 0;
-//			}
-//			
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		
-//		return sparsifyDistMatrix;
-//	}
-	
-
-//	public double[][] SparsifyDocDisSimilarityMatrixStandardDevNbyKSimilarities(
-//			double[][] docSimMatrix, int numberofclusters) {
-//	
-//		double[][] sparsifyDistMatrix = null;
-//		double[][] lastsparsifyDistMatrix = null;
-//		int numberOfItemsPerCluster = docSimMatrix.length/numberofclusters-1;
-//		int constNumberOfItemsPerCluster =numberOfItemsPerCluster; 
-//		int totalItemsToBeSparsified = numberOfItemsPerCluster*docSimMatrix.length;
-//	
-//		try{
-//			
-//			boolean isGoodTotalSparsified = false;
-//			double alphaFactor = 0.5;
-//			
-//			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
-//			
-//			while(!isGoodTotalSparsified){
-//				
-//				//sparsifyDistMatrix = UtilsShared.CopyMatrix(docSimMatrix, true);
-//				sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
-//				
-//				HashMap<String, Integer> hmCellCount= new HashMap<String, Integer>();
-//				
-//				
-//				isGoodTotalSparsified = true;
-//			}
-//			
-//			
-//		}catch(Exception e){
-//			
-//		}
-//		
-//		return lastsparsifyDistMatrix;
-//	}
-//	
 	public double[][] SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(
 			double[][] docSimMatrix, int numberofclusters) {
 		

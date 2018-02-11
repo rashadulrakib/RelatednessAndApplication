@@ -325,4 +325,20 @@ public class ClusterUnSupervisedAgNews {
 			e.printStackTrace();
 		}
 	}
+	
+	public void GenerateDocSimMatrixW2Vce() {
+		try{
+			ArrayList<String []> alDocLabelFlat =agNewsUtil.getAgNewsFlat();
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2VecGoogle(agNewsUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-w2vec-sim-google-8000", docSimMatrix, " ");
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

@@ -16,6 +16,7 @@ import dal.clustering.document.dataset.agnews.AgNewsExternalEvaluation;
 import dal.clustering.document.dataset.agnews.ClusterSemiSupervisedAgNews;
 import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNews;
 import dal.clustering.document.dataset.agnews.ProcessAgNewsDocument;
+import dal.clustering.document.dataset.all.process.w2vec.W2VecAggregator;
 import dal.clustering.document.dataset.biomedical.BioMedicalExternalEvaluation;
 import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedical;
 import dal.clustering.document.dataset.biomedical.ProcessBiomedicalData;
@@ -214,6 +215,7 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixCosineTfIdf();
     	//new ClusterUnSupervisedAgNews().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new ClusterUnSupervisedAgNews().GenerateDocSimMatrixW2Vce();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessGoogleWebSnippet().Process();
@@ -238,7 +240,8 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineTfIdf();
-    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocSimMatrixW2Vce();
     	//new WebSnippetExternalEvaluation().ExternalEvaluate();
     	//new WebSnippetInternalEvaluation().InternalEvaluateAndSelectModel();
     	
@@ -260,6 +263,7 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsification();
 	    //new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineTfIdf();
+    	//new ClusterUnSupervisedStackOverflow().GenerateDocSimMatrixW2Vce();
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
     	//new ProcessBiomedicalData().Process();
@@ -275,6 +279,9 @@ public class App
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();
     	//new Cicling2002ExternalEvaluation().ExternalEvaluate();
+    	
+    	
+    	//new W2VecAggregator().AggregateW2VecsForDatasets();
     	
     	//end doc clustering
     	
