@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import dal.clustering.document.shared.DocClusterUtil;
 
@@ -13,14 +14,26 @@ public class BioMedicalUtil {
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
+	ArrayList<String> alBodies;
+	List<List<String>> documents;
 	
 	public BioMedicalUtil(){
 		docClusterUtil = new DocClusterUtil();
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
+		alBodies = new ArrayList<String>();
+		documents = new ArrayList<List<String>>();
 		
 		loadAllDocsBiomedical();
+	}
+	
+	public List<List<String>> GetStackOverflowDocuments() {
+		return documents;
+	}
+	
+	public ArrayList<String> GetBodies(){
+		return alBodies;
 	}
 	
 	public HashSet<String> getUniqueWords(){
@@ -60,7 +73,11 @@ public class BioMedicalUtil {
 		        
 		        if(body.isEmpty()) continue;
 		        
+		        alBodies.add(body);
+		        
 		        uniqueWords.addAll(processed);
+		        
+		        documents.add(processed);
 		        
 		        String arr[] = new String[2];
 		        arr[0]= body;

@@ -16,7 +16,7 @@ public class DocClusterUtilTrWP {
 	public DocClusterUtilTrWP(DocClusterUtilGTM docClusterUtilGTM, TextUtilShared textUtilShared,
 			TextRelatednessGoogleNgUtil textRelatednessGoogleNgUtil){
 		this.docClusterUtilGTM = docClusterUtilGTM;
-		textRelatednessTrwp = new TextRelatednessTrwp(docClusterUtilGTM.textRelatednessGtm, textUtilShared, textRelatednessGoogleNgUtil);
+		//textRelatednessTrwp = new TextRelatednessTrwp(docClusterUtilGTM.textRelatednessGtm, textUtilShared, textRelatednessGoogleNgUtil);
 	}
 	
 	public double ComputeTextSimTrWp(String text1, String text2){ 

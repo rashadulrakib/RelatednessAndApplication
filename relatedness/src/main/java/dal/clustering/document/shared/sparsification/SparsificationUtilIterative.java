@@ -159,8 +159,10 @@ public class SparsificationUtilIterative {
 			List<Alpha> AlAlphaSublist = null;
 			
 			boolean isGoodAvg = false;
-			double alphaFactor = 1.0;
+			double alphaFactor = 1;
 			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
+			
+			int whileCount = 0;
 
 			while(!isGoodAvg){
 				
@@ -182,6 +184,8 @@ public class SparsificationUtilIterative {
 				
 				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff);
 
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-sparse-gtm-alpha-20000-"+whileCount, sparsifyDistMatrix, " ");
+				
 				if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs, alphaFactor)){
 					isGoodAvg = true;
 				}else{
@@ -191,9 +195,10 @@ public class SparsificationUtilIterative {
 					}else if(avgAvgCount<(double)itemsPerCluster){
 							alphaFactor=alphaFactor+0.01;
 					}
-				
-					alSparseDists.add(sparsifyDistMatrix);
+					//alSparseDists.add(sparsifyDistMatrix);
 				}
+
+				whileCount++;				
 				uniqueDiffs.add( Math.ceil(diff));
 			}
 			

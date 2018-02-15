@@ -269,4 +269,34 @@ public class UtilsShared {
 		return matrix;
 	}
 	
+	public static ArrayList<double[]> LoadVectorFromFile(String file){
+		ArrayList<double[]> vecs = new ArrayList<double[]>(); 
+		
+		try{
+			
+			System.out.println("Start LoadVectorFromFile");
+			
+			String line;
+			
+			BufferedReader br = new BufferedReader(new FileReader(file));
+	        int i=0;
+	        while ((line = br.readLine()) != null) {
+	           line = line.trim();
+	           if(line.isEmpty()) continue;
+	           
+	           double row [] = ConvertStringArrayToDoubleArray(line.split("\\s+"));
+	           vecs.add(row);
+	           
+	           System.out.println("Start LoadVectorFromFile="+i++);
+	        }
+	        br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		System.out.println("End LoadVectorFromFile");
+		
+		return vecs;
+	}
+	
 }

@@ -11,5 +11,7 @@ public class BioMedicalConstant {
 	public static final String BioMedicalSTC2RawOut="D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\STC2\\Biomedical.txt";
 	public static final String BioMedicalSTC2GndOut="D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\STC2\\Biomedical_gnd.txt";
 	
+	public static final String BioMedicalBodies = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\BTM\\BiomedicalBodies.txt";
+	
 	public static final int NumberOfClusters = 20;
 }

@@ -214,7 +214,7 @@ public class ClusterUnSupervisedAgNews {
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
 					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-CenterBased", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-google-CenterBased-8000", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -236,7 +236,7 @@ public class ClusterUnSupervisedAgNews {
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
 					.SparsifyDocDisSimilarityMatrixByCenterVector(weightCenterVec, testW2Vecs);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-wightCenterBased", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-google-wightCenterBased-8000", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -263,14 +263,14 @@ public class ClusterUnSupervisedAgNews {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-tfidf-sim-8000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-w2vec-sim-google-8000";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, AgNewsConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-sd-Alpha-8000-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-google-Alpha-8000-NbyK", saprsifyMatrix, " ");
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-NbyK", saprsifyMatrix, " "); 
 			
 		}catch(Exception e){
@@ -292,7 +292,7 @@ public class ClusterUnSupervisedAgNews {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsification() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-gtm-sim-8000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-w2vec-sim-google-8000";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-2280";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
@@ -301,7 +301,7 @@ public class ClusterUnSupervisedAgNews {
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, AgNewsConstant.NumberOfClusters, false);
 			
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-sd-Alpha-2280-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-gtm-sd-nonAlpha-8000-Fixed", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-google-nonAlpha-8000", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -314,12 +314,13 @@ public class ClusterUnSupervisedAgNews {
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
-			List<double[][]> alSparseDists = agNewsUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, AgNewsConstant.NumberOfClusters);
+			//List<double[][]> alSparseDists = agNewsUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, AgNewsConstant.NumberOfClusters);
+			List<double[][]> alSparseDists = agNewsUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(docSimMatrix, AgNewsConstant.NumberOfClusters);
 
-			for(int i=0;i< alSparseDists.size();i++){
-				double[][] sparseDistMatrix = alSparseDists.get(i);
-				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-sparse-w2vec-alpha-8000-"+i, sparseDistMatrix, " ");
-			}
+//			for(int i=0;i< alSparseDists.size();i++){
+//				double[][] sparseDistMatrix = alSparseDists.get(i);
+//				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-sparse-w2vec-alpha-8000-"+i, sparseDistMatrix, " ");
+//			}
 			
 		}catch(Exception e){
 			e.printStackTrace();

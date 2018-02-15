@@ -247,7 +247,7 @@ public class DocClusterUtil {
 		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
-	           
+			   
 			String text="";
 			
             while ((text = br.readLine()) != null) {
@@ -380,6 +380,24 @@ public class DocClusterUtil {
 			}
 		}
 		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return testW2Vecs;
+	}
+	
+	public ArrayList<InstanceW2Vec> CreateW2VecForTestData(ArrayList<double[]> vecs) {
+		ArrayList<InstanceW2Vec> testW2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+		
+			for(double [] vec: vecs){
+				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
+				instanceW2Vec.Features = vec;
+				testW2Vecs.add(instanceW2Vec);
+			}
+			
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 		

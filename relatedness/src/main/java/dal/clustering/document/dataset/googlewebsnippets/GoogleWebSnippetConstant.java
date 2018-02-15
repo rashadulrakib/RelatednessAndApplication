@@ -17,6 +17,10 @@ public class GoogleWebSnippetConstant {
 	public static final String WebSnippetSTC2TextIndexOut = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\STC2\\SearchSnippets_index.txt";
 	public static final String WebSnippetSTC2VocabIndexIn = "D:\\PhD\\dr.norbert\\method\\STC2-master\\STC2-master\\dataset\\SearchSnippets_vocab2idx.dic";
 	
+	public static final String WebSnippetBodies = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\BTM\\WebBodies.txt";
+	
+	public static final String WebSnippet2280VectorFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\btm-vec-glove-2280";
+	
 //	public static final String WebSnippetSTC2RawOut = "/users/grad/rakib/dr.norbert/shorttext/data-web-snippets/STC2/SearchSnippets.txt";
 //	public static final String WebSnippetSTC2GndOut = "/users/grad/rakib/dr.norbert/shorttext/data-web-snippets/STC2/SearchSnippets_gnd.txt";
 //	public static final String WebSnippetSTC2TextIndexOut = "/users/grad/rakib/dr.norbert/shorttext/data-web-snippets/STC2/SearchSnippets_index.txt";

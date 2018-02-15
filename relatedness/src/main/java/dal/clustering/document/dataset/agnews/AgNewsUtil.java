@@ -16,6 +16,7 @@ public class AgNewsUtil {
 	List<List<String>> documents;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	public DocClusterUtil docClusterUtil;
+	ArrayList<String> alBodies;
 	
 	public AgNewsUtil(){
 		
@@ -24,8 +25,13 @@ public class AgNewsUtil {
 		uniqueWords = new HashSet<String>();
 		documents = new ArrayList<List<String>>();
 		docClusterUtil = new DocClusterUtil();
+		alBodies = new ArrayList<String>();
 		
 		loadAllAgNews();
+	}
+	
+	public ArrayList<String> GetBodies(){
+		return alBodies;
 	}
 	
 	public HashSet<String> getUniqueWords(){
@@ -75,6 +81,8 @@ public class AgNewsUtil {
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
 		        if(body.isEmpty()) continue;
+		        
+		        alBodies.add(body);
 		        
 		        uniqueWords.addAll(processed);
 		        

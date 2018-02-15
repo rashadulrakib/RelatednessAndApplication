@@ -16,6 +16,7 @@ public class StackOverflowUtil {
 	ArrayList<String[]> aldocsBodeyLabelFlat;
 	List<List<String>> documents;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
+	ArrayList<String> alBodies;
 	
 	public StackOverflowUtil(){
 		docClusterUtil = new DocClusterUtil();
@@ -23,8 +24,13 @@ public class StackOverflowUtil {
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
 		documents = new ArrayList<List<String>>();
+		alBodies = new ArrayList<String>();
 		
 		loadAllDocsStackOverflow();
+	}
+	
+	public ArrayList<String> GetBodies(){
+		return alBodies;
 	}
 	
 	public HashSet<String> getUniqueWords(){
@@ -70,6 +76,8 @@ public class StackOverflowUtil {
 		        uniqueWords.addAll(processed);
 		        
 		        documents.add(processed);
+		        
+		        alBodies.add(body);
 		        
 		        String arr[] = new String[2];
 		        arr[0]= body;

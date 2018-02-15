@@ -8,5 +8,7 @@ public class AgNewsConstant {
 	public static final String wordPhPairssimAgNewsFile = "/users/grad/rakib/dr.norbert/docclustering/agnews/agnewsGTMwordPhraseSimScores";
 	public static final String AgNewsDocSimFile = "/users/grad/rakib/dr.norbert/docclustering/agnews/agNewsdocSim";
 	
+	public static final String AgNewsBodies = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\BTM\\AgnewsBodies.txt";
+	
 	public static final int NumberOfClusters = 4;
 }

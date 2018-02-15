@@ -14,5 +14,7 @@ public class StackOverflowConstant {
 	public static final String StackOverflowSTC2TextIndexOut = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\STC2\\StackOverflow_index.txt";
 	public static final String StackOverflowSTC2VocabIndexIn="D:\\PhD\\dr.norbert\\method\\STC2-master\\STC2-master\\dataset\\StackOverflow_vocab2idx.dic";
 	
+	public static final String StackOverflowBodies = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\BTM\\StackOverflowBodies.txt";
+	
 	public static final int NumberOfClusters = 20;
 }
