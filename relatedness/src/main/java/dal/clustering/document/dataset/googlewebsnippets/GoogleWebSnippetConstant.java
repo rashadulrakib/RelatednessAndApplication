@@ -19,7 +19,8 @@ public class GoogleWebSnippetConstant {
 	
 	public static final String WebSnippetBodies = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\BTM\\WebBodies.txt";
 	
-	public static final String WebSnippet2280VectorFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\btm-vec-glove-2280";
+	//public static final String WebSnippet2280VectorFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\btm-vec-2280";
+	public static final String WebSnippet2280VectorFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/btm-vec-2280";
 	
 //	public static final String WebSnippetSTC2RawOut = "/users/grad/rakib/dr.norbert/shorttext/data-web-snippets/STC2/SearchSnippets.txt";
 //	public static final String WebSnippetSTC2GndOut = "/users/grad/rakib/dr.norbert/shorttext/data-web-snippets/STC2/SearchSnippets_gnd.txt";

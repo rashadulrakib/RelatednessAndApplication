@@ -280,9 +280,11 @@ public class App
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineTfIdf();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vce();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixGtm();
-    	new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
 	    //new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
-    	//new BioMedicalExternalEvaluation().ExternalEvaluate();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	new BioMedicalExternalEvaluation().ExternalEvaluate();
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();
