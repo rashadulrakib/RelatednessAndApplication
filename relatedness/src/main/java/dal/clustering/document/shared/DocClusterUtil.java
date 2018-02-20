@@ -30,6 +30,7 @@ public class DocClusterUtil {
 	public DocClusterUtilTrWpByGtmParallel docClusterUtilTrWpByGtmParallel;
 	public DocClusterUtilTfIdfParallel docClusterUtilTfIdfParallel;
 	public DocClusterUtilW2VecParallel docClusterUtilParallelW2vec;
+	public DocClusterUtilParallelBtmKlVec docClusterUtilParallelBtmKlVec;
 	public SparsificationUtil sparsificationUtil;
 	public SparsificationUtilIterative sparsificationUtilIterative;
 	
@@ -39,6 +40,7 @@ public class DocClusterUtil {
 		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
 		docClusterUtilParallelTrwp = new DocClusterUtilTrWpParallel();
 		docClusterUtilParallelW2vec = new DocClusterUtilW2VecParallel();
+		docClusterUtilParallelBtmKlVec = new DocClusterUtilParallelBtmKlVec();
 		docClusterUtilTrWpByGtmParallel = new DocClusterUtilTrWpByGtmParallel();
 		docClusterUtilTfIdfParallel = new DocClusterUtilTfIdfParallel();
 		sparsificationUtil = new SparsificationUtil(); 
@@ -306,6 +308,39 @@ public class DocClusterUtil {
 		
 		return w2vec;
 	}
+	
+	
+	public HashMap<String, double[]> PopulateW2VecBioMedical(HashSet<String> uniqueWords) {
+		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
+	           
+			String text="";
+			
+            while ((text = br.readLine()) != null) {
+            	text = text.trim().toLowerCase();
+            	
+            	String [] arr = text.split("\\s+");
+            	String EmbeddingWord = arr[0];
+            	
+            	if(uniqueWords.contains(EmbeddingWord)){
+            		String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
+            		double [] vecDoubles = new double[vecs.length];
+            		for(int i=0; i< vecs.length;i++){
+            			vecDoubles[i] = Double.parseDouble(vecs[i]);
+            		}
+            		w2vec.put(EmbeddingWord, vecDoubles);
+            	}
+            }
+           
+            br.close();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return w2vec;
+	}
 
 	public LinkedHashMap<String, ArrayList<double[]>> CreateW2VecForTrainData(LinkedHashMap<String, ArrayList<String>> hmTrainPerLabelBodyPreprocesed,
 			HashMap<String, double[]> hmW2Vec) {
@@ -332,23 +367,31 @@ public class DocClusterUtil {
 		return trainW2Vecs;
 	}
 
-	private double[] PopulateW2VecForSingleDoc(String doc, HashMap<String, double[]> hmW2Vec) {
+	public double[] PopulateW2VecForSingleDoc(String doc, HashMap<String, double[]> hmW2Vec) {
 		
-		double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
+		double [] tempVec = hmW2Vec.values().iterator().next();
+		double [] avgVec = new double[tempVec.length];
+		
 		String arr[] = doc.split("\\s+");
 		
 		try{
 		
+			
+			
 			for(String word: arr){
         		if(hmW2Vec.containsKey(word)){
         			double[] wordVec = hmW2Vec.get(word); 
         			for(int i=0;i<avgVec.length;i++){
         				avgVec[i]=avgVec[i]+ wordVec[i];
         			}
+        			
+        			sumFound++;
         		}
         	}
-        	
-        	//averaging avgvec
+			
+			textLengtSum = textLengtSum+arr.length;
+			
+			//averaging avgvec
         	for(int i=0;i<avgVec.length;i++){
         		avgVec[i]=avgVec[i]/(double)arr.length;
         	}
@@ -361,6 +404,9 @@ public class DocClusterUtil {
 		return avgVec;
 	}
 
+	double sumFound = 0;
+	int textLengtSum =0;
+	
 	public ArrayList<InstanceW2Vec> CreateW2VecForTestData(ArrayList<String[]> alTestDocsBodyLabelPreprocesed, HashMap<String, double[]> hmW2Vec) {
 		
 		ArrayList<InstanceW2Vec> testW2Vecs = new ArrayList<InstanceW2Vec>();
@@ -378,6 +424,8 @@ public class DocClusterUtil {
 				
 				testW2Vecs.add(instanceW2Vec);
 			}
+			
+			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -751,6 +799,18 @@ public class DocClusterUtil {
 		double[][] docSimMatrix = null;
 		try{
 			docSimMatrix = docClusterUtilTfIdfParallel.ComputeDocumentSimMatrixTfIdfParallel(docsTfIdfs, threads);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docSimMatrix;
+	}
+	
+	public double[][] ComputeBTMKLVecParallel(ArrayList<InstanceW2Vec> testW2Vecs, int threads){
+		
+		double[][] docSimMatrix = null;
+		try{
+			docSimMatrix = docClusterUtilParallelBtmKlVec.ComputeDocumentSimMatrixBtmKLVecParallel(testW2Vecs, threads);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

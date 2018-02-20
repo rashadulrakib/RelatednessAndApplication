@@ -244,6 +244,7 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocSimMatrixW2Vce();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocSimMatrixVector();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocSimMatrixBTMKL();
     	//new WebSnippetExternalEvaluation().ExternalEvaluate();
     	//new WebSnippetInternalEvaluation().InternalEvaluateAndSelectModel();
     	
@@ -278,13 +279,13 @@ public class App
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineTfIdf();
-    	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vce();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixGtm();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
 	    //new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
-    	new BioMedicalExternalEvaluation().ExternalEvaluate();
+    	//new BioMedicalExternalEvaluation().ExternalEvaluate();
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();
@@ -294,8 +295,8 @@ public class App
     	//new W2VecAggregator().AggregateW2VecsForDatasets();
     	
     	//new BTMProcessor().WriteBodies();
-    	//new BTMProcessor().LabelInstancesByProbabilityOfTopicGivenDocument();
-    	
+    	new BTMProcessor().LabelInstancesByProbabilityOfTopicGivenDocument();
+    	new WebSnippetExternalEvaluation().ExternalEvaluateLoop();
     	
     	//end doc clustering
     	

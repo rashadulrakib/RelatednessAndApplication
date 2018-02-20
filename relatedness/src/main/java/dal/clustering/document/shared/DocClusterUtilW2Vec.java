@@ -17,11 +17,11 @@ public class DocClusterUtilW2Vec {
 	HashSet<String> uniqueWords;
 	DocClusterUtil docClusterUtil;
 	
-	HashMap<String, double[]> w2vec;
+	HashMap<String, double[]> hmW2vec;
 	TextRelatednessW2VecUtil textRelatednessUtilW2Vec;
 	
 	public HashMap<String, double[]> GetW2Vec(){
-		return w2vec;
+		return hmW2vec;
 	}
 	
 	public DocClusterUtilW2Vec(HashSet<String> uniqueWords,	DocClusterUtil docClusterUtil) {
@@ -29,12 +29,12 @@ public class DocClusterUtilW2Vec {
 		this.docClusterUtil = docClusterUtil;
 		
 		PopulateW2Vec();
-		textRelatednessUtilW2Vec = new TextRelatednessW2VecUtil(w2vec);
+		textRelatednessUtilW2Vec = new TextRelatednessW2VecUtil(hmW2vec);
 	}
 
 	private void PopulateW2Vec() {
 		try{
-			w2vec = new HashMap<String, double[]>();
+			hmW2vec = new HashMap<String, double[]>();
 			
 			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
 	           
@@ -52,7 +52,7 @@ public class DocClusterUtilW2Vec {
             		for(int i=0; i< vecs.length;i++){
             			vecDoubles[i] = Double.parseDouble(vecs[i]);
             		}
-            		w2vec.put(EmbeddingWord, vecDoubles);
+            		hmW2vec.put(EmbeddingWord, vecDoubles);
             	}
             }
            
@@ -75,7 +75,7 @@ public class DocClusterUtilW2Vec {
 				ArrayList<double[]> w2vecForDocs = new ArrayList<double[]>();
 				
 				for(String doc: docs){
-					double[] w2vecForDoc = PopulateW2VecForSingleDoc(doc);
+					double[] w2vecForDoc = docClusterUtil.PopulateW2VecForSingleDoc(doc, hmW2vec);
 					w2vecForDocs.add(w2vecForDoc);
 				}
 				docsW2VecList.put(label, w2vecForDocs);
@@ -100,7 +100,7 @@ public class DocClusterUtilW2Vec {
 				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
 				
 				instanceW2Vec.OriginalLabel = label;
-				instanceW2Vec.Features = PopulateW2VecForSingleDoc(body);
+				instanceW2Vec.Features =  docClusterUtil.PopulateW2VecForSingleDoc(body, hmW2vec);
 				instanceW2Vec.Text = body;
 				
 				docsW2VecFlat.add(instanceW2Vec);
@@ -113,34 +113,34 @@ public class DocClusterUtilW2Vec {
 		return docsW2VecFlat;
 	}
 
-	public double[] PopulateW2VecForSingleDoc(String doc) {
-		
-		double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
-		String arr[] = doc.split("\\s+");
-		
-		try{
-		
-			for(String word: arr){
-        		if(w2vec.containsKey(word)){
-        			double[] wordVec = w2vec.get(word); 
-        			for(int i=0;i<avgVec.length;i++){
-        				avgVec[i]=avgVec[i]+ wordVec[i];
-        			}
-        		}
-        	}
-        	
-        	//averaging avgvec
-        	for(int i=0;i<avgVec.length;i++){
-        		avgVec[i]=avgVec[i]/(double)arr.length;
-        	}
-        	//end averaging avgvec
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return avgVec;
-	}
+//	public double[] PopulateW2VecForSingleDoc(String doc) {
+//		
+//		double [] avgVec = new double[TextRelatednessW2VecConstant.W2VecDimension];
+//		String arr[] = doc.split("\\s+");
+//		
+//		try{
+//		
+//			for(String word: arr){
+//        		if(hmW2vec.containsKey(word)){
+//        			double[] wordVec = hmW2vec.get(word); 
+//        			for(int i=0;i<avgVec.length;i++){
+//        				avgVec[i]=avgVec[i]+ wordVec[i];
+//        			}
+//        		}
+//        	}
+//        	
+//        	//averaging avgvec
+//        	for(int i=0;i<avgVec.length;i++){
+//        		avgVec[i]=avgVec[i]/(double)arr.length;
+//        	}
+//        	//end averaging avgvec
+//		}
+//		catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		
+//		return avgVec;
+//	}
 
 	public double ComputeTextSimilarityByW2VecFollowingGtm(String centerText, String body) {
 		double sim =0;

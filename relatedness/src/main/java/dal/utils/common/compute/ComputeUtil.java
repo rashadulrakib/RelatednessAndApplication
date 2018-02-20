@@ -146,9 +146,7 @@ public class ComputeUtil {
 					commonVSq = commonVSq + Math.pow(v1.get(v1Key)-v2.get(v1Key), 2);
 					continue;
 				}
-				
-					v1Sq = v1Sq + v1.get(v1Key)*v1.get(v1Key);
-				
+				v1Sq = v1Sq + v1.get(v1Key)*v1.get(v1Key);
 			}
 			
 			for(String v2Key: v2.keySet()){
@@ -165,5 +163,47 @@ public class ComputeUtil {
 		}
 		
 		return sim;
+	}
+
+	public static double ComputeKLDivergenceSimilarity(double[] ftr1, double[] ftr2) {
+		double sim=0;
+		try{
+			if(ftr1.length!=ftr2.length) return 0;
+			
+			double [] middleVec = new double[ftr1.length]; 
+			for(int i=0;i<ftr1.length;i++){
+				middleVec[i] = (ftr1[i]+ ftr2[i])/2; 
+			}
+			
+			double distKL1 = KLDistance(ftr1, middleVec);
+			double distKL2 = KLDistance(ftr2, middleVec);
+			
+			double dist = (distKL1+distKL2)/2;
+			
+			if(dist>1 || dist<0){
+				System.out.println("dist="+dist);
+				sim = 0;
+				//sim = 1;
+			}else{
+				sim = 1 - dist;
+				//sim = dist;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return sim;
+	}
+
+	private static double KLDistance(double[] ftr, double[] middleVec) {
+		double dist = 0;
+		try{
+			for(int i=0;i<ftr.length;i++){
+				dist = dist + ftr[i]*Math.log(ftr[i]/middleVec[i]);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return dist;
 	}
 }

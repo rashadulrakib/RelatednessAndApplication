@@ -357,7 +357,7 @@ public class ClusterUnSupervisedStackOverflow {
 		}
 	}
 	
-	public void GenerateDocSimMatrixW2Vce() {
+	public void GenerateDocSimMatrixW2Vec() {
 		try{
 			ArrayList<String []> alDocLabelFlat =stackOverflowUtil.getDocsStackOverflowFlat();
 			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);

@@ -314,7 +314,7 @@ public class UnSupervisedClusteringText {
 					
 					InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
 					instanceW2Vec.OriginalLabel = label;
-					instanceW2Vec.Features = docClusterUtilW2Vec.PopulateW2VecForSingleDoc(body);
+					instanceW2Vec.Features = docClusterUtil.PopulateW2VecForSingleDoc(body, docClusterUtilW2Vec.GetW2Vec());
 					instanceW2Vec.Text = body;
 					instanceW2Vec.ClusteredLabel = closestLabel;
 					

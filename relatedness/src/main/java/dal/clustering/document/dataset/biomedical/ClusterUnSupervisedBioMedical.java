@@ -230,16 +230,17 @@ public class ClusterUnSupervisedBioMedical {
 		}
 	}
 	
-	public void GenerateDocSimMatrixW2Vce() {
+	public void GenerateDocSimMatrixW2Vec() {
 		try{
 			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
 			
-			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2Vec(bioMedicalUtil.getUniqueWords());
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 			
 			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
-			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
-
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-sim-20000", docSimMatrix, " ");
+			
+//			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+//
+//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-biomedical-sim-20000", docSimMatrix, " ");
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -248,7 +249,7 @@ public class ClusterUnSupervisedBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-gtm-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-biomedical-sim-20000";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			

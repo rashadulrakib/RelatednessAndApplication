@@ -562,8 +562,8 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-12340";
-			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
+			//String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-12340";
+			String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmklvec-sim-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			//List<double[][]> alSparseDists = googlewebSnippetUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
@@ -580,7 +580,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 		}
 	}
 
-	public void GenerateDocSimMatrixW2Vce() {
+	public void GenerateDocSimMatrixW2Vec() {
 		try{
 			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
@@ -606,6 +606,21 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-btmvec-sim-2280", docSimMatrix, " ");
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmvec-sim-2280", docSimMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void GenerateDocSimMatrixBTMKL() {
+		try{
+			ArrayList<double[]> vecs = UtilsShared.LoadVectorFromFile(GoogleWebSnippetConstant.WebSnippet2280VectorFile);
+			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(vecs); 
+			
+			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeBTMKLVecParallel(testW2Vecs, 1);
+			
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-btmklvec-sim-2280", docSimMatrix, " ");
+			UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmklvec-sim-2280", docSimMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();

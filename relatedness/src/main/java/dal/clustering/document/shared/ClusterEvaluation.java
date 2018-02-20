@@ -63,7 +63,10 @@ public class ClusterEvaluation {
 		}
 	}
 	
-	public void EvalSemiSupervisedByPurityMajorityVotingText(LinkedHashMap<String, ArrayList<InstanceText>> finalCluster) {
+	public double EvalSemiSupervisedByPurityMajorityVotingText(LinkedHashMap<String, ArrayList<InstanceText>> finalCluster) {
+		
+		double purity = 0;
+		
 		try{
 			//int matchInCluster = 0;
 			int totalItems = 0;
@@ -92,18 +95,23 @@ public class ClusterEvaluation {
 			}
 			
 			System.out.println("Semi-supervised purity-majority-text="+ (double)maxGroupSizeSum/totalItems);
+			purity = (double)maxGroupSizeSum/totalItems;
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		return purity;
 	}
 	
-	public void EvalSemiSupervisedByPurityMajorityVotingTextExternal(LinkedHashMap<String, ArrayList<InstanceText>> lastClusters) {
+	public double EvalSemiSupervisedByPurityMajorityVotingTextExternal(LinkedHashMap<String, ArrayList<InstanceText>> lastClusters) {
+		double purity = 0;
 		try{
-			EvalSemiSupervisedByPurityMajorityVotingText(lastClusters);
+			purity = EvalSemiSupervisedByPurityMajorityVotingText(lastClusters);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		return purity;
 	}
 	
 	
