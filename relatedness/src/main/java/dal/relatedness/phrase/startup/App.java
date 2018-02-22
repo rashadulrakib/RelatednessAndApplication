@@ -281,7 +281,7 @@ public class App
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineTfIdf();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixGtm();
-    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
 	    //new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
@@ -295,8 +295,11 @@ public class App
     	//new W2VecAggregator().AggregateW2VecsForDatasets();
     	
     	//new BTMProcessor().WriteBodies();
-    	new BTMProcessor().LabelInstancesByProbabilityOfTopicGivenDocument();
-    	new WebSnippetExternalEvaluation().ExternalEvaluateLoop();
+    	//new BTMProcessor().LabelInstancesByProbabilityOfTopicGivenDocument();
+    	//new WebSnippetExternalEvaluation().ExternalEvaluateLoop();
+    	//new StackOverflowExternalEvaluation().ExternalEvaluateLoop();
+    	//new AgNewsExternalEvaluation().ExternalEvaluateLoop();
+    	//new BioMedicalExternalEvaluation().ExternalEvaluateLoop();
     	
     	//end doc clustering
     	

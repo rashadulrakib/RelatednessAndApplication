@@ -3,6 +3,7 @@ package dal.clustering.document.dataset.biomedical;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,11 +68,13 @@ public class BioMedicalUtil {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 			   
-			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
-		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
-		        
+//			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+//		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+//		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
+		       
 		        if(body.isEmpty()) continue;
+		       
+		        ArrayList<String> processed = new ArrayList<String>(Arrays.asList(body.split("\\s+")));
 		        
 		        alBodies.add(body);
 		        

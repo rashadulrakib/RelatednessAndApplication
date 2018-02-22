@@ -184,8 +184,8 @@ public class SparsificationUtilIterative {
 				
 				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff);
 
-				//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-sparse-w2vec-biomedical-alpha-20000-"+whileCount, sparsifyDistMatrix, " ");
-				UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-sparse-bioASQNoFilter-alpha-20000-"+whileCount, sparsifyDistMatrix, " ");
+				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
 				
 				if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs, alphaFactor)){
 					isGoodAvg = true;

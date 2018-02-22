@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import dal.clustering.document.dataset.biomedical.BioMedicalConstant;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
@@ -313,7 +314,8 @@ public class DocClusterUtil {
 	public HashMap<String, double[]> PopulateW2VecBioMedical(HashSet<String> uniqueWords) {
 		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
+			//BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
+			BufferedReader br = new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQCombined));
 	           
 			String text="";
 			
@@ -321,6 +323,9 @@ public class DocClusterUtil {
             	text = text.trim().toLowerCase();
             	
             	String [] arr = text.split("\\s+");
+            	
+            	if(arr.length<20) continue; 
+            	
             	String EmbeddingWord = arr[0];
             	
             	if(uniqueWords.contains(EmbeddingWord)){
@@ -376,8 +381,6 @@ public class DocClusterUtil {
 		
 		try{
 		
-			
-			
 			for(String word: arr){
         		if(hmW2Vec.containsKey(word)){
         			double[] wordVec = hmW2Vec.get(word); 

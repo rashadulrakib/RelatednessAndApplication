@@ -23,13 +23,50 @@ public class ProcessBiomedicalData {
 	
 	public void Process() {
 		try{
-			loadAllDocsBiomedicalByW2VecListAndWriteToArff();
+			//loadAllDocsBiomedicalByW2VecListAndWriteToArff();
+			CombineBioASQData();
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		
+	}
+
+
+	private void CombineBioASQData() {
+		try{
+			
+			ArrayList<String> words = new ArrayList<String>();
+			
+			BufferedReader br =  new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQWord));
+			String line = "";
+			while((line = br.readLine())!=null){
+			   line = line.trim();
+			   if(line.isEmpty()) continue;
+			   words.add(line);
+			}
+			br.close();
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter(BioMedicalConstant.BioMedicalBioASQCombined));
+			
+			br =  new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQVector));
+			int i=0;
+			while((line = br.readLine())!=null){
+			   line = line.trim();
+			   if(line.isEmpty()) continue;
+			   
+			   String word = words.get(i);
+			   bw.write(word+" "+line+"\n");
+			   
+			   i++;
+			}
+			br.close();
+			bw.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 

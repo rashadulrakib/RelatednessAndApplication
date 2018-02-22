@@ -238,9 +238,9 @@ public class ClusterUnSupervisedBioMedical {
 			
 			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
 			
-//			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
-//
-//			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-biomedical-sim-20000", docSimMatrix, " ");
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQNoFilter-sim-20000", docSimMatrix, " ");
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -249,7 +249,7 @@ public class ClusterUnSupervisedBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-biomedical-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQNoFilter-sim-20000";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
@@ -269,14 +269,15 @@ public class ClusterUnSupervisedBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsification() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-gtm-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bionlpPubMedNoFilter-sim-20000";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomic(docSimMatrix, BioMedicalConstant.NumberOfClusters, false);
+			
 			//double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixAlgorithomicExact(docSimMatrix, StackOverflowConstant.NumberOfClusters);
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-gtm-sd-0-Fixed", saprsifyMatrix, " ");
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-gtm-nonAlpha-20000", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-bionlpPubMedNoFilter-nonAlpha-20000", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -288,13 +289,13 @@ public class ClusterUnSupervisedBioMedical {
 			
 			System.out.println("GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities");
 			
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-tfidf-sim";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-ASQbiomedical-sim-20000";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-tfidf-Alpha-20000-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-ASQbiomedical-Alpha-20000-NbyK", saprsifyMatrix, " ");
 						
 		}catch(Exception e){
 			e.printStackTrace();
@@ -326,7 +327,7 @@ public class ClusterUnSupervisedBioMedical {
 
 			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
 			
-			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecGoogle(bioMedicalUtil.getUniqueWords());
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
 			
 			InstanceW2Vec centerVec = bioMedicalUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
@@ -334,7 +335,7 @@ public class ClusterUnSupervisedBioMedical {
 			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil
 					.SparsifyDocDisSimilarityMatrixByCenterVector(centerVec, testW2Vecs);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-google-CenterBased-20000", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-ASQbiomedical-CenterBased-20000", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -346,7 +347,7 @@ public class ClusterUnSupervisedBioMedical {
 
 			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
 			
-			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecGoogle(bioMedicalUtil.getUniqueWords());
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
 			
 			InstanceW2Vec centerVec = bioMedicalUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
@@ -356,7 +357,7 @@ public class ClusterUnSupervisedBioMedical {
 			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil
 					.SparsifyDocDisSimilarityMatrixByCenterVector(weightCenterVec, testW2Vecs);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-google-wightCenterBased-20000", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-ASQbiomedical-wightCenterBased-20000", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();

@@ -13,5 +13,12 @@ public class BioMedicalConstant {
 	
 	public static final String BioMedicalBodies = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\BTM\\BiomedicalBodies.txt";
 	
+	public static final String BioMedicalBioASQVector = "/users/grad/rakib/w2vecs/biomedical/BioASQ/word2vecTools/vectors.txt";
+	public static final String BioMedicalBioASQWord = "/users/grad/rakib/w2vecs/biomedical/BioASQ/word2vecTools/types.txt";
+	public static final String BioMedicalBioASQCombined = "/users/grad/rakib/w2vecs/biomedical/BioASQ/bioasqvectors.txt";
+	
+	public static final String BioMedicalBioNlpPMC = "/users/grad/rakib/w2vecs/biomedical/BioNlp/PMC-w2v.txt";
+	public static final String BioMedicalBioNlpPubMed = "/users/grad/rakib/w2vecs/biomedical/BioNlp/PubMed-w2v.txt"; 
+	
 	public static final int NumberOfClusters = 20;
 }

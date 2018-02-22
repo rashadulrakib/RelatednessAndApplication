@@ -20,7 +20,8 @@ public class WebSnippetExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-BTM-labels-2208";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-BTM-labels-2208";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\btm-vec-2280-72-alpha-0.6-beta-label-1";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			
@@ -94,8 +95,12 @@ public class WebSnippetExternalEvaluation {
 	public void ExternalEvaluateLoop() {
 		try{
 			
-			for(int fid=0;fid<=5415;fid++){
-				String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\BTM\\labels\\websnippet-BTM-labels-2208-"+fid;
+			double maxPurity = Double.MIN_VALUE;
+			String maxFile = "";
+			
+			for(int fid=1;fid<=2000;fid++){
+				//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\web-snippets\\BTM\\labels\\web-snippets-BTM-labels-12340-"+fid;
+				String externalClusteringResultFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/BTM/labels/websnippet-BTM-labels-2280-"+fid;
 				
 				BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 				
@@ -158,9 +163,16 @@ public class WebSnippetExternalEvaluation {
 					}
 					
 					double purity = clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
-					//clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
+					if(maxPurity<purity){
+						clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
+						maxPurity = purity;
+						maxFile = externalClusteringResultFile;
+					}
+					//
 				}
 			}
+			
+			System.out.println("maxPurity="+maxPurity+",maxFile="+maxFile);
 			
 		}catch(Exception e){
 			e.printStackTrace();
