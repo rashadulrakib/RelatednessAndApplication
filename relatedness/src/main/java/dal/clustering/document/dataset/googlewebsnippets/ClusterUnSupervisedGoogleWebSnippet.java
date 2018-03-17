@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import dal.clustering.document.shared.ClusterEvaluation;
+import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.cluster.SemiSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
@@ -533,14 +534,14 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-google-12340";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-gtm-sim-12340";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-google-Alpha-12340-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-Alpha-12340-NbyK", saprsifyMatrix, " ");
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-NbyK", saprsifyMatrix, " "); 
 			
 		}catch(Exception e){
@@ -562,8 +563,8 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			//String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-12340";
-			String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmklvec-sim-2280";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/websnippet-tfidf-sim-2280";
+			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmklvec-sim-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			//List<double[][]> alSparseDists = googlewebSnippetUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
@@ -579,10 +580,28 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			e.printStackTrace();
 		}
 	}
+	
+	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterativeList(){
+		try{
+			
+			for(int i=0;i< DocClusterConstant.DataFold;i++){
+				String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280-"+i;
+				double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+				
+				googlewebSnippetUtil.docClusterUtil
+						.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterativeList(docSimMatrix, 
+								GoogleWebSnippetConstant.NumberOfClusters, "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/websnippet-w2vec-alpha-2280-"+i);
+				System.out.println("write to /users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/websnippet-w2vec-alpha-2280-"+i);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	public void GenerateDocSimMatrixW2Vec() {
 		try{
-			ArrayList<String []> alDocLabelFlat =googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
 			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2VecGoogle(googlewebSnippetUtil.GetUniqueWords());
@@ -590,6 +609,27 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-google-2280", docSimMatrix, " ");
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void GenerateDocSimMatrixW2VecList() {
+		try{
+			ArrayList<ArrayList<String []>> alDocLabelFlatList = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlatList();
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
+			
+			for(int i=0;i<alDocLabelFlatList.size();i++){
+				ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatList.get(i), hmW2Vec);			
+				System.out.println("testW2Vecs="+testW2Vecs.size());
+				double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280-1_10"+i, docSimMatrix, " ");
+			}
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -644,4 +684,45 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 //		}
 //		
 //	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf() {
+		try{
+			
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(googlewebSnippetUtil.GetWebSnippetNewsDocuments(), googlewebSnippetUtil.GetUniqueWords());
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			
+			double [] centTodocs = googlewebSnippetUtil.docClusterUtil.ComputeSimCenterToDocsTfIdf(docsTfIdfs, hmCenterVecTfIdf);
+			
+			double [][] docSimMatrix = googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixTfIdfParallel(docsTfIdfs, 10);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs, docSimMatrix, centTodocs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-tfidf-web-CenterBased-12340", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf() {
+		try{
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(googlewebSnippetUtil.GetWebSnippetNewsDocuments(), googlewebSnippetUtil.GetUniqueWords());
+			
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			HashMap<String, Double> maxVec = obj.ComputeMaxInstanceTfIdf(docsTfIdfs);
+			HashMap<String, Double> weightCenterVec = obj.ComputeWeightCenterInstanceTfIdf(hmCenterVecTfIdf, maxVec);
+			
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(weightCenterVec, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-tfidf-web-weightCenterBased-12340", saprsifyMatrix, " ");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

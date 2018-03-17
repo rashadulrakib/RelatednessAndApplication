@@ -36,6 +36,29 @@ public class ComputeUtil {
         return score;
 	 }
 	 
+	 public static double ComputeCosineSimilarity(HashMap<String, Double> smallVec,
+				HashMap<String, Double> bigVec, double bigSqrt) {
+		 double sim = 0;
+		 
+		try{
+			double smallSqSum = 0;
+			double v1v2Sum = 0.0;
+			
+			for(String smallKey: smallVec.keySet()){
+				smallSqSum = smallSqSum+ smallVec.get(smallKey)*smallVec.get(smallKey);
+				if(bigVec.containsKey(smallKey)){
+					v1v2Sum = v1v2Sum+ smallVec.get(smallKey)* bigVec.get(smallKey);
+				}
+			}
+			
+			return v1v2Sum/Math.sqrt(smallSqSum)/bigSqrt;
+			
+		}catch (Exception e) {
+            e.printStackTrace();
+        }
+		return sim;
+	 }
+	 
 	public static double ComputeCosineSimilarity(HashMap<String, Double> v1, HashMap<String, Double> v2) {
 		double sim = 0;
 		try{
@@ -112,8 +135,6 @@ public class ComputeUtil {
 		return 0;
 	}
 	
-	
-
 	public static double ComputeEuclidianDistance(double[] center, double[] instanceFtrs) {
 		double dist = 0;
 		try{
@@ -206,4 +227,19 @@ public class ComputeUtil {
 		}
 		return dist;
 	}
+	
+	public static double ComputeVecSqrt(HashMap<String, Double> vec){
+		double sqrt  =1;
+		try{
+			double sum = 0;
+			for(String key: vec.keySet()){
+				sum = sum + vec.get(key)*vec.get(key);
+			}
+			sqrt = Math.sqrt(sum);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return sqrt;
+	}
+	
 }

@@ -123,8 +123,47 @@ public class SparsificationUtilHelper {
 		try{
 			int mulConst = 1;
 			
+			///			
+			double [][] rijMatrix = new double[docSimMatrix.length][];
+			
 			for(int i=0;i<docSimMatrix.length;i++){
 				double simArr [] = docSimMatrix[i];
+				
+				rijMatrix[i] = new double[docSimMatrix.length];
+				
+				double simSim = 0.0;
+				for(int j=0;j<simArr.length;j++){
+					if(j==i) continue;
+					simSim= simSim + simArr[j]*mulConst;
+				}
+				
+				double avgSimSum = simSim / simArr.length;
+				
+				double varianceSum = 0;
+				
+				for(int j=0;j<simArr.length;j++){
+					if(j==i) continue;
+					varianceSum = varianceSum + (simArr[j]*mulConst-avgSimSum)*(simArr[j]*mulConst-avgSimSum);
+				}
+				
+				double sd = Math.sqrt(varianceSum/simArr.length);
+				
+				for(int j=0;j<simArr.length;j++){
+					if(j==i) continue;
+					
+					double alphaVal = (simArr[j]-avgSimSum)/sd;
+					//Alpha objAlpha = new Alpha(alphaVal, i, j);
+					rijMatrix[i][j] = alphaVal;
+				}
+			}
+			
+			///
+			
+			
+			
+			for(int i=0;i<docSimMatrix.length;i++){
+				
+				/*double simArr [] = docSimMatrix[i];
 				
 				double simSim = 0.0;
 				for(int j=0;j<simArr.length;j++){
@@ -143,6 +182,7 @@ public class SparsificationUtilHelper {
 				
 				double sd = Math.sqrt(varianceSum/simArr.length);
 				
+				
 				for(int j=i+1;j<simArr.length;j++)
 				//for(int j=0;j<simArr.length;j++)
 				{
@@ -150,7 +190,17 @@ public class SparsificationUtilHelper {
 					double alphaVal = (simArr[j]-avgSimSum)/sd;
 					Alpha objAlpha = new Alpha(alphaVal, i, j);
 					sortedAlphaValues.add(objAlpha);
-				}
+				}*/
+				
+				for(int j=i+1;j<docSimMatrix.length;j++){
+					if(rijMatrix[i][j]>=rijMatrix[j][i]){
+						Alpha objAlpha = new Alpha(rijMatrix[i][j], i, j);
+						sortedAlphaValues.add(objAlpha);
+					}else{
+						Alpha objAlpha = new Alpha(rijMatrix[j][i], j, i);
+						sortedAlphaValues.add(objAlpha);
+					}
+				}					
 			}
 			
 			System.out.println("Sorting alpha values");

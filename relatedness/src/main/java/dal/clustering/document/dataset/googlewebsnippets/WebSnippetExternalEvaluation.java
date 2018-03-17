@@ -21,7 +21,7 @@ public class WebSnippetExternalEvaluation {
 	public void ExternalEvaluate() {
 		try{
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-BTM-labels-2208";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\btm-vec-2280-72-alpha-0.6-beta-label-1";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-Alpha-2280-NbyK-labels";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			
@@ -85,6 +85,70 @@ public class WebSnippetExternalEvaluation {
 				
 				clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
 				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void ExternalEvaluateList(){
+		try{
+			ArrayList<ArrayList<String[]>> aldocsBodeyLabelFlatList = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlatList();
+			
+			for(int i=5;i<aldocsBodeyLabelFlatList.size();i++){
+				
+				String labelFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-w2vec-alpha-2052-"+i+"-labels";
+				BufferedReader br =  new BufferedReader(new FileReader(labelFile));
+				
+				String line="";
+				ArrayList<String> clusterLables = new ArrayList<String>();
+				
+				while((line=br.readLine()) != null) {
+			        line = line.trim();
+			        if(line.isEmpty()) continue;
+			        
+			        String clusterGroups [] = line.split(",");
+			        
+			        ArrayList<String> labelGr = new ArrayList<String>();
+			        for(String gr: clusterGroups){
+			        	labelGr.add(Integer.toString((int)Double.parseDouble(gr)));
+			        }
+			        
+			        clusterLables.addAll(labelGr);
+				}
+				br.close();
+				
+				LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
+				ArrayList<InstanceText> alInsts = new ArrayList<InstanceText>();
+				ArrayList<String[]> aldocsBodeyLabelFlat = aldocsBodeyLabelFlatList.get(i);
+				
+				if(clusterLables.size()== aldocsBodeyLabelFlat.size()){
+					
+					for(int ii=0;ii<aldocsBodeyLabelFlat.size();ii++ ){
+						InstanceText newInst = new InstanceText();
+						newInst.OriginalLabel = aldocsBodeyLabelFlat.get(ii)[1];
+						newInst.Text = aldocsBodeyLabelFlat.get(ii)[0];
+						newInst.ClusteredLabel = clusterLables.get(ii);
+						alInsts.add(newInst);
+					}
+					
+					for(InstanceText inst: alInsts){
+						if(!lastClusters.containsKey(inst.ClusteredLabel)){
+							ArrayList<InstanceText> al = new ArrayList<InstanceText>();
+							al.add(inst);
+							lastClusters.put(inst.ClusteredLabel, al);
+						}else{
+							ArrayList<InstanceText> al = lastClusters.get(inst.ClusteredLabel);
+							al.add(inst);
+							lastClusters.put(inst.ClusteredLabel, al);
+						}
+					}
+					
+					clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
+					//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+				}
+				
 			}
 			
 		}catch(Exception e){

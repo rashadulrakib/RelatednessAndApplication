@@ -1181,4 +1181,21 @@ public class DocClusterUtil {
 		return insts;
 	}
 
+	public double[] ComputeSimCenterToDocsTfIdf(ArrayList<HashMap<String, Double>> docsTfIdfs, HashMap<String, Double> hmCenterVecTfIdf) {
+		double [] centTodocs = new double [docsTfIdfs.size()];
+		try{
+			
+			double centSqrt = ComputeUtil.ComputeVecSqrt(hmCenterVecTfIdf);
+			int i=0;
+			for(HashMap<String, Double> docTfIdf : docsTfIdfs){
+				double sim = ComputeUtil.ComputeCosineSimilarity(docTfIdf, hmCenterVecTfIdf, centSqrt);
+				centTodocs[i++] = sim;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return centTodocs;
+	}
+
 }

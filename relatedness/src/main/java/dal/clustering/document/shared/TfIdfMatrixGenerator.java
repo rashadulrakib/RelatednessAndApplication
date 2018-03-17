@@ -3,6 +3,7 @@ package dal.clustering.document.shared;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -106,6 +107,78 @@ public class TfIdfMatrixGenerator {
 		}
 		
 		return docFreqs;
+	}
+
+	public HashMap<String, Double> ConstructCenterVecTfIdf(	ArrayList<HashMap<String, Double>> docsTfIdfs) {
+		HashMap<String, Double> hmCenter = new LinkedHashMap<String, Double>();
+		
+		try{
+			for(HashMap<String, Double> docTfIdf: docsTfIdfs){
+				for(String ftr: docTfIdf.keySet()){
+					if(hmCenter.containsKey(ftr)){
+						hmCenter.put(ftr, hmCenter.get(ftr) + docTfIdf.get(ftr));
+					}else{
+						hmCenter.put(ftr, docTfIdf.get(ftr));
+					}
+				}
+			}
+			
+			int totalDoc = docsTfIdfs.size();
+			
+			for(String ftr: hmCenter.keySet()){
+				hmCenter.put(ftr, hmCenter.get(ftr)/totalDoc);
+			}
+			
+		}catch(Exception e){ 
+			e.printStackTrace();
+		}
+		
+		return hmCenter;
+	}
+
+	public HashMap<String, Double> ComputeMaxInstanceTfIdf(ArrayList<HashMap<String, Double>> docsTfIdfs) {
+		HashMap<String, Double> maxVec = new LinkedHashMap<String, Double>();
+		
+		try{
+		
+			for(HashMap<String, Double> docTfIdf: docsTfIdfs){
+				for(String ftr: docTfIdf.keySet()){
+					if(maxVec.containsKey(ftr)){
+						maxVec.put(ftr, Math.max(maxVec.get(ftr), docTfIdf.get(ftr))  );
+					}else{
+						maxVec.put(ftr, docTfIdf.get(ftr));
+					}
+				}
+			}
+			
+		}catch(Exception e){ 
+			e.printStackTrace();
+		}
+		
+		return maxVec;
+	}
+
+	public HashMap<String, Double> ComputeWeightCenterInstanceTfIdf(HashMap<String, Double> hmCenterVecTfIdf,
+			HashMap<String, Double> maxVec) {
+		
+		HashMap<String, Double> weightMaxVec = new LinkedHashMap<String, Double>();
+		
+		try{
+			for(String ftr: hmCenterVecTfIdf.keySet()){
+				if(maxVec.containsKey(ftr)){
+					double weightFtr = 2*maxVec.get(ftr)*hmCenterVecTfIdf.get(ftr)
+							/(maxVec.get(ftr)+hmCenterVecTfIdf.get(ftr));
+					weightMaxVec.put(ftr, weightFtr);
+				}
+				else{
+					weightMaxVec.put(ftr, hmCenterVecTfIdf.get(ftr));
+				}
+			}
+		}catch(Exception e){ 
+			e.printStackTrace();
+		}
+
+		return weightMaxVec;
 	}
 	
 }

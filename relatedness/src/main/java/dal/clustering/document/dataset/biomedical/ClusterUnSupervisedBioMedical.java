@@ -220,7 +220,7 @@ public class ClusterUnSupervisedBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixCosineTfIdf() {
 		try{
-			ArrayList<HashMap<String, Double>> docsTfIdfs = new TfIdfMatrixGenerator().ConstructTfIdfList(bioMedicalUtil.GetStackOverflowDocuments(), bioMedicalUtil.getUniqueWords());
+			ArrayList<HashMap<String, Double>> docsTfIdfs = new TfIdfMatrixGenerator().ConstructTfIdfList(bioMedicalUtil.GetBiomedicalDocuments(), bioMedicalUtil.getUniqueWords());
 			double [][] docSimMatrix = bioMedicalUtil.docClusterUtil.ComputeSimilarityMatrixTfIdfParallel(docsTfIdfs, 10);
 			
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-tfidf-sim", docSimMatrix, " ");
@@ -240,7 +240,26 @@ public class ClusterUnSupervisedBioMedical {
 			
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQNoFilter-sim-20000", docSimMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ-sim-20000", docSimMatrix, " ");
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocSimMatrixW2VecList() {
+		try{
+			ArrayList<ArrayList<String []>> alDocLabelFlatList = bioMedicalUtil.GetDocsBiomedicalFlatList();
+			
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			
+			for(int i=0;i<alDocLabelFlatList.size();i++){
+				ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatList.get(i), hmW2Vec);			
+				System.out.println("testW2Vecs="+testW2Vecs.size());
+				double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-sim-20000-1_10"+i, docSimMatrix, " ");
+			}
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -249,7 +268,7 @@ public class ClusterUnSupervisedBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQNoFilter-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-tfidf-sim";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
@@ -289,13 +308,13 @@ public class ClusterUnSupervisedBioMedical {
 			
 			System.out.println("GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities");
 			
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-ASQbiomedical-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-tfidf-sim";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-w2vec-ASQbiomedical-Alpha-20000-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-tfidf-Alpha-20000-NbyK", saprsifyMatrix, " ");
 						
 		}catch(Exception e){
 			e.printStackTrace();
@@ -341,7 +360,7 @@ public class ClusterUnSupervisedBioMedical {
 			e.printStackTrace();
 		}
 	}
-	
+		
 	public void GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification(){
 		try{
 
@@ -363,4 +382,42 @@ public class ClusterUnSupervisedBioMedical {
 			e.printStackTrace();
 		}
 	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf() {
+		try{
+			
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(bioMedicalUtil.GetBiomedicalDocuments(), bioMedicalUtil.getUniqueWords());
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-tfidf-bio-CenterBased-20000", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf() {
+		try{
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(bioMedicalUtil.GetBiomedicalDocuments(), bioMedicalUtil.getUniqueWords());
+			
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			HashMap<String, Double> maxVec = obj.ComputeMaxInstanceTfIdf(docsTfIdfs);
+			HashMap<String, Double> weightCenterVec = obj.ComputeWeightCenterInstanceTfIdf(hmCenterVecTfIdf, maxVec);
+			
+			double [][] saprsifyMatrix = bioMedicalUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(weightCenterVec, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/sparseMatrix-tfidf-bio-weightCenterBased-20000", saprsifyMatrix, " ");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 }

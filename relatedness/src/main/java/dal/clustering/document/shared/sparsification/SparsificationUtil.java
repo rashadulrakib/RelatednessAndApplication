@@ -546,28 +546,115 @@ public class SparsificationUtil {
 		return sparsifyDistMatrix;
 	}
 	
+	public double[][] SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(HashMap<String, Double> hmCenterVecTfIdf,
+			ArrayList<HashMap<String, Double>> docsTfIdfs) {
+		
+		double[][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docsTfIdfs.size(), docsTfIdfs.size());
+		
+		try{
+			for(int i=0; i<docsTfIdfs.size();i++){
+				
+				HashMap<String, Double> inst1 = docsTfIdfs.get(i);
+				sparsifyDistMatrix[i][i]=0;
+				
+				double sim1ToCenter = ComputeUtil.ComputeCosineSimilarity(inst1, hmCenterVecTfIdf);
+				
+				System.out.println("doc="+i);
+				
+				for(int j=i+1;j<docsTfIdfs.size();j++){
+					
+					HashMap<String, Double> inst2 = docsTfIdfs.get(j);
+					
+					double sim2ToCenter = ComputeUtil.ComputeCosineSimilarity(inst2, hmCenterVecTfIdf);
+					double sim1To2 = ComputeUtil.ComputeCosineSimilarity(inst1, inst2);
+					
+					double sim = 0;
+					if(sim1To2 > Math.max(sim1ToCenter, sim2ToCenter) ){
+						sim = sim1To2;
+					}
+					
+					sparsifyDistMatrix[i][j]= 1-sim;
+					sparsifyDistMatrix[j][i]= 1-sim;
+				}
+				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sparsifyDistMatrix;
+	}
+	
+	public double[][] SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(
+			HashMap<String, Double> hmCenterVecTfIdf,
+			ArrayList<HashMap<String, Double>> docsTfIdfs,
+			double[][] docSimMatrix, double[] centTodocs) {
+		
+		double[][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docsTfIdfs.size(), docsTfIdfs.size());
+		
+		try{
+			for(int i=0; i<docsTfIdfs.size();i++){
+				
+				//HashMap<String, Double> inst1 = docsTfIdfs.get(i);
+				sparsifyDistMatrix[i][i]=0;
+				
+				double sim1ToCenter = centTodocs[i];
+				
+				System.out.println("doc="+i);
+				
+				for(int j=i+1;j<docsTfIdfs.size();j++){
+					
+					//HashMap<String, Double> inst2 = docsTfIdfs.get(j);
+					
+					double sim2ToCenter = centTodocs[j];
+					double sim1To2 = docSimMatrix[i][j];
+					
+					double sim = 0;
+					if(sim1To2 > Math.max(sim1ToCenter, sim2ToCenter) ){
+						sim = sim1To2;
+					}
+					
+					sparsifyDistMatrix[i][j]= 1-sim;
+					sparsifyDistMatrix[j][i]= 1-sim;
+				}
+				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sparsifyDistMatrix;
+	}
+	
 	public double[][] SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(
 			double[][] docSimMatrix, int numberofclusters) {
 		
 		double[][] sparsifyDistMatrix = null;
-		double[][] lastsparsifyDistMatrix = null;
-		int numberOfItemsPerCluster = docSimMatrix.length/numberofclusters-1;
-		int constNumberOfItemsPerCluster =numberOfItemsPerCluster; 
-		int totalItemsToBeSparsified = numberOfItemsPerCluster*docSimMatrix.length;
+		//double[][] lastsparsifyDistMatrix = null;
+		int numberOfItemsPerCluster = 2*(docSimMatrix.length/numberofclusters-1);
+		//int constNumberOfItemsPerCluster =numberOfItemsPerCluster; 
+		//int totalItemsToBeSparsified = numberOfItemsPerCluster*docSimMatrix.length;
 		
 		try{
 			
-			boolean isGoodTotalSparsified = false;
-			double alphaFactor = 0.5;
+			//boolean isGoodTotalSparsified = false;
+			//double alphaFactor = 0.5;
 			
-			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
+			//HashSet<Double> uniqueDiffs = new  HashSet<Double>();
 			
-			while(!isGoodTotalSparsified){
+			List<Alpha> allalkeptAlpha = new ArrayList<Alpha>();
+			
+			
+			{
 				
+			
+				//isGoodTotalSparsified = true;
 				//sparsifyDistMatrix = UtilsShared.CopyMatrix(docSimMatrix, true);
 				sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
 				
-				HashMap<String, Integer> hmCellCount= new HashMap<String, Integer>();
+				//HashMap<String, Integer> hmCellCount= new HashMap<String, Integer>();
+				
+				
 				
 				for(int i=0;i<docSimMatrix.length;i++){
 					
@@ -582,55 +669,57 @@ public class SparsificationUtil {
 					Collections.sort(alAlpha, new Comparator<Alpha>() {
 					    @Override
 					    public int compare(Alpha o1, Alpha o2) {
-					        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-					    	// return lhs.customInt > rhs.customInt ? -1 : (lhs.customInt < rhs.customInt) ? 1 : 0;
 					        return o2.getValue().compareTo(o1.getValue());
 					    }
 					});
 					
-					List<Alpha> alAlphaSublist = alAlpha.subList(0, numberOfItemsPerCluster);
+					//List<Alpha> alAlphaSublist = alAlpha.subList(0, numberOfItemsPerCluster);
+					allalkeptAlpha.addAll(alAlpha.subList(0, numberOfItemsPerCluster));
 					
-					for(Alpha alp: alAlphaSublist){
-						int minInd = alp.getRow();
-						int maxInd = alp.getCol();
-						
-						if(minInd> maxInd){
-							int temp = minInd;
-							minInd = maxInd;
-							maxInd = temp;
-						}
-						
-						String cellIndex = minInd+","+maxInd;
-						
-						if(hmCellCount.containsKey(cellIndex)){
-							hmCellCount.put(cellIndex, hmCellCount.get(cellIndex)+1);
-						}else{
-							hmCellCount.put(cellIndex,1);
-						}
-					}
+//					for(Alpha alp: alAlphaSublist){
+//						int minInd = alp.getRow();
+//						int maxInd = alp.getCol();
+//						
+//						if(minInd> maxInd){
+//							int temp = minInd;
+//							minInd = maxInd;
+//							maxInd = temp;
+//						}
+//						
+//						String cellIndex = minInd+","+maxInd;
+//						
+//						if(hmCellCount.containsKey(cellIndex)){
+//							hmCellCount.put(cellIndex, hmCellCount.get(cellIndex)+1);
+//						}else{
+//							hmCellCount.put(cellIndex,1);
+//						}
+//					}
 					
-					alAlpha.clear();
-					alAlpha=null;
+					//alAlpha.clear();
+					//alAlpha=null;
 				}
 				
-				int totalRealSparsed = 0;
+				//int totalRealSparsed = 0;
 				
-				for(String cellIndex: hmCellCount.keySet()){
-					if(hmCellCount.get(cellIndex)==2)
-					{
-						int row = Integer.parseInt(cellIndex.split(",")[0]);
-						int col = Integer.parseInt(cellIndex.split(",")[1]);
-						
-//						sparsifyDistMatrix[row][col] = 0;
-//						sparsifyDistMatrix[col][row] = 0;
-						
-						sparsifyDistMatrix[row][col] = (1-docSimMatrix[row][col])*SparsificationConstant.SimMultipleConstant;
-						sparsifyDistMatrix[col][row] = (1-docSimMatrix[col][row])*SparsificationConstant.SimMultipleConstant;
-						
-						totalRealSparsed++;
-					}
-				}
+//				for(String cellIndex: hmCellCount.keySet()){
+//					if(hmCellCount.get(cellIndex)==2)
+//					{
+//						int row = Integer.parseInt(cellIndex.split(",")[0]);
+//						int col = Integer.parseInt(cellIndex.split(",")[1]);
+//						
+////						sparsifyDistMatrix[row][col] = 0;
+////						sparsifyDistMatrix[col][row] = 0;
+//						
+//						sparsifyDistMatrix[row][col] = (1-docSimMatrix[row][col])*SparsificationConstant.SimMultipleConstant;
+//						sparsifyDistMatrix[col][row] = (1-docSimMatrix[col][row])*SparsificationConstant.SimMultipleConstant;
+//						
+//						totalRealSparsed++;
+//					}
+//				}
 				
+				
+				
+				//not used
 //				if(totalRealSparsed>=totalItemsToBeSparsified){
 //					isGoodTotalSparsified= true;
 //				}else{
@@ -638,50 +727,75 @@ public class SparsificationUtil {
 //					alphaFactor=alphaFactor+ alphaFactor;
 //					sparsifyDistMatrix = null;
 //				}
+				//not used
 				
-				double diff = Math.ceil(Math.abs(totalRealSparsed- totalItemsToBeSparsified));
+//				double diff = Math.ceil(Math.abs(totalRealSparsed- totalItemsToBeSparsified));
+//				
+//				System.out.println("total keycell="+hmCellCount.size()+", totalRealSparsed="+totalRealSparsed
+//						+", totalItemsToBeSparsified="+totalItemsToBeSparsified+" ,alphaFactor="+alphaFactor+", diff="+diff);
+//				
+//				if(SparsificationUtilHelper.IsEndNbyK(diff, uniqueDiffs, alphaFactor)){
+//					isGoodTotalSparsified= true;
+//				}else{
+//					
+//					if(totalRealSparsed<totalItemsToBeSparsified){
+//						alphaFactor=alphaFactor + 0.5;
+//						numberOfItemsPerCluster=constNumberOfItemsPerCluster+ (int)(constNumberOfItemsPerCluster*alphaFactor);
+//					}else{
+//						alphaFactor=alphaFactor - 0.2 ;
+//						numberOfItemsPerCluster=constNumberOfItemsPerCluster+ (int)(constNumberOfItemsPerCluster*alphaFactor);
+//					}
+//					
+//					lastsparsifyDistMatrix = sparsifyDistMatrix;
+//					sparsifyDistMatrix = null;
+//				}
+//				
+//				hmCellCount.clear();
+//				hmCellCount=null;
+//				
+//				uniqueDiffs.add(diff);
+			}
+			
+			HashSet<String> distinctIJ = new HashSet<String>();
+			
+			for(Alpha alph :allalkeptAlpha){
+				int row = alph.getRow();
+				int col = alph.getCol();
 				
-				System.out.println("total keycell="+hmCellCount.size()+", totalRealSparsed="+totalRealSparsed
-						+", totalItemsToBeSparsified="+totalItemsToBeSparsified+" ,alphaFactor="+alphaFactor+", diff="+diff);
+				int minInd = row;
+				int maxInd = col;
 				
-				if(SparsificationUtilHelper.IsEndNbyK(diff, uniqueDiffs, alphaFactor)){
-					isGoodTotalSparsified= true;
-				}else{
-					
-					if(totalRealSparsed<totalItemsToBeSparsified){
-						alphaFactor=alphaFactor + 0.5;
-						numberOfItemsPerCluster=constNumberOfItemsPerCluster+ (int)(constNumberOfItemsPerCluster*alphaFactor);
-					}else{
-						alphaFactor=alphaFactor - 0.2 ;
-						numberOfItemsPerCluster=constNumberOfItemsPerCluster+ (int)(constNumberOfItemsPerCluster*alphaFactor);
-					}
-					
-					lastsparsifyDistMatrix = sparsifyDistMatrix;
-					sparsifyDistMatrix = null;
+				if(minInd> maxInd){
+					int temp = minInd;
+					minInd = maxInd;
+					maxInd = temp;
 				}
 				
-				hmCellCount.clear();
-				hmCellCount=null;
+				String cellIndex = minInd+","+maxInd;
+				distinctIJ.add(cellIndex);
 				
-				uniqueDiffs.add(diff);
+				sparsifyDistMatrix[row][col] = 1-docSimMatrix[row][col];
+				sparsifyDistMatrix[col][row] = 1-docSimMatrix[col][row];
 			}
+			
+			System.out.println("distinctIJ="+distinctIJ.size()+", allalkeptAlpha="+allalkeptAlpha.size());
 			
 			for(int i=0;i<sparsifyDistMatrix.length;i++){
 				sparsifyDistMatrix[i][i] = 0;
 			}
 			
-			for(int i=0;i<lastsparsifyDistMatrix.length;i++){
-				lastsparsifyDistMatrix[i][i] = 0;
-			}
+//			for(int i=0;i<lastsparsifyDistMatrix.length;i++){
+//				lastsparsifyDistMatrix[i][i] = 0;
+//			}
 			
-			System.out.println("mat cmp="+lastsparsifyDistMatrix.equals(sparsifyDistMatrix));
+			//System.out.println("mat cmp="+lastsparsifyDistMatrix.equals(sparsifyDistMatrix));
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
-		//return sparsifyDistMatrix;
-		return lastsparsifyDistMatrix;
+		return sparsifyDistMatrix;
+		//return lastsparsifyDistMatrix;
 	}
 
 }

@@ -3,16 +3,20 @@ package dal.clustering.document.dataset.agnews;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 
+import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
 
 public class AgNewsUtil {
 	
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	ArrayList<ArrayList<String[]>> aldocsBodeyLabelFlatList;
 	List<List<String>> documents;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	public DocClusterUtil docClusterUtil;
@@ -26,8 +30,11 @@ public class AgNewsUtil {
 		documents = new ArrayList<List<String>>();
 		docClusterUtil = new DocClusterUtil();
 		alBodies = new ArrayList<String>();
+		aldocsBodeyLabelFlatList = new ArrayList<ArrayList<String[]>>();
 		
 		loadAllAgNews();
+		
+		PopulateNFoldWebSnippet();
 	}
 	
 	public ArrayList<String> GetBodies(){
@@ -40,6 +47,10 @@ public class AgNewsUtil {
 	
 	public ArrayList<String[]> getAgNewsFlat(){
 		return aldocsBodeyLabelFlat;
+	}
+	
+	public ArrayList<ArrayList<String[]>> GetDocsAgNewsFlatList() {
+		return aldocsBodeyLabelFlatList;
 	}
 	
 	public List<List<String>> GetAgNewsDocuments(){
@@ -115,4 +126,39 @@ public class AgNewsUtil {
 			e.printStackTrace();
 		}
 	}
+	
+	private void PopulateNFoldWebSnippet() {
+		try{
+			ArrayList<String[]> alNew = new ArrayList<String[]>(aldocsBodeyLabelFlat);
+			Collections.shuffle(alNew, new Random(DocClusterConstant.DataRandConstant));
+			
+			int itemsPerFold = alNew.size()/DocClusterConstant.DataFold;
+			
+			for(int i=0;i<DocClusterConstant.DataFold;i++){
+				int foldStartIndex = i*itemsPerFold;
+				int foldEndIndex = foldStartIndex + itemsPerFold;
+				
+				ArrayList<String[]> alFold = new ArrayList<String[]>();
+				
+				//1/10 th items
+				for(int j=foldStartIndex; j<foldEndIndex;j++){
+					alFold.add(alNew.get(j));
+				}
+				//9/10 th items
+//				for(int j=0; j<foldStartIndex;j++){
+//					alFold.add(alNew.get(j));
+//				}
+//				
+//				for(int j=foldEndIndex; j<alNew.size();j++){
+//					alFold.add(alNew.get(j));
+//				}
+				
+				aldocsBodeyLabelFlatList.add(alFold);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 }

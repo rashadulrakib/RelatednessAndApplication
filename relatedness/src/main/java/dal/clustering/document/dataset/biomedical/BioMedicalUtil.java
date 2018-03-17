@@ -3,17 +3,20 @@ package dal.clustering.document.dataset.biomedical;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 
+import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
 
 public class BioMedicalUtil {
 	public DocClusterUtil docClusterUtil;
 	HashSet<String> uniqueWords;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	ArrayList<ArrayList<String[]>> aldocsBodeyLabelFlatList;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	ArrayList<String> alBodies;
 	List<List<String>> documents;
@@ -25,11 +28,14 @@ public class BioMedicalUtil {
 		uniqueWords = new HashSet<String>();
 		alBodies = new ArrayList<String>();
 		documents = new ArrayList<List<String>>();
+		aldocsBodeyLabelFlatList = new ArrayList<ArrayList<String[]>>();
 		
 		loadAllDocsBiomedical();
+		
+		PopulateNFoldData();
 	}
 	
-	public List<List<String>> GetStackOverflowDocuments() {
+	public List<List<String>> GetBiomedicalDocuments() {
 		return documents;
 	}
 	
@@ -43,6 +49,10 @@ public class BioMedicalUtil {
 	
 	public ArrayList<String[]> getDocsBiomedicalFlat(){
 		return aldocsBodeyLabelFlat;
+	}
+	
+	public ArrayList<ArrayList<String[]>> GetDocsBiomedicalFlatList() {
+		return aldocsBodeyLabelFlatList;
 	}
 	
 	public LinkedHashMap<String, ArrayList<String>> getDocsBiomedicalList(){
@@ -68,13 +78,13 @@ public class BioMedicalUtil {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 			   
-//			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
-//		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
-//		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
+			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		       
 		        if(body.isEmpty()) continue;
 		       
-		        ArrayList<String> processed = new ArrayList<String>(Arrays.asList(body.split("\\s+")));
+		        //ArrayList<String> processed = new ArrayList<String>(Arrays.asList(body.split("\\s+")));
 		        
 		        alBodies.add(body);
 		        
@@ -106,6 +116,40 @@ public class BioMedicalUtil {
 				System.out.println(key+","+docsLabelBodyList.get(key).size());
 			}
 		   
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private void PopulateNFoldData() {
+		try{
+			ArrayList<String[]> alNew = new ArrayList<String[]>(aldocsBodeyLabelFlat);
+			Collections.shuffle(alNew, new Random(DocClusterConstant.DataRandConstant));
+			
+			int itemsPerFold = alNew.size()/DocClusterConstant.DataFold;
+			
+			for(int i=0;i<DocClusterConstant.DataFold;i++){
+				int foldStartIndex = i*itemsPerFold;
+				int foldEndIndex = foldStartIndex + itemsPerFold;
+				
+				ArrayList<String[]> alFold = new ArrayList<String[]>();
+				
+				//1/10 th items
+				for(int j=foldStartIndex; j<foldEndIndex;j++){
+					alFold.add(alNew.get(j));
+				}
+				//9/10 th items
+//				for(int j=0; j<foldStartIndex;j++){
+//					alFold.add(alNew.get(j));
+//				}
+//				
+//				for(int j=foldEndIndex; j<alNew.size();j++){
+//					alFold.add(alNew.get(j));
+//				}
+				
+				aldocsBodeyLabelFlatList.add(alFold);
+			}
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

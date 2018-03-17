@@ -332,13 +332,13 @@ public class ClusterUnSupervisedStackOverflow {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-w2vec-sim-google-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-tfidf-sim";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, StackOverflowConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-w2vec-google-Alpha-20000-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-tfidf-Alpha-20000-NbyK", saprsifyMatrix, " ");
 						
 		}catch(Exception e){
 			e.printStackTrace();
@@ -362,20 +362,40 @@ public class ClusterUnSupervisedStackOverflow {
 			ArrayList<String []> alDocLabelFlat =stackOverflowUtil.getDocsStackOverflowFlat();
 			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
 			
-			HashMap<String, double[]> hmW2Vec = stackOverflowUtil.docClusterUtil.PopulateW2VecGoogle(stackOverflowUtil.getUniqueWords());
+			HashMap<String, double[]> hmW2Vec = stackOverflowUtil.docClusterUtil.PopulateW2Vec(stackOverflowUtil.getUniqueWords());
 			ArrayList<InstanceW2Vec> testW2Vecs = stackOverflowUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
 			double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-w2vec-sim-google-20000", docSimMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-glove-sim-20000", docSimMatrix, " ");
 
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 
+	public void GenerateDocSimMatrixW2VecList() {
+		try{
+			ArrayList<ArrayList<String []>> alDocLabelFlatList = stackOverflowUtil.GetDocsStackOverflowFlatList();
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			HashMap<String, double[]> hmW2Vec = stackOverflowUtil.docClusterUtil.PopulateW2Vec(stackOverflowUtil.getUniqueWords());
+			
+			for(int i=0;i<alDocLabelFlatList.size();i++){
+				ArrayList<InstanceW2Vec> testW2Vecs = stackOverflowUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatList.get(i), hmW2Vec);			
+				System.out.println("testW2Vecs="+testW2Vecs.size());
+				double [][] docSimMatrix= stackOverflowUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-w2vec-sim-20000-1_10"+i, docSimMatrix, " ");
+			}
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-w2vec-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/stackoverflow-tfidf-sim";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
@@ -388,6 +408,43 @@ public class ClusterUnSupervisedStackOverflow {
 //				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-google-Alpha-2280-"+i, sparseDistMatrix, " ");
 //			}
 			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf() {
+		try{
+			
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(stackOverflowUtil.GetStackOverflowDocuments(), stackOverflowUtil.getUniqueWords());
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-tfidf-stack-CenterBased-20000", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf() {
+		try{
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(stackOverflowUtil.GetStackOverflowDocuments(), stackOverflowUtil.getUniqueWords());
+			
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			HashMap<String, Double> maxVec = obj.ComputeMaxInstanceTfIdf(docsTfIdfs);
+			HashMap<String, Double> weightCenterVec = obj.ComputeWeightCenterInstanceTfIdf(hmCenterVecTfIdf, maxVec);
+			
+			double [][] saprsifyMatrix = stackOverflowUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(weightCenterVec, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/stackoverflow/sparseMatrix-tfidf-stack-weightCenterBased-20000", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

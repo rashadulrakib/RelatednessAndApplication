@@ -94,7 +94,7 @@ class PartialDocSimMatrixCalculatorTfIdf implements Callable<ArrayList<ArrayList
     	int zeroCount =0;
     	
     	for(int i=startDocIndex; i<=endDocIndex;i++){
-    		System.out.println("doc="+i);
+    		System.out.println("doc="+i+", thid="+thId);
 			HashMap<String, Double> ftr1 = docsTfIdfs.get(i);
 			
 			ArrayList<Double> simScores = new ArrayList<Double>();

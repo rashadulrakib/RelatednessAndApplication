@@ -3,6 +3,7 @@ package dal.clustering.document.shared.sparsification;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -142,6 +143,24 @@ public class SparsificationUtilIterative {
 		
 		return alSparseDists;
 	}
+	
+	public void SparsifyDocDisSimilarityMatrixAlgorithomicExactIterativeList(double[][] docSimMatrix, int numberofclusters,
+			String outsparsematrixFile){
+		try{
+			
+			List<double[][]> alSparseDists = SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(docSimMatrix,
+					numberofclusters);
+			
+			if(alSparseDists.size()==1){
+				UtilsShared.WriteMatrixToFile(outsparsematrixFile, alSparseDists.get(0), " ");
+			}else{
+				System.out.println("More size="+alSparseDists.size());
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	public List<double[][]> SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(
 			double[][] docSimMatrix, int numberofclusters) {
@@ -149,7 +168,7 @@ public class SparsificationUtilIterative {
 		List<double[][]> alSparseDists = new ArrayList<double[][]>();
 		
 		try{
-			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicExact");
+			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicExact " + new Date().toLocaleString());
 			
 			int itemsPerCluster = docSimMatrix.length/numberofclusters;
 			int itemsToKeep = (itemsPerCluster*docSimMatrix.length-docSimMatrix.length)/1;
@@ -159,12 +178,14 @@ public class SparsificationUtilIterative {
 			List<Alpha> AlAlphaSublist = null;
 			
 			boolean isGoodAvg = false;
-			double alphaFactor = 1;
+			double alphaFactor = 1.5;
 			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
 			
 			int whileCount = 0;
 
 			while(!isGoodAvg){
+				
+				isGoodAvg = true;
 				
 				double [][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
 				
@@ -182,10 +203,12 @@ public class SparsificationUtilIterative {
 				
 				double diff = Math.abs(avgAvgCount-(double)itemsPerCluster);
 				
-				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff);
-
-				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-sparse-bioASQNoFilter-alpha-20000-"+whileCount, sparsifyDistMatrix, " ");
+				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff+", "+new Date().toLocaleString());
+				
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/3n-agnews-tfidf-sparse-alpha-8000-"+whileCount, sparsifyDistMatrix, " ");
 				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
+				
+				//alSparseDists.add(sparsifyDistMatrix);
 				
 				if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs, alphaFactor)){
 					isGoodAvg = true;
@@ -196,7 +219,6 @@ public class SparsificationUtilIterative {
 					}else if(avgAvgCount<(double)itemsPerCluster){
 							alphaFactor=alphaFactor+0.01;
 					}
-					//alSparseDists.add(sparsifyDistMatrix);
 				}
 
 				whileCount++;				

@@ -263,14 +263,14 @@ public class ClusterUnSupervisedAgNews {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-w2vec-sim-google-8000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-tfidf-sim-8000";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-gtm-sim-2280";
 			
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, AgNewsConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-w2vec-google-Alpha-8000-NbyK", saprsifyMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-Alpha-8000-NbyK", saprsifyMatrix, " ");
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-NbyK", saprsifyMatrix, " "); 
 			
 		}catch(Exception e){
@@ -338,6 +338,61 @@ public class ClusterUnSupervisedAgNews {
 
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-w2vec-sim-google-8000", docSimMatrix, " ");
 
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	public void GenerateDocSimMatrixW2VecList() {
+		try{
+			ArrayList<ArrayList<String []>> alDocLabelFlatList = agNewsUtil.GetDocsAgNewsFlatList();
+			//double [][] docSimMatrix= googlewebSnippetUtil.docClusterUtil.ComputeCosineMatrixW2Vec(alDocLabelFlat, unSupervisedClusteringW2Vec.docClusterUtilW2Vec);
+			
+			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2Vec(agNewsUtil.getUniqueWords());
+			
+			for(int i=0;i<alDocLabelFlatList.size();i++){
+				ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatList.get(i), hmW2Vec);			
+				System.out.println("testW2Vecs="+testW2Vecs.size());
+				double [][] docSimMatrix= agNewsUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/agnews-w2vec-sim-8000-1_10"+i, docSimMatrix, " ");
+			}
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	public void GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf() {
+		try{
+			
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(agNewsUtil.GetAgNewsDocuments(), agNewsUtil.getUniqueWords());
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-agnews-CenterBased-8000", saprsifyMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf() {
+		try{
+			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
+			
+			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(agNewsUtil.GetAgNewsDocuments(), agNewsUtil.getUniqueWords());
+			
+			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
+			HashMap<String, Double> maxVec = obj.ComputeMaxInstanceTfIdf(docsTfIdfs);
+			HashMap<String, Double> weightCenterVec = obj.ComputeWeightCenterInstanceTfIdf(hmCenterVecTfIdf, maxVec);
+			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(weightCenterVec, docsTfIdfs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-agnews-weightCenterBased-8000", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -331,17 +331,17 @@ public class ClusterEvaluation {
 				
 				double [][] transposed = UtilsShared.TransposeMatrix(matrixColRow);
 				
-				System.out.print("cooccurrence_matrix=np.array([");
-				
-				for(int i=0;i<transposed.length;i++){
-					System.out.print("[");
-					for(int j=0;j<transposed[i].length;j++){
-						System.out.print(transposed[i][j]+",");
-					}
-					System.out.println("]");
-				}
-				
-				System.out.print("])");
+//				System.out.print("cooccurrence_matrix=np.array([");
+//				
+//				for(int i=0;i<transposed.length;i++){
+//					System.out.print("[");
+//					for(int j=0;j<transposed[i].length;j++){
+//						System.out.print(transposed[i][j]+",");
+//					}
+//					System.out.println("]");
+//				}
+//				
+//				System.out.print("])");
 				
 			}else{
 				System.out.println("predicted clusters="+sortedFinalCluster.keySet().size()+", original clusters= "+sortedClusterGroupsOriginalLabelByMerged.keySet().size());

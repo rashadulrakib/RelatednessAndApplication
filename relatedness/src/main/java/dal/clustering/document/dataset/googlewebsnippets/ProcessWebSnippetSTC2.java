@@ -31,6 +31,27 @@ public class ProcessWebSnippetSTC2 {
 		hmLabelIds.put("politics-society", "7");
 		hmLabelIds.put("sports", "8");
 	}
+	
+	public void ProcessBySTC2List(){
+		try{
+			HashMap<String, Integer> hmVocabIndex = sTC2ProcessUtil.getAlVocabIndex();
+			ArrayList<ArrayList<String[]>> aldocsBodeyLabelFlatList = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlatList();
+
+			for(int i=0;i<aldocsBodeyLabelFlatList.size();i++){
+				ArrayList<String[]> aldocsBodeyLabelFlat = aldocsBodeyLabelFlatList.get(i);
+				
+				sTC2ProcessUtil.PopulateSTC2BodyGroundtruthLinewordindex(aldocsBodeyLabelFlat,
+						hmVocabIndex, hmLabelIds);
+				
+				UtilsShared.WriteLinesToFile(GoogleWebSnippetConstant.WebSnippetSTC2TextIndexOut+"-2280-"+i+".txt", sTC2ProcessUtil.GetAllLinesBodyWordIndex());
+				UtilsShared.WriteLinesToFile(GoogleWebSnippetConstant.WebSnippetSTC2RawOut+"-2280-"+i+".txt", sTC2ProcessUtil.GetAlBodies());
+				UtilsShared.WriteLinesToFile(GoogleWebSnippetConstant.WebSnippetSTC2GndOut+"-2280-"+i+".txt", sTC2ProcessUtil.GetAlLabels());
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	public void ProcessBySTC2(){
 		try{
