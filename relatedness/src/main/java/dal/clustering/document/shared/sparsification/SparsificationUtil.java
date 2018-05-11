@@ -3,6 +3,7 @@ package dal.clustering.document.shared.sparsification;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -629,6 +630,8 @@ public class SparsificationUtil {
 	public double[][] SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(
 			double[][] docSimMatrix, int numberofclusters) {
 		
+		System.out.println("Start SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities " + new Date().toLocaleString());
+		
 		double[][] sparsifyDistMatrix = null;
 		//double[][] lastsparsifyDistMatrix = null;
 		int numberOfItemsPerCluster = 2*(docSimMatrix.length/numberofclusters-1);
@@ -783,6 +786,8 @@ public class SparsificationUtil {
 			for(int i=0;i<sparsifyDistMatrix.length;i++){
 				sparsifyDistMatrix[i][i] = 0;
 			}
+			
+			System.out.println("End SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities " + new Date().toLocaleString());
 			
 //			for(int i=0;i<lastsparsifyDistMatrix.length;i++){
 //				lastsparsifyDistMatrix[i][i] = 0;

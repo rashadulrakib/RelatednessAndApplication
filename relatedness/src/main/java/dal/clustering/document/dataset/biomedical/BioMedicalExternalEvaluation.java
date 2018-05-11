@@ -20,7 +20,7 @@ public class BioMedicalExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\sparseMatrix-w2vec-ASQbiomedical-wightCenterBased-20000-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\sparseMatrix-tfidf-bio-weightCenterBased-20000-labels";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			

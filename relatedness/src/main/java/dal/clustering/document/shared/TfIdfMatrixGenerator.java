@@ -113,6 +113,8 @@ public class TfIdfMatrixGenerator {
 		HashMap<String, Double> hmCenter = new LinkedHashMap<String, Double>();
 		
 		try{
+			System.out.println("ConstructCenterVecTfIdf start");
+			
 			for(HashMap<String, Double> docTfIdf: docsTfIdfs){
 				for(String ftr: docTfIdf.keySet()){
 					if(hmCenter.containsKey(ftr)){
@@ -129,6 +131,8 @@ public class TfIdfMatrixGenerator {
 				hmCenter.put(ftr, hmCenter.get(ftr)/totalDoc);
 			}
 			
+			System.out.println("ConstructCenterVecTfIdf end");
+			
 		}catch(Exception e){ 
 			e.printStackTrace();
 		}
@@ -140,6 +144,8 @@ public class TfIdfMatrixGenerator {
 		HashMap<String, Double> maxVec = new LinkedHashMap<String, Double>();
 		
 		try{
+			
+			System.out.println("ComputeMaxInstanceTfIdf start");
 		
 			for(HashMap<String, Double> docTfIdf: docsTfIdfs){
 				for(String ftr: docTfIdf.keySet()){
@@ -150,6 +156,8 @@ public class TfIdfMatrixGenerator {
 					}
 				}
 			}
+			
+			System.out.println("ComputeMaxInstanceTfIdf end");
 			
 		}catch(Exception e){ 
 			e.printStackTrace();
@@ -164,6 +172,9 @@ public class TfIdfMatrixGenerator {
 		HashMap<String, Double> weightMaxVec = new LinkedHashMap<String, Double>();
 		
 		try{
+			
+			System.out.println("ComputeWeightCenterInstanceTfIdf start");
+			
 			for(String ftr: hmCenterVecTfIdf.keySet()){
 				if(maxVec.containsKey(ftr)){
 					double weightFtr = 2*maxVec.get(ftr)*hmCenterVecTfIdf.get(ftr)
@@ -174,6 +185,9 @@ public class TfIdfMatrixGenerator {
 					weightMaxVec.put(ftr, hmCenterVecTfIdf.get(ftr));
 				}
 			}
+			
+			System.out.println("ComputeWeightCenterInstanceTfIdf end");
+			
 		}catch(Exception e){ 
 			e.printStackTrace();
 		}

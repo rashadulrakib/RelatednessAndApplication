@@ -2,6 +2,7 @@ package dal.clustering.document.dataset.googlewebsnippets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -399,6 +400,10 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
 			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
 			
+			System.out.println("start GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification " 
+					+ new Date().toLocaleString() );
+		
+			
 			InstanceW2Vec centerVec = googlewebSnippetUtil.docClusterUtil.ComputeCenterInstanceW2Vec(testW2Vecs);
 			InstanceW2Vec maxVec = googlewebSnippetUtil.docClusterUtil.ComputeMaxInstanceW2Vec(testW2Vecs);
 			InstanceW2Vec weightCenterVec = googlewebSnippetUtil.docClusterUtil.ComputeWeightCenterInstanceW2Vec(centerVec, maxVec);
@@ -406,7 +411,11 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil
 					.SparsifyDocDisSimilarityMatrixByCenterVector(weightCenterVec, testW2Vecs);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-google-wightCenterBased-2280", saprsifyMatrix, " ");
+			System.out.println("end GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification " 
+					+ new Date().toLocaleString() );
+			
+			
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-w2vec-google-wightCenterBased-2280", saprsifyMatrix, " ");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -541,7 +550,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			
 			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil.SparsifyDocDisSimilarityMatrixFixedNbyKSimilarities(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-Alpha-12340-NbyK", saprsifyMatrix, " ");
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-gtm-Alpha-12340-NbyK", saprsifyMatrix, " ");
 			//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-gtm-sd-Alpha-2280-NbyK", saprsifyMatrix, " "); 
 			
 		}catch(Exception e){
@@ -712,15 +721,17 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			TfIdfMatrixGenerator obj = new TfIdfMatrixGenerator();
 			
 			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(googlewebSnippetUtil.GetWebSnippetNewsDocuments(), googlewebSnippetUtil.GetUniqueWords());
-			
 			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
 			HashMap<String, Double> maxVec = obj.ComputeMaxInstanceTfIdf(docsTfIdfs);
 			HashMap<String, Double> weightCenterVec = obj.ComputeWeightCenterInstanceTfIdf(hmCenterVecTfIdf, maxVec);
 			
-			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil
-					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(weightCenterVec, docsTfIdfs);
+			double [] centTodocs = googlewebSnippetUtil.docClusterUtil.ComputeSimCenterToDocsTfIdf(docsTfIdfs, weightCenterVec);
+			double [][] docSimMatrix = googlewebSnippetUtil.docClusterUtil.ComputeSimilarityMatrixTfIdfParallel(docsTfIdfs, 10);
 			
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-tfidf-web-weightCenterBased-12340", saprsifyMatrix, " ");
+			double [][] saprsifyMatrix = googlewebSnippetUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs, docSimMatrix, centTodocs);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/sparseMatrix-tfidf-web-weightCenterBased-2280", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

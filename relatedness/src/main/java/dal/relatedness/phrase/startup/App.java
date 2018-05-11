@@ -240,8 +240,8 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixTrwpFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
-    	new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
+    	new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
@@ -270,7 +270,7 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsification();
@@ -297,7 +297,7 @@ public class App
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
 	    //new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
     	//new BioMedicalExternalEvaluation().ExternalEvaluate();

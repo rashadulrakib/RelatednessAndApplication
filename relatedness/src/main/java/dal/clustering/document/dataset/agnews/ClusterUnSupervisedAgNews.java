@@ -369,8 +369,12 @@ public class ClusterUnSupervisedAgNews {
 			ArrayList<HashMap<String, Double>> docsTfIdfs = obj.ConstructTfIdfList(agNewsUtil.GetAgNewsDocuments(), agNewsUtil.getUniqueWords());
 			HashMap<String, Double> hmCenterVecTfIdf = obj.ConstructCenterVecTfIdf(docsTfIdfs);
 			
+			double [] centTodocs = agNewsUtil.docClusterUtil.ComputeSimCenterToDocsTfIdf(docsTfIdfs, hmCenterVecTfIdf);
+			
+			double [][] docSimMatrix = agNewsUtil.docClusterUtil.ComputeSimilarityMatrixTfIdfParallel(docsTfIdfs, 10);
+			
 			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
-					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs);
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs, docSimMatrix, centTodocs);
 			
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-agnews-CenterBased-8000", saprsifyMatrix, " ");
 			
@@ -389,9 +393,12 @@ public class ClusterUnSupervisedAgNews {
 			HashMap<String, Double> maxVec = obj.ComputeMaxInstanceTfIdf(docsTfIdfs);
 			HashMap<String, Double> weightCenterVec = obj.ComputeWeightCenterInstanceTfIdf(hmCenterVecTfIdf, maxVec);
 			
-			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
-					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(weightCenterVec, docsTfIdfs);
+			double [] centTodocs = agNewsUtil.docClusterUtil.ComputeSimCenterToDocsTfIdf(docsTfIdfs, weightCenterVec);
+			double [][] docSimMatrix = agNewsUtil.docClusterUtil.ComputeSimilarityMatrixTfIdfParallel(docsTfIdfs, 10);
 			
+			double [][] saprsifyMatrix = agNewsUtil.docClusterUtil.sparsificationUtil
+					.SparsifyDocDisSimilarityMatrixByCenterVectorTfIdf(hmCenterVecTfIdf, docsTfIdfs, docSimMatrix, centTodocs);
+
 			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/sparseMatrix-tfidf-agnews-weightCenterBased-8000", saprsifyMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
