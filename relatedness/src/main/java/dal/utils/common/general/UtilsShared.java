@@ -252,6 +252,11 @@ public class UtilsShared {
 						matrix[i][j] = 1-docSimMatrix[i][j];
 					}
 				}
+				
+				for(int i=0;i<docSimMatrix.length;i++){
+					matrix[i][i]=0;
+				}
+				
 			}else{
 				for(int i=0;i<docSimMatrix.length;i++){
 					matrix[i] = new double[docSimMatrix.length];
@@ -298,5 +303,4 @@ public class UtilsShared {
 		
 		return vecs;
 	}
-	
 }

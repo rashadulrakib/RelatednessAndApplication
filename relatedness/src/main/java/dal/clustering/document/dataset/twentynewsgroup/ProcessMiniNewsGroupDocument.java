@@ -12,13 +12,13 @@ import java.util.List;
 
 import dal.clustering.document.shared.PairSim;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
-import dal.clustering.document.shared.entities.ClusterDocumentShared;
+import dal.clustering.document.shared.entities.ClusterDocumentProcessingShared;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 import dal.relatedness.text.compute.trwp.TextRelatednessTrwpConstant;
 import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.utils.common.compute.ComputeUtil;
 
-public class ProcessMiniNewsGroupDocument  extends ClusterDocumentShared {
+public class ProcessMiniNewsGroupDocument  extends ClusterDocumentProcessingShared {
 	ArrayList<String> phrasesOfAText;
 	 
 	 HashMap<String, Double> phSimChacheScores = new HashMap<String, Double>();

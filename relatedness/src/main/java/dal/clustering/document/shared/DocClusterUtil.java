@@ -17,6 +17,8 @@ import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.clustering.document.shared.entities.PreprocessedContainer;
 import dal.clustering.document.shared.sparsification.SparsificationUtil;
 import dal.clustering.document.shared.sparsification.SparsificationUtilIterative;
+import dal.clustering.document.shared.sparsification.SparsificationUtilRAD;
+import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 import dal.relatedness.text.utils.TextRelatednessGoogleNgUtil;
 import dal.utils.common.compute.ComputeUtil;
@@ -30,22 +32,24 @@ public class DocClusterUtil {
 	public DocClusterUtilTrWpParallel docClusterUtilParallelTrwp;
 	public DocClusterUtilTrWpByGtmParallel docClusterUtilTrWpByGtmParallel;
 	public DocClusterUtilTfIdfParallel docClusterUtilTfIdfParallel;
-	public DocClusterUtilW2VecParallel docClusterUtilParallelW2vec;
+	public DocClusterUtilW2VecParallel docClusterUtilW2vecParallel;
 	public DocClusterUtilParallelBtmKlVec docClusterUtilParallelBtmKlVec;
 	public SparsificationUtil sparsificationUtil;
 	public SparsificationUtilIterative sparsificationUtilIterative;
+	public SparsificationUtilRAD sparsificationUtilRAD;
 	
 	
 	public DocClusterUtil(){
 		textUtilShared = new TextUtilShared();
 		textRelatednessGoogleNgUtil = new TextRelatednessGoogleNgUtil(textUtilShared);
 		docClusterUtilParallelTrwp = new DocClusterUtilTrWpParallel();
-		docClusterUtilParallelW2vec = new DocClusterUtilW2VecParallel();
+		docClusterUtilW2vecParallel = new DocClusterUtilW2VecParallel();
 		docClusterUtilParallelBtmKlVec = new DocClusterUtilParallelBtmKlVec();
 		docClusterUtilTrWpByGtmParallel = new DocClusterUtilTrWpByGtmParallel();
 		docClusterUtilTfIdfParallel = new DocClusterUtilTfIdfParallel();
 		sparsificationUtil = new SparsificationUtil(); 
 		sparsificationUtilIterative = new SparsificationUtilIterative();
+		sparsificationUtilRAD = new SparsificationUtilRAD();
 	}
 	
 //	public double ComputeSimilarityFromWeightedMatrixBySTD(ArrayList<ArrayList<PairSim>> t1t2simPairList, double common,
@@ -344,6 +348,53 @@ public class DocClusterUtil {
 			e.printStackTrace();
 		}
 		
+		return w2vec;
+	}
+	
+	
+	public HashMap<String, double[]> PopulateW2VecBioMedicalStemmed(HashSet<String> uniqueWordsStemmed) {
+		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
+		String errorText = "";
+		String errorEmbedding="";
+		try{
+			//BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
+			BufferedReader br = new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQCombined));
+	           
+			String text="";
+
+            while ((text = br.readLine()) != null) {
+            	text = text.trim().toLowerCase();
+            	
+            	errorText = text;
+            	
+            	String [] arr = text.split("\\s+");
+            	
+            	if(arr.length<20) continue; //not a good vector in the embedding file
+            	
+            	String EmbeddingWord = arr[0];
+            	
+            	String EmbeddingWordStemmed = StemmingUtil.stemPhrase(EmbeddingWord);
+            	
+            	if(EmbeddingWordStemmed.isEmpty() || !uniqueWordsStemmed.contains(EmbeddingWordStemmed)) continue;
+            	
+            	errorEmbedding = EmbeddingWord;
+            	//String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
+        		
+        		double [] vecDoubles = new double[arr.length-1];
+        		for(int i=1; i< arr.length;i++){
+        			vecDoubles[i-1] = Double.parseDouble(arr[i]);
+        		}
+        		w2vec.put(EmbeddingWordStemmed, vecDoubles);            	
+            }
+           
+            br.close();
+		}
+		catch(Exception e){
+			System.out.println("Error="+errorEmbedding+","+errorText);
+			e.printStackTrace();
+		}
+		
+		System.out.println("w2vec="+w2vec.size());
 		return w2vec;
 	}
 
@@ -789,7 +840,7 @@ public class DocClusterUtil {
 		
 		double[][] docSimMatrix = null;
 		try{
-			docSimMatrix = docClusterUtilParallelW2vec.ComputeDocumentSimMatrixW2VecParallel(testW2Vecs, threads);
+			docSimMatrix = docClusterUtilW2vecParallel.ComputeDocumentSimMatrixW2VecParallel(testW2Vecs, threads);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

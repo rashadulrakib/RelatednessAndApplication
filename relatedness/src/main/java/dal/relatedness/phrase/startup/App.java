@@ -20,6 +20,7 @@ import dal.clustering.document.dataset.all.process.btm.BTMProcessor;
 import dal.clustering.document.dataset.all.process.w2vec.W2VecAggregator;
 import dal.clustering.document.dataset.biomedical.BioMedicalExternalEvaluation;
 import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedical;
+import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedicalRAD;
 import dal.clustering.document.dataset.biomedical.ProcessBiomedicalData;
 import dal.clustering.document.dataset.biomedical.ProcessBiomedicalSTC2;
 import dal.clustering.document.dataset.cicling2002.Cicling2002ExternalEvaluation;
@@ -240,14 +241,15 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixTrwpFixedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationStandardDevNbyKSimilarities();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixCosineTfIdf();
-    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative(); // real-doceng
+    	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterativeEMNLP(); // real-emnlp
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterativeList();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedGoogleWebSnippet().GenerateDocSimMatrixW2VecList();
@@ -270,7 +272,7 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixGtmFixedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocsDisSimilarityMatrixFromFileSparsification();
@@ -281,8 +283,14 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocSimMatrixW2VecList();
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
     	
+    	//***********biomedical************//
     	//new ProcessBiomedicalData().Process();
     	//new ProcessBiomedicalSTC2().ProcessBySTC2();
+    	
+    	//new ClusterUnSupervisedBioMedicalRAD().ClusterDocsByFrequentTerms();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixW2VecStemmed();
+    	new ClusterUnSupervisedBioMedicalRAD().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
+
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecAverageVector();
@@ -290,17 +298,18 @@ public class App
     	//new ClusterUnSupervisedBioMedical().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsification();
-    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineTfIdf();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineTfIdf();    	
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2VecList();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixGtm();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
 	    //new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
-    	new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
     	//new BioMedicalExternalEvaluation().ExternalEvaluate();
+    	//***********end biomedical************//
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();

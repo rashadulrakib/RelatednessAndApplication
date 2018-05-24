@@ -572,7 +572,7 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/websnippet-tfidf-sim-2280";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmklvec-sim-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
@@ -589,6 +589,25 @@ public class ClusterUnSupervisedGoogleWebSnippet {
 			e.printStackTrace();
 		}
 	}
+	
+//	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterativeEMNLP(){
+//		try{
+//			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/web-snippet-w2vec-sim-2280";
+//			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-btmklvec-sim-2280";
+//			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
+//			
+//			//List<double[][]> alSparseDists = googlewebSnippetUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
+//			List<double[][]> alSparseDists = googlewebSnippetUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterativeEMNLP(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
+//
+////			for(int i=0;i< alSparseDists.size();i++){
+////				double[][] sparseDistMatrix = alSparseDists.get(i);
+////				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/websnippet-sparse-w2vec-google-alpha-12340-"+i, sparseDistMatrix, " ");
+////				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-w2vec-google-Alpha-2280-"+i, sparseDistMatrix, " ");
+////			}
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterativeList(){
 		try{

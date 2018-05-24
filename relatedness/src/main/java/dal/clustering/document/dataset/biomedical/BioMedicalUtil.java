@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
@@ -15,28 +16,44 @@ import dal.clustering.document.shared.DocClusterUtil;
 public class BioMedicalUtil {
 	public DocClusterUtil docClusterUtil;
 	HashSet<String> uniqueWords;
+	HashSet<String> uniqueWordsStemmed;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	ArrayList<String[]> aldocsBodeyLabelFlatStemmed;
 	ArrayList<ArrayList<String[]>> aldocsBodeyLabelFlatList;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
 	ArrayList<String> alBodies;
 	List<List<String>> documents;
+	List<List<String>> stemmedDocuments;
+	List<Set<String>> stemmedDocumnetsUniqueTerms;
 	
 	public BioMedicalUtil(){
 		docClusterUtil = new DocClusterUtil();
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
+		aldocsBodeyLabelFlatStemmed = new ArrayList<String[]>();
 		docsLabelBodyList = new LinkedHashMap<String, ArrayList<String>>();
 		uniqueWords = new HashSet<String>();
+		uniqueWordsStemmed = new HashSet<String>();
 		alBodies = new ArrayList<String>();
 		documents = new ArrayList<List<String>>();
+		stemmedDocuments = new ArrayList<List<String>>();
+		stemmedDocumnetsUniqueTerms = new ArrayList<Set<String>>();
 		aldocsBodeyLabelFlatList = new ArrayList<ArrayList<String[]>>();
 		
 		loadAllDocsBiomedical();
 		
-		PopulateNFoldData();
+		//PopulateNFoldData();
 	}
 	
 	public List<List<String>> GetBiomedicalDocuments() {
 		return documents;
+	}
+	
+	public List<List<String>> GetBiomedicalStemmedDocuments() {
+		return stemmedDocuments;
+	}
+	
+	public List<Set<String>> GetBiomedicalStemmedDocumnetsUniqueTerms() {
+		return stemmedDocumnetsUniqueTerms;
 	}
 	
 	public ArrayList<String> GetBodies(){
@@ -47,9 +64,17 @@ public class BioMedicalUtil {
 		return uniqueWords;
 	}
 	
+	public HashSet<String> GetUniqueWordsStemmed(){
+		return uniqueWordsStemmed;
+	}
+	
 	public ArrayList<String[]> getDocsBiomedicalFlat(){
 		return aldocsBodeyLabelFlat;
 	}
+	
+	public ArrayList<String[]> GetDocsBiomedicalFlatStemmed(){
+		return aldocsBodeyLabelFlatStemmed;
+	} 
 	
 	public ArrayList<ArrayList<String[]>> GetDocsBiomedicalFlatList() {
 		return aldocsBodeyLabelFlatList;
@@ -81,22 +106,33 @@ public class BioMedicalUtil {
 			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
 		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
+		        ArrayList<String> processedStemmed = docClusterUtil.textUtilShared.StemByEachWord(processed);
+		        String bodyStemmed = docClusterUtil.textUtilShared.ConvertArrayListToString(processedStemmed);
 		       
-		        if(body.isEmpty()) continue;
+		        if(body.isEmpty() || bodyStemmed.isEmpty()) continue;
 		       
 		        //ArrayList<String> processed = new ArrayList<String>(Arrays.asList(body.split("\\s+")));
 		        
 		        alBodies.add(body);
 		        
 		        uniqueWords.addAll(processed);
+		        uniqueWordsStemmed.addAll(processedStemmed);
 		        
 		        documents.add(processed);
+		        stemmedDocuments.add(processedStemmed);
+		        HashSet<String> uniqueDocTems = docClusterUtil.textUtilShared.ConvertStringListToHashSetStemming(processed);
+		        stemmedDocumnetsUniqueTerms.add(uniqueDocTems);
 		        
 		        String arr[] = new String[2];
 		        arr[0]= body;
 		        arr[1] = label;
+		        
+		        String arrStemmed[] = new String[2];
+		        arrStemmed[0] = bodyStemmed;
+		        arrStemmed[1] = label;
 			    
 		        aldocsBodeyLabelFlat.add(arr);
+		        aldocsBodeyLabelFlatStemmed.add(arrStemmed);
 		        
 		        if(!docsLabelBodyList.containsKey(label)){
 		        	ArrayList<String> bodies = new ArrayList<String>();

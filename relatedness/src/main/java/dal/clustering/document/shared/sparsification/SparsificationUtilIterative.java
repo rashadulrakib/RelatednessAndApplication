@@ -178,7 +178,8 @@ public class SparsificationUtilIterative {
 			List<Alpha> AlAlphaSublist = null;
 			
 			boolean isGoodAvg = false;
-			double alphaFactor = 1.5;
+			//double alphaFactor = 1.5; //3 times
+			double alphaFactor = 1; //2 times
 			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
 			
 			int whileCount = 0;
@@ -205,7 +206,7 @@ public class SparsificationUtilIterative {
 				
 				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff+", "+new Date().toLocaleString());
 				
-				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/agnews/3n-agnews-tfidf-sparse-alpha-8000-"+whileCount, sparsifyDistMatrix, " ");
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/2n-websnippet-w2vec-glove-sparse-2280-"+whileCount, sparsifyDistMatrix, " ");
 				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
 				
 				//alSparseDists.add(sparsifyDistMatrix);
@@ -232,4 +233,74 @@ public class SparsificationUtilIterative {
 		return alSparseDists;
 	}
 	
+//	public List<double[][]> SparsifyDocDisSimilarityMatrixAlgorithomicExactIterativeEMNLP(
+//			double[][] docSimMatrix, int numberofclusters) {
+//		List<double[][]> alSparseDists = new ArrayList<double[][]>();
+//		
+//		try{
+//			System.out.println("Start SparsifyDocDisSimilarityMatrixAlgorithomicExact " + new Date().toLocaleString());
+//			
+//			int itemsPerCluster = docSimMatrix.length/numberofclusters;
+//			int itemsToKeep = (itemsPerCluster*docSimMatrix.length-docSimMatrix.length)/1;
+//			
+//			List<Alpha> alAlpha = SparsificationUtilHelper.PrepareAlphaValuesDiagonal(docSimMatrix, false);
+//			
+//			List<Alpha> AlAlphaSublist = null;
+//			
+//			boolean isGoodAvg = false;
+//			//double alphaFactor = 1.5; //3 times
+//			double alphaFactor = 1; //2 times
+//			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
+//			
+//			int whileCount = 0;
+//
+//			while(!isGoodAvg){
+//				
+//				//isGoodAvg = true;
+//				
+//				double [][] sparsifyDistMatrix = UtilsShared.InitializeMatrix(docSimMatrix.length, docSimMatrix.length, SparsificationConstant.LargeDistValue);
+//				
+//				for(int i=0;i<docSimMatrix.length;i++){
+//					sparsifyDistMatrix[i][i] = 0;
+//				}
+//				
+//				AlAlphaSublist = alAlpha.subList(0, (int)(itemsToKeep*alphaFactor));
+//				
+//				System.out.println("populate dist matrix, AlAlphaSublist="+AlAlphaSublist.size());
+//				
+//				sparsifyDistMatrix = SparsificationUtilHelper.PrepareSparsifiedMatrix(docSimMatrix, AlAlphaSublist);
+//				
+//				double avgAvgCount = SparsificationUtilHelper.ComputeAverageSparsifyCount(sparsifyDistMatrix);
+//				
+//				double diff = Math.abs(avgAvgCount-(double)itemsPerCluster);
+//				
+//				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff+", "+new Date().toLocaleString());
+//				
+//				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/n-to-2n-websnippet-w2vec-glove-sparse-2280-"+whileCount, sparsifyDistMatrix, " ");
+//				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
+//				
+//				//alSparseDists.add(sparsifyDistMatrix);
+//				
+//				if(SparsificationUtilHelper.IsEnd(diff, uniqueDiffs, alphaFactor)){
+//					isGoodAvg = true;
+//				}else{
+//					
+//					if(avgAvgCount>(double)itemsPerCluster){
+//							alphaFactor=alphaFactor-0.05;
+//					}else if(avgAvgCount<(double)itemsPerCluster){
+//							alphaFactor=alphaFactor+0.01;
+//					}
+//				}
+//
+//				whileCount++;				
+//				uniqueDiffs.add( Math.ceil(diff));
+//			}
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		
+//		return alSparseDists;
+//	}
+//	
 }

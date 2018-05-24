@@ -35,7 +35,7 @@ public class GooglewebSnippetUtil {
 		
 		loadAllDocsGoogleWebSnippet();
 
-		PopulateNFoldWebSnippet();
+		//PopulateNFoldWebSnippet();
 	}
 	
 	public ArrayList<String> GetBodies(){

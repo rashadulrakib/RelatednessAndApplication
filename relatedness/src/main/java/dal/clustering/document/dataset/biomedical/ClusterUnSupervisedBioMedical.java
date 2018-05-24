@@ -10,19 +10,17 @@ import java.util.List;
 
 import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
-import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
-import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.general.UtilsShared;
 
-public class ClusterUnSupervisedBioMedical {
+public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 
-	UnSupervisedClusteringText unSupervisedClusteringText;
-	UnSupervisedClusteringW2Vec unSupervisedClusteringW2Vec;
-	ClusterEvaluation clusterEvaluation;
-	BioMedicalUtil bioMedicalUtil;
+//	UnSupervisedClusteringText unSupervisedClusteringText;
+//	UnSupervisedClusteringW2Vec unSupervisedClusteringW2Vec;
+//	ClusterEvaluation clusterEvaluation;
+//	BioMedicalUtil bioMedicalUtil;
 	
 	public ClusterUnSupervisedBioMedical() throws IOException{
 		bioMedicalUtil = new BioMedicalUtil();
@@ -273,7 +271,7 @@ public class ClusterUnSupervisedBioMedical {
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
-			//List<double[][]> alSparseDists = googlewebSnippetUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, GoogleWebSnippetConstant.NumberOfClusters);
+			//List<double[][]> alSparseDists = bioMedicalUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 			List<double[][]> alSparseDists = bioMedicalUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 
 //			for(int i=0;i< alSparseDists.size();i++){

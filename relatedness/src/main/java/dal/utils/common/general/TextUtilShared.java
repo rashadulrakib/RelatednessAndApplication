@@ -203,7 +203,7 @@ public class TextUtilShared {
 		return commonPhWords;
 	}
 	
-	private HashSet<String> ConvertStringListToHashSetStemming(ArrayList<String> phWordList) {
+	public HashSet<String> ConvertStringListToHashSetStemming(ArrayList<String> phWordList) {
 		HashSet<String> hmlist = new HashSet<String>();
 		try{
 			for(String str: phWordList){
@@ -275,7 +275,9 @@ public  String PerformPreprocess(String doc) {
 		
 		try{
 			for(String word: words){
-				doc.add(StemmingUtil.stemPhrase(word));
+				String stemmed = StemmingUtil.stemPhrase(word);
+				if(stemmed.isEmpty()) continue;
+				doc.add(stemmed);
 			}
 		}
 		catch(Exception e){

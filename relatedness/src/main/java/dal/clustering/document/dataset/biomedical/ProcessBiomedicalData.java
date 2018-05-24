@@ -9,30 +9,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import dal.clustering.document.shared.DocClusterUtil;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 
 public class ProcessBiomedicalData {
 
-	DocClusterUtil docClusterUtil;
+	//DocClusterUtil docClusterUtil;
+	BioMedicalUtil bioMedicalUtil;
 	
 	public ProcessBiomedicalData() {
-		docClusterUtil = new DocClusterUtil();
+		//docClusterUtil = new DocClusterUtil();
+		bioMedicalUtil = new BioMedicalUtil();
 	}
 
 	
 	public void Process() {
 		try{
 			//loadAllDocsBiomedicalByW2VecListAndWriteToArff();
-			CombineBioASQData();
+			//CombineBioASQData();
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			e.printStackTrace();
 		}
 		
 	}
-
 
 	private void CombineBioASQData() {
 		try{
@@ -91,9 +90,9 @@ public class ProcessBiomedicalData {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 			   
-			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
-		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
+			   body = bioMedicalUtil.docClusterUtil.textUtilShared.PerformPreprocess(body);
+		        ArrayList<String> processed = bioMedicalUtil.docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        body = bioMedicalUtil.docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
 		        if(body.isEmpty()) continue;
 			   
