@@ -289,7 +289,7 @@ public class App
     	
     	//new ClusterUnSupervisedBioMedicalRAD().ClusterDocsByFrequentTerms();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixW2VecStemmed();
-    	new ClusterUnSupervisedBioMedicalRAD().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
 
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
@@ -299,16 +299,16 @@ public class App
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineTfIdf();    	
-    	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vec();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2Vec(); //RAD
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixW2VecList();
     	//new ClusterUnSupervisedBioMedical().GenerateDocSimMatrixGtm();
-    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative(); //RAD
 	    //new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixFromFileSparsificationBFixedNbyKSimilarities();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
-    	//new BioMedicalExternalEvaluation().ExternalEvaluate();
+    	new BioMedicalExternalEvaluation().ExternalEvaluate();
     	//***********end biomedical************//
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();

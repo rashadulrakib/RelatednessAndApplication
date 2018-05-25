@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
@@ -19,12 +18,8 @@ public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 
 //	UnSupervisedClusteringText unSupervisedClusteringText;
 //	UnSupervisedClusteringW2Vec unSupervisedClusteringW2Vec;
-//	ClusterEvaluation clusterEvaluation;
-//	BioMedicalUtil bioMedicalUtil;
 	
 	public ClusterUnSupervisedBioMedical() throws IOException{
-		bioMedicalUtil = new BioMedicalUtil();
-		clusterEvaluation = new ClusterEvaluation(bioMedicalUtil.docClusterUtil);
 //		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(bioMedicalUtil.getUniqueWords(),
 //				bioMedicalUtil.getDocsBiomedicalFlat(), bioMedicalUtil.getDocsBiomedicalList(), 
 //				bioMedicalUtil.docClusterUtil);
@@ -267,7 +262,7 @@ public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-tfidf-sim";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ-sim-20000";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			

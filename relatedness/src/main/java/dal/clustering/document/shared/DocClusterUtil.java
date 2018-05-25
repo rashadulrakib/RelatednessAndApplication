@@ -333,10 +333,10 @@ public class DocClusterUtil {
             	String EmbeddingWord = arr[0];
             	
             	if(uniqueWords.contains(EmbeddingWord)){
-            		String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
-            		double [] vecDoubles = new double[vecs.length];
-            		for(int i=0; i< vecs.length;i++){
-            			vecDoubles[i] = Double.parseDouble(vecs[i]);
+            		//String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
+            		double [] vecDoubles = new double[arr.length-1];
+            		for(int i=1; i< arr.length;i++){
+            			vecDoubles[i-1] = Double.parseDouble(arr[i]);
             		}
             		w2vec.put(EmbeddingWord, vecDoubles);
             	}

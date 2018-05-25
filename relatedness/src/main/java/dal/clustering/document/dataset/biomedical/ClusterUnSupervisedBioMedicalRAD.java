@@ -10,16 +10,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	
 	public ClusterUnSupervisedBioMedicalRAD(){
-		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(bioMedicalUtil.getUniqueWords(),
-		bioMedicalUtil.getDocsBiomedicalFlat(), bioMedicalUtil.getDocsBiomedicalList(), 
-		bioMedicalUtil.docClusterUtil);
 	}
 	
 	public void ClusterDocsByFrequentTerms(){
