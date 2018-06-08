@@ -6,7 +6,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class UtilsShared {
 	public static boolean AnyOverlapBetweenTwoRanges(int range1First, int range1Last, int range2First, int range2Last){
@@ -146,6 +148,24 @@ public class UtilsShared {
 	}
 	
 	public static double[][] LoadMatrixFromFile(String file){
+		try{
+			return loadMatrixFromFileBySeperator(file, "\\s+");
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static double[][] LoadMatrixFromFile(String file, String seperator){
+		try{
+			return loadMatrixFromFileBySeperator(file, seperator);
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private static double[][] loadMatrixFromFileBySeperator(String file, String seperator){
 		double[][] distMatrix = null; 
 		
 		try{
@@ -156,7 +176,7 @@ public class UtilsShared {
 			
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			line = br.readLine();
-			int size = line.split("\\s+").length;
+			int size = line.split(seperator).length;
 			br.close();
 			
 			distMatrix = new double[size][];
@@ -167,7 +187,7 @@ public class UtilsShared {
 	           line = line.trim();
 	           if(line.isEmpty()) continue;
 	           
-	           double row [] = ConvertStringArrayToDoubleArray(line.split("\\s+"));
+	           double row [] = ConvertStringArrayToDoubleArray(line.split(seperator));
 	           distMatrix[i++]= row;
 	           
 	           System.out.println("Start LoadMatrixFromFile="+i);
@@ -182,7 +202,6 @@ public class UtilsShared {
 		return distMatrix;
 	}
 	
-
 	public static double[][] LoadSimilarityMatrixFromDistanceFile(String distFile) {
 		double[][] simMatrix = null; 
 		
@@ -302,5 +321,22 @@ public class UtilsShared {
 		System.out.println("End LoadVectorFromFile");
 		
 		return vecs;
+	}
+	
+	public static <T> ArrayList<T> ConvertCollectionToArrayList(Collection<T> col){
+		ArrayList<T> list = new ArrayList<T>();
+		
+		try{
+			Iterator<T> itr = col.iterator();
+			
+			while(itr.hasNext()){
+				list.add(itr.next());
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 }

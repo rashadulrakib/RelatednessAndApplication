@@ -26,6 +26,7 @@ public class ProcessBiomedicalData {
 		try{
 			//loadAllDocsBiomedicalByW2VecListAndWriteToArff();
 			//CombineBioASQData();
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();

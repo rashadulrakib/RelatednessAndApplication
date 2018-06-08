@@ -10,12 +10,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	
+	TfIdfMatrixGenerator tfIdfMatrixGenerator;
+	
 	public ClusterUnSupervisedBioMedicalRAD(){
+		tfIdfMatrixGenerator = new TfIdfMatrixGenerator();
 	}
 	
 	public void ClusterDocsByFrequentTerms(){
@@ -108,16 +112,47 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 		}
 	}
 	
+	public void GenerateDocSimMatrixDoc2Vec(){
+		try{
+			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.doc2VecUtil.CreateDoc2VecInstances("/users/grad/rakib/doc2vec/doc2vec-100", bioMedicalUtil.getDocsBiomedicalFlat(), ",");
+			
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-doc2vec100-sim-20000", docSimMatrix, " ");
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public void GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification(){
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ-sim-20000-stemmed";	
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-doc2vec100-sim-20000";	
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			double [][] docDisSimMatrixDense = UtilsShared.CopyMatrix(docSimMatrix, true);
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-w2vec-bioasq-dense-20000-stemmed", docDisSimMatrixDense, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-doc2vec100-dense-20000", docDisSimMatrixDense, " ");
 			
 			double [][] docDisSimMatrixSparse = bioMedicalUtil.docClusterUtil.sparsificationUtilRAD.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters);
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-w2vec-bioasq-sparse-20000-stemmed", docDisSimMatrixSparse, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-doc2vec100-sparse-20000", docDisSimMatrixSparse, " ");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void GenerateDocSimMatrixW2VecPrunedFtrs() {
+		try{
+			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();			
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			
+			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());			
+			ArrayList<String []> alDocLabelFlatPruned = bioMedicalUtil.docClusterUtil.textUtilShared.PruneWordsByDocFreqs(docFreqs, alDocLabelFlat); 
+			
+			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatPruned, hmW2Vec);			
+			
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vecwordpruned-bioASQ2018-sim-20000", docSimMatrix, " ");
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

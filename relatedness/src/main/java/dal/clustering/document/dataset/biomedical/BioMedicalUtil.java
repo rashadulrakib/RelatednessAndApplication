@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import dal.clustering.document.shared.Doc2VecUtil;
 import dal.clustering.document.shared.DocClusterConstant;
 import dal.clustering.document.shared.DocClusterUtil;
 
 public class BioMedicalUtil {
+	public Doc2VecUtil doc2VecUtil; 
 	public DocClusterUtil docClusterUtil;
 	HashSet<String> uniqueWords;
 	HashSet<String> uniqueWordsStemmed;
@@ -27,6 +29,7 @@ public class BioMedicalUtil {
 	List<Set<String>> stemmedDocumnetsUniqueTerms;
 	
 	public BioMedicalUtil(){
+		doc2VecUtil = new Doc2VecUtil();
 		docClusterUtil = new DocClusterUtil();
 		aldocsBodeyLabelFlat = new ArrayList<String[]>();
 		aldocsBodeyLabelFlatStemmed = new ArrayList<String[]>();
@@ -103,7 +106,7 @@ public class BioMedicalUtil {
 			   String label = arrLabelBody[0].trim();
 			   String body =  arrLabelBody[1].trim();
 			   
-			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
+			    body = docClusterUtil.textUtilShared.PerformPreprocess(body);
 		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        ArrayList<String> processedStemmed = docClusterUtil.textUtilShared.StemByEachWord(processed);

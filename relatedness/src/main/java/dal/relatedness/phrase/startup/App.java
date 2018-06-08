@@ -289,6 +289,8 @@ public class App
     	
     	//new ClusterUnSupervisedBioMedicalRAD().ClusterDocsByFrequentTerms();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixW2VecStemmed();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixDoc2Vec();
+    	new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixW2VecPrunedFtrs();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
 
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
@@ -308,7 +310,7 @@ public class App
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineW2VecWeightCenterBasedSparsification();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineCenterBasedSparsificationTfIdf();
     	//new ClusterUnSupervisedBioMedical().GenerateDocsDisSimilarityMatrixCosineWeightCenterBasedSparsificationTfIdf();
-    	new BioMedicalExternalEvaluation().ExternalEvaluate();
+        //new BioMedicalExternalEvaluation().ExternalEvaluate();
     	//***********end biomedical************//
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();

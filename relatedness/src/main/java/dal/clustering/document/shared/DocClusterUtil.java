@@ -319,9 +319,10 @@ public class DocClusterUtil {
 		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
 		try{
 			//BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
-			BufferedReader br = new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQCombined));
+			BufferedReader br = new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQ2018));
 	           
 			String text="";
+			HashSet<String> notFound = new HashSet<String>();
 			
             while ((text = br.readLine()) != null) {
             	text = text.trim().toLowerCase();
@@ -339,10 +340,13 @@ public class DocClusterUtil {
             			vecDoubles[i-1] = Double.parseDouble(arr[i]);
             		}
             		w2vec.put(EmbeddingWord, vecDoubles);
+            	}else{
+            		notFound.add(EmbeddingWord);
             	}
             }
            
             br.close();
+            System.out.println("Ttotal words="+uniqueWords.size()+", notFoundWords="+notFound.size());
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -457,6 +461,47 @@ public class DocClusterUtil {
 		
 		return avgVec;
 	}
+	
+	public double[] PopulateW2VecIDFForSingleDoc(String doc, HashMap<String, double[]> hmW2Vec, 
+			HashMap<String, Double> docFreqs, double totalDocs){
+		
+		double [] tempVec = hmW2Vec.values().iterator().next();
+		double [] avgVec = new double[tempVec.length];
+		
+		String arr[] = doc.split("\\s+");
+		
+		try{
+			
+			for(String word: arr){
+        		if(hmW2Vec.containsKey(word)){
+        			double[] wordVec = hmW2Vec.get(word);
+        			//double idfVal = totalDocs/ docFreqs.containsKey(word) ? docFreqs.get(word) ?  1.00;
+        			double idfVal = 1;
+        			if(docFreqs.containsKey(word)){
+        				idfVal = Math.log10(totalDocs/docFreqs.get(word));
+        			}
+        			for(int i=0;i<avgVec.length;i++){
+        				avgVec[i]=avgVec[i]+ wordVec[i]*idfVal;
+        			}
+        			
+        			sumFound++;
+        		}
+        	}
+			
+			textLengtSum = textLengtSum+arr.length;
+			
+			//averaging avgvec
+        	for(int i=0;i<avgVec.length;i++){
+        		avgVec[i]=avgVec[i]/(double)arr.length;
+        	}
+        	//end averaging avgvec
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return avgVec;
+	}
 
 	double sumFound = 0;
 	int textLengtSum =0;
@@ -482,6 +527,37 @@ public class DocClusterUtil {
 			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
 		}
 		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return testW2Vecs;
+	}
+	
+	public ArrayList<InstanceW2Vec> CreateW2VecIDFForTestData(ArrayList<String[]> alDocLabelFlat,
+			HashMap<String, double[]> hmW2Vec, HashMap<String, Double> docFreqs) {
+		
+		ArrayList<InstanceW2Vec> testW2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+		
+			double totalDocs = alDocLabelFlat.size();
+			
+			for(String[] bodyLabel: alDocLabelFlat){
+				String body = bodyLabel[0];
+				String label = bodyLabel[1];
+				
+				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
+				
+				instanceW2Vec.OriginalLabel = label;
+				instanceW2Vec.Features = PopulateW2VecIDFForSingleDoc(body, hmW2Vec, docFreqs, totalDocs);
+				instanceW2Vec.Text = body;
+				
+				testW2Vecs.add(instanceW2Vec);
+			}
+			
+			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
+			
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 		

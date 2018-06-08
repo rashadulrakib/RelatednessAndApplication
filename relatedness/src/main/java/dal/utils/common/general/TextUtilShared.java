@@ -6,8 +6,10 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 
@@ -393,5 +395,45 @@ public  String PerformPreprocess(String doc) {
 
         return wPhs;
     }
+
+	public ArrayList<String[]> PruneWordsByDocFreqs(HashMap<String, Double> docFreqs, ArrayList<String[]> alDocLabelFlat) {
+		ArrayList<String []> alDocLabelFlatPruned = new ArrayList<String[]>(); 
+		
+		try{
+			for(String[] bodyLabel: alDocLabelFlat){
+				String body = bodyLabel[0];
+				String label = bodyLabel[1];
+				
+				String [] arr = body.split("\\s+");
+				
+				ArrayList<Double> aldocFreqs = UtilsShared.ConvertCollectionToArrayList(docFreqs.values());
+				
+				Double average = aldocFreqs.stream().mapToDouble(val -> val).average().orElse(0.0);
+				
+				double varainceSum = 0;
+				for(Double num: aldocFreqs){
+					varainceSum = varainceSum + (num-average)*(num-average);
+				}
+				
+				double sd = Math.sqrt(varainceSum/aldocFreqs.size());
+				
+				HashSet<String> highDocFreqs = new HashSet<String>();
+				
+				for(String key: docFreqs.keySet()){
+					double freq = docFreqs.get(key);
+					
+					if(freq>=average+sd){
+						highDocFreqs.add(key);
+					}
+				}
+				
+				
+			}
+		}catch (Exception e) {
+	           e.printStackTrace();
+	    }
+		
+		return alDocLabelFlatPruned;
+	}
 	
 }
