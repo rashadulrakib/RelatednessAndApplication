@@ -502,6 +502,81 @@ public class DocClusterUtil {
 		
 		return avgVec;
 	}
+	
+	
+	public double[] PopulateW2VecMinMaxForSingleDoc(String doc, HashMap<String, double[]> hmW2Vec) {
+		
+		double [] tempVec = hmW2Vec.values().iterator().next();
+		double [] avgVec = new double[tempVec.length];
+		
+		String arr[] = doc.split("\\s+");
+		
+		try{
+		
+			for(String word: arr){
+        		if(hmW2Vec.containsKey(word)){
+        			double[] wordVec = hmW2Vec.get(word); 
+        			for(int i=0;i<avgVec.length;i++){
+        				avgVec[i]=Math.max(avgVec[i], wordVec[i]);
+        			}
+        			
+        			sumFound++;
+        		}
+        	}
+			
+			textLengtSum = textLengtSum+arr.length;
+			
+			//averaging avgvec
+//        	for(int i=0;i<avgVec.length;i++){
+//        		avgVec[i]=avgVec[i]/(double)arr.length;
+//        	}
+        	//end averaging avgvec
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return avgVec;
+	}
+	
+	
+	public double[] PopulateW2VecAvgMaxHarmonicForSingleDoc(String doc, HashMap<String, double[]> hmW2Vec) {
+		
+		double [] tempVec = hmW2Vec.values().iterator().next();
+		double [] avgVec = new double[tempVec.length];
+		double [] maxVec = new double[tempVec.length];
+		
+		String arr[] = doc.split("\\s+");
+		
+		try{
+		
+			for(String word: arr){
+        		if(hmW2Vec.containsKey(word)){
+        			double[] wordVec = hmW2Vec.get(word); 
+        			for(int i=0;i<avgVec.length;i++){
+        				avgVec[i]= avgVec[i] + wordVec[i];
+        				maxVec[i] = Math.max(maxVec[i] , wordVec[i]);
+        			}
+        			
+        			sumFound++;
+        		}
+        	}
+			
+			textLengtSum = textLengtSum+arr.length;
+			
+			//averaging avgvec
+        	for(int i=0;i<avgVec.length;i++){
+        		avgVec[i]=avgVec[i]/(double)arr.length;
+        		avgVec[i]=2*maxVec[i]*avgVec[i]/(maxVec[i]+ avgVec[i]);
+        	}
+        	//end averaging avgvec
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return avgVec;
+	}
 
 	double sumFound = 0;
 	int textLengtSum =0;
@@ -558,6 +633,60 @@ public class DocClusterUtil {
 			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
 			
 		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return testW2Vecs;
+	}
+	
+	public ArrayList<InstanceW2Vec> CreateW2VecMinMaxForTestData(ArrayList<String[]> alTestDocsBodyLabelPreprocesed, HashMap<String, double[]> hmW2Vec) {
+		
+		ArrayList<InstanceW2Vec> testW2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			for(String[] bodyLabel: alTestDocsBodyLabelPreprocesed){
+				String body = bodyLabel[0];
+				String label = bodyLabel[1];
+				
+				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
+				
+				instanceW2Vec.OriginalLabel = label;
+				instanceW2Vec.Features = PopulateW2VecMinMaxForSingleDoc(body, hmW2Vec);
+				instanceW2Vec.Text = body;
+				
+				testW2Vecs.add(instanceW2Vec);
+			}
+			
+			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return testW2Vecs;
+	}
+	
+	public ArrayList<InstanceW2Vec> CreateW2VecAvgMaxHarmonicForTestData(ArrayList<String[]> alTestDocsBodyLabelPreprocesed, HashMap<String, double[]> hmW2Vec) {
+		
+		ArrayList<InstanceW2Vec> testW2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			for(String[] bodyLabel: alTestDocsBodyLabelPreprocesed){
+				String body = bodyLabel[0];
+				String label = bodyLabel[1];
+				
+				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
+				
+				instanceW2Vec.OriginalLabel = label;
+				instanceW2Vec.Features = PopulateW2VecAvgMaxHarmonicForSingleDoc(body, hmW2Vec);
+				instanceW2Vec.Text = body;
+				
+				testW2Vecs.add(instanceW2Vec);
+			}
+			
+			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
+		}
+		catch(Exception e){
 			e.printStackTrace();
 		}
 		

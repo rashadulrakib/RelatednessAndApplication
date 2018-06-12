@@ -6,10 +6,10 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.DoubleSummaryStatistics;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.TreeSet;
 
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 
@@ -396,39 +396,65 @@ public  String PerformPreprocess(String doc) {
         return wPhs;
     }
 
-	public ArrayList<String[]> PruneWordsByDocFreqs(HashMap<String, Double> docFreqs, ArrayList<String[]> alDocLabelFlat) {
+	public ArrayList<String[]> PruneWordsByDocFreqs(HashMap<String, Double> docFreqs, 
+			ArrayList<String[]> alDocLabelFlat, int maxDocFreq) {
+		
 		ArrayList<String []> alDocLabelFlatPruned = new ArrayList<String[]>(); 
 		
 		try{
+			
+			ArrayList<Double> aldocFreqs = UtilsShared.ConvertCollectionToArrayList(docFreqs.values());
+			
+			Double average = aldocFreqs.stream().mapToDouble(val -> val).average().orElse(0.0);
+			
+			double varainceSum = 0;
+			for(Double num: aldocFreqs){
+				varainceSum = varainceSum + (num-average)*(num-average);
+			}
+			
+			double sd = Math.sqrt(varainceSum/aldocFreqs.size());
+			
+			TreeSet<String> highDocFreqs = new TreeSet<String>();
+			
+			for(String key: docFreqs.keySet()){
+				double freq = docFreqs.get(key);
+				
+				if(maxDocFreq>1){
+					if(freq> maxDocFreq){
+						highDocFreqs.add(key);
+					}
+				}else{
+					if(freq>=average+sd){
+						highDocFreqs.add(key);
+					}
+				}
+			}
+			
+			for(String hword: highDocFreqs){
+				System.out.println("high freq="+hword+","+docFreqs.get(hword));
+			}
+			
 			for(String[] bodyLabel: alDocLabelFlat){
 				String body = bodyLabel[0];
 				String label = bodyLabel[1];
 				
 				String [] arr = body.split("\\s+");
+			
+				StringBuilder sbNew = new StringBuilder();
 				
-				ArrayList<Double> aldocFreqs = UtilsShared.ConvertCollectionToArrayList(docFreqs.values());
-				
-				Double average = aldocFreqs.stream().mapToDouble(val -> val).average().orElse(0.0);
-				
-				double varainceSum = 0;
-				for(Double num: aldocFreqs){
-					varainceSum = varainceSum + (num-average)*(num-average);
+				for(String word: arr){
+					if(highDocFreqs.contains(word))
+						continue;					
+					sbNew.append(word+" ");
 				}
 				
-				double sd = Math.sqrt(varainceSum/aldocFreqs.size());
+				String[] newbodyLabel = new String[2];
+				newbodyLabel[0] = sbNew.toString().trim();
+				newbodyLabel[1]= label;
 				
-				HashSet<String> highDocFreqs = new HashSet<String>();
-				
-				for(String key: docFreqs.keySet()){
-					double freq = docFreqs.get(key);
-					
-					if(freq>=average+sd){
-						highDocFreqs.add(key);
-					}
-				}
-				
-				
+				alDocLabelFlatPruned.add(newbodyLabel);
 			}
+			
 		}catch (Exception e) {
 	           e.printStackTrace();
 	    }

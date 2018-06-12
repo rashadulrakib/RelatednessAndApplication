@@ -297,8 +297,8 @@ public class ClusterEvaluation {
 				}
 			}
 			
-			System.out.println("labels_pred = "+preds);
-			System.out.println("labels_true = "+trues);
+			//System.out.println("labels_pred = "+preds);
+			//System.out.println("labels_true = "+trues);
 			
 			if(sortedFinalCluster.keySet().size()== sortedClusterGroupsOriginalLabelByMerged.keySet().size()){
 

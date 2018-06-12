@@ -262,15 +262,15 @@ public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vecidf-bioASQ2018-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vecAvgMaxHarmonic-bioASQ2018-sim-20000";
 			//String simFile = "/users/grad/rakib/w2vecs/biomedical/BioASQ/2018/sim_matrixwdm-2000-10";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			//List<double[][]> alSparseDists = bioMedicalUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 			List<double[][]> alSparseDists = bioMedicalUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters); //RAD
-			double [][] docDisSimMatrixDense = UtilsShared.CopyMatrix(docSimMatrix, true);
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-w2vecidf-bioasq2018-dense-20000", docDisSimMatrixDense, " ");
+			//double [][] docDisSimMatrixDense = UtilsShared.CopyMatrix(docSimMatrix, true);
+			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-w2vecwordpruned-bioasq2018-dense-20000", docDisSimMatrixDense, " ");
 			
 //			for(int i=0;i< alSparseDists.size();i++){
 //				double[][] sparseDistMatrix = alSparseDists.get(i);
