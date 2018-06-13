@@ -17,8 +17,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
-import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
+import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
@@ -217,44 +217,56 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			}
 			br.close();
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersPred = new LinkedHashMap<String, ArrayList<InstanceText>>();
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersOrigi = new LinkedHashMap<String, ArrayList<InstanceText>>();
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPred = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersOrigi = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
 	
 			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
-			ArrayList<InstanceText> alInsts = new ArrayList<InstanceText>();
+			ArrayList<InstanceW2Vec> alInsts = new ArrayList<InstanceW2Vec>();
 			
 			if(clusterLables.size()== alBodyLabel.size()){
+
+				HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 				
 				for(int i=0;i<alBodyLabel.size();i++ ){
-					InstanceText newInst = new InstanceText();
+					InstanceW2Vec newInst = new InstanceW2Vec();
 					newInst.OriginalLabel = alBodyLabel.get(i)[1];
 					newInst.Text = alBodyLabel.get(i)[0];
 					newInst.ClusteredLabel = clusterLables.get(i);
+					newInst.Features = bioMedicalUtil.docClusterUtil.PopulateW2VecForSingleDoc(newInst.Text, hmW2Vec);
 					alInsts.add(newInst);
 				}
 				
-				for(InstanceText inst: alInsts){
+				hmW2Vec.clear();
+				
+				for(InstanceW2Vec inst: alInsts){
 					
 					if(!lastClustersPred.containsKey(inst.ClusteredLabel)){
-						ArrayList<InstanceText> al = new ArrayList<InstanceText>();
+						ArrayList<InstanceW2Vec> al = new ArrayList<InstanceW2Vec>();
 						al.add(inst);
 						lastClustersPred.put(inst.ClusteredLabel, al);
 					}else{
-						ArrayList<InstanceText> al = lastClustersPred.get(inst.ClusteredLabel);
+						ArrayList<InstanceW2Vec> al = lastClustersPred.get(inst.ClusteredLabel);
 						al.add(inst);
 						lastClustersPred.put(inst.ClusteredLabel, al);
 					}
 					
 					if(!lastClustersOrigi.containsKey(inst.OriginalLabel)){
-						ArrayList<InstanceText> al = new ArrayList<InstanceText>();
+						ArrayList<InstanceW2Vec> al = new ArrayList<InstanceW2Vec>();
 						al.add(inst);
 						lastClustersOrigi.put(inst.OriginalLabel, al);
 					}else{
-						ArrayList<InstanceText> al = lastClustersOrigi.get(inst.OriginalLabel);
+						ArrayList<InstanceW2Vec> al = lastClustersOrigi.get(inst.OriginalLabel);
 						al.add(inst);
 						lastClustersOrigi.put(inst.OriginalLabel, al);
 					}
 				}
+				
+				
+				//LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPredSubList = GetSublist(new String[]{"2", "6"}, lastClustersPred);
+				
+				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(lastClustersPred);
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(lastClustersPredSubList);
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(lastClustersOrigi);
 				
 				///find unique terms in each cluster
 				HashMap<String, Integer> clusterDisFreqPred = new HashMap<String, Integer>();
@@ -262,9 +274,9 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				for(String label: lastClustersPred.keySet()){
 					
 					HashSet<String> uniqWordsPerCluster = new HashSet<String>();
-					ArrayList<InstanceText> al = lastClustersPred.get(label);
+					ArrayList<InstanceW2Vec> al = lastClustersPred.get(label);
 					
-					for(InstanceText inst: al){
+					for(InstanceW2Vec inst: al){
 						String [] textArr= inst.Text.split("\\s+");
 						for(String w: textArr){
 							uniqWordsPerCluster.add(w);
@@ -286,9 +298,9 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				for(String label: lastClustersOrigi.keySet()){
 					
 					HashSet<String> uniqWordsPerCluster = new HashSet<String>();
-					ArrayList<InstanceText> al = lastClustersOrigi.get(label);
+					ArrayList<InstanceW2Vec> al = lastClustersOrigi.get(label);
 					
-					for(InstanceText inst: al){
+					for(InstanceW2Vec inst: al){
 						String [] textArr= inst.Text.split("\\s+");
 						for(String w: textArr){
 							uniqWordsPerCluster.add(w);
@@ -321,13 +333,13 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				///end
 				
 				//find the pure text
-				LinkedHashMap<String, ArrayList<InstanceText>> pureClustersPred = new LinkedHashMap<String, ArrayList<InstanceText>>();
-				LinkedHashMap<String, ArrayList<InstanceText>> pureClustersPredTolerated = new LinkedHashMap<String, ArrayList<InstanceText>>();
+				LinkedHashMap<String, ArrayList<InstanceW2Vec>> pureClustersPred = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+				LinkedHashMap<String, ArrayList<InstanceW2Vec>> pureClustersPredTolerated = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
 				
 				for(String label: lastClustersPred.keySet()){
-					ArrayList<InstanceText> al = lastClustersPred.get(label);
+					ArrayList<InstanceW2Vec> al = lastClustersPred.get(label);
 					
-					for(InstanceText inst: al){
+					for(InstanceW2Vec inst: al){
 						String [] textArr= inst.Text.split("\\s+");
 						
 						boolean flag = false;
@@ -341,11 +353,11 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 						if(flag) continue;
 						
 						if(!pureClustersPred.containsKey(inst.ClusteredLabel)){
-							ArrayList<InstanceText> all = new ArrayList<InstanceText>();
+							ArrayList<InstanceW2Vec> all = new ArrayList<InstanceW2Vec>();
 							all.add(inst);
 							pureClustersPred.put(inst.ClusteredLabel, all);
 						}else{
-							ArrayList<InstanceText> all = pureClustersPred.get(inst.ClusteredLabel);
+							ArrayList<InstanceW2Vec> all = pureClustersPred.get(inst.ClusteredLabel);
 							all.add(inst);
 							pureClustersPred.put(inst.ClusteredLabel, all);
 						}
@@ -355,9 +367,9 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					if(pureClustersPred.containsKey(label)){
 						bw.write(label+", pure texts="+ pureClustersPred.get(label).size()+"\n");
 						//for(ArrayList<InstanceText> values: pureClustersPred.get(label))
-						ArrayList<InstanceText> pureTexts = pureClustersPred.get(label);
+						ArrayList<InstanceW2Vec> pureTexts = pureClustersPred.get(label);
 						
-						for(InstanceText inst: pureTexts){
+						for(InstanceW2Vec inst: pureTexts){
 							bw.write(inst.Text+"\n");
 						}
 						
@@ -369,20 +381,122 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				//end
 			
 				//find most similar docs to the pure texts
+//				int loop=0;
 				for(String pureLabel: pureClustersPredTolerated.keySet()){
-					ArrayList<InstanceText> pureTexts = pureClustersPredTolerated.get(pureLabel);
-					System.out.println(pureLabel+","+pureTexts.size()+",lastClustersPred="+lastClustersPred.size());
+					ArrayList<InstanceW2Vec> pureTexts = pureClustersPredTolerated.get(pureLabel);
+					System.out.println(pureLabel+","+pureTexts.size()
+							+",lastClustersPredSize="+lastClustersPred.get(pureLabel).size());
 					//find lastClustersPred.size() most similar items to pureLabeltext
 					
+//					ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
+//							lastClustersPred.get(pureLabel).size(), alInsts, docFreqs, maxDocFreqTolerance);
+					ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
+							1000, alInsts, docFreqs, maxDocFreqTolerance);
+					lastClustersPred.put(pureLabel, closestPureTexts);
+					//loop++;
+//					if(loop>1){
+//						break;
+//					}
 				}
 				//end
 				
 				bw.close();
 				
+				//LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPredSubList1 = GetSublist(new String[]{"2", "6"}, lastClustersPred);
+				
+				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(lastClustersPred);
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(lastClustersPredSubList1);
 			}	
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	private LinkedHashMap<String, ArrayList<InstanceW2Vec>> GetSublist(
+			String[] labels,
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPred) {
+		LinkedHashMap<String, ArrayList<InstanceW2Vec>> sublist = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+		
+		try{
+			for(String label: labels){
+				sublist.put(label, lastClustersPred.get(label));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sublist;
+	}
+
+	private ArrayList<InstanceW2Vec> FindClosestPureTexts(
+			ArrayList<InstanceW2Vec> pureTexts, String pureLabel, int numberOfClosestTexts,
+			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Double> docFreqs, int maxDocFreqTolerance) {
+		
+		ArrayList<InstanceW2Vec> finalClosestTexts = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			
+			ArrayList<HashSet<InstanceW2Vec>> listListClosets = new ArrayList<HashSet<InstanceW2Vec>>();
+			
+			for(InstanceW2Vec pureText: pureTexts){
+				
+				HashSet<InstanceW2Vec> closets = new HashSet<InstanceW2Vec>();
+				
+				ArrayList<double[]> simIndex = new ArrayList<double[]>();
+				
+				for(int i=0;i<alInsts.size();i++){
+					
+					boolean allHaveMaxDocFreq = isAllWordsHaveMaxDocFreq(alInsts.get(i).Text, maxDocFreqTolerance, docFreqs);
+					if(!allHaveMaxDocFreq) continue;
+					
+					double sim = ComputeUtil.ComputeCosineSimilarity(pureText.Features, alInsts.get(i).Features);
+					simIndex.add(new double[]{sim, i});
+				}
+				
+				Collections.sort(simIndex, new Comparator<double[]>(){
+
+					@Override
+					public int compare(double[] arg0, double[] arg1) {
+						return Double.compare(arg1[0], arg0[0]);
+					}
+				});
+				
+				for(int i=0;i<simIndex.size() && i<numberOfClosestTexts;i++){
+					int ind = (int)simIndex.get(i)[1];
+					
+					InstanceW2Vec newInst = new InstanceW2Vec();
+					newInst.ClusteredLabel = pureLabel;
+					newInst.OriginalLabel = alInsts.get(ind).OriginalLabel;
+					newInst.Text = alInsts.get(ind).Text;
+					newInst.Features = alInsts.get(ind).Features;
+					
+				    closets.add(newInst);
+				}
+				
+				listListClosets.add(closets);
+			}
+			
+			finalClosestTexts.addAll(listListClosets.get(0));
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return finalClosestTexts;
+	}
+
+	private boolean isAllWordsHaveMaxDocFreq(String text, int maxDocFreq, HashMap<String, Double> docFreqs) {
+		try{
+		
+			String [] arr = text.split("\\s+");
+			
+			for(String word: arr){
+				if(docFreqs.get(word)>maxDocFreq) return false;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return true;
 	}
 }
