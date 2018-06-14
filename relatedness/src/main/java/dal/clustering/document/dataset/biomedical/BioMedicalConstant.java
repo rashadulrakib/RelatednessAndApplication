@@ -21,8 +21,8 @@ public class BioMedicalConstant {
 	public static final String BioMedicalBioASQCombined = "/users/grad/rakib/w2vecs/biomedical/BioASQ/bioasqvectors.txt";
     //public static final String BioMedicalBioASQ2018 = "/users/grad/rakib/w2vecs/biomedical/BioASQ/2018/bioasqvectors2018.txt";
 	public static final String BioMedicalBioASQ2018 = "D:\\PhD\\w2vecs\\biomedical\\BioASQ\\2018\\pubmed2018_w2v_200D.txt";
-        
-
+	public static final int BioASQ2018W2VecDimension = 200;
+	
 	public static final String BioMedicalBioNlpPMC = "/users/grad/rakib/w2vecs/biomedical/BioNlp/PMC-w2v.txt";
 	public static final String BioMedicalBioNlpPubMed = "/users/grad/rakib/w2vecs/biomedical/BioNlp/PubMed-w2v.txt";
 

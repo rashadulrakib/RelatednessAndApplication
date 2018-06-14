@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -245,7 +244,7 @@ public class TextUtilShared {
 		return isEqual;
 	}
 	
-public  String PerformPreprocess(String doc) {
+    public  String PerformPreprocess(String doc) {
 		
 		String pDoc = "";
 		try{
@@ -396,7 +395,7 @@ public  String PerformPreprocess(String doc) {
         return wPhs;
     }
 
-	public ArrayList<String[]> PruneWordsByDocFreqs(HashMap<String, Double> docFreqs, 
+	public ArrayList<String[]> StatisticalPruneWordsByDocFreqs(HashMap<String, Double> docFreqs, 
 			ArrayList<String[]> alDocLabelFlat, int maxDocFreq) {
 		
 		ArrayList<String []> alDocLabelFlatPruned = new ArrayList<String[]>(); 
@@ -462,4 +461,38 @@ public  String PerformPreprocess(String doc) {
 		return alDocLabelFlatPruned;
 	}
 	
+	public ArrayList<String[]> FixedPruneWordsByDocFreqs(HashMap<String, Double> docFreqs, 
+			ArrayList<String[]> alDocLabelFlat, int maxDocFreq) {
+		
+		ArrayList<String []> alDocLabelFlatPruned = new ArrayList<String[]>(); 
+		
+		try{
+			for(String[] bodyLabel: alDocLabelFlat){
+				
+				if(!IsAllWordsHaveLessThanEqualMaxDocFreq(bodyLabel[0], maxDocFreq, docFreqs)) continue;
+				
+				alDocLabelFlatPruned.add(bodyLabel);
+			}
+			
+		}catch (Exception e) {
+	           e.printStackTrace();
+	    }
+		
+		return alDocLabelFlatPruned;
+	}
+	
+	public boolean IsAllWordsHaveLessThanEqualMaxDocFreq(String text, int maxDocFreq, HashMap<String, Double> docFreqs) {
+		try{
+		
+			String [] arr = text.split("\\s+");
+			
+			for(String word: arr){
+				if(docFreqs.get(word)>maxDocFreq) return false;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return true;
+	}
 }

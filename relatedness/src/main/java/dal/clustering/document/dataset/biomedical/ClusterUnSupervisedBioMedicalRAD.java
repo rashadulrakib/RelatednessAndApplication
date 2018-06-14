@@ -153,7 +153,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 			
 			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());			
-			ArrayList<String []> alDocLabelFlatPruned = bioMedicalUtil.docClusterUtil.textUtilShared.PruneWordsByDocFreqs(docFreqs, alDocLabelFlat, 950); 
+			ArrayList<String []> alDocLabelFlatPruned = bioMedicalUtil.docClusterUtil.textUtilShared.StatisticalPruneWordsByDocFreqs(docFreqs, alDocLabelFlat, 950); 
 			
 			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatPruned, hmW2Vec);			
 			
@@ -447,7 +447,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				
 				for(int i=0;i<alInsts.size();i++){
 					
-					boolean allHaveMaxDocFreq = isAllWordsHaveMaxDocFreq(alInsts.get(i).Text, maxDocFreqTolerance, docFreqs);
+					boolean allHaveMaxDocFreq = bioMedicalUtil.docClusterUtil.textUtilShared.IsAllWordsHaveLessThanEqualMaxDocFreq(alInsts.get(i).Text, maxDocFreqTolerance, docFreqs);
 					if(!allHaveMaxDocFreq) continue;
 					
 					double sim = ComputeUtil.ComputeCosineSimilarity(pureText.Features, alInsts.get(i).Features);
@@ -484,19 +484,5 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 		}
 		return finalClosestTexts;
 	}
-
-	private boolean isAllWordsHaveMaxDocFreq(String text, int maxDocFreq, HashMap<String, Double> docFreqs) {
-		try{
-		
-			String [] arr = text.split("\\s+");
-			
-			for(String word: arr){
-				if(docFreqs.get(word)>maxDocFreq) return false;
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return true;
-	}
+	
 }

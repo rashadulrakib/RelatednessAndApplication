@@ -9,22 +9,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import dal.clustering.document.shared.TfIdfMatrixGenerator;
+import dal.clustering.document.shared.entities.InstanceW2Vec;
+import dal.clustering.document.tools.weka.processing.WekaProcessingUtil;
 import dal.relatedness.text.compute.w2vec.TextRelatednessW2VecConstant;
 
 public class ProcessBiomedicalData {
 
-	//DocClusterUtil docClusterUtil;
 	BioMedicalUtil bioMedicalUtil;
+	TfIdfMatrixGenerator tfIdfMatrixGenerator;
+	WekaProcessingUtil wekaProcessingUtil;
 	
 	public ProcessBiomedicalData() {
-		//docClusterUtil = new DocClusterUtil();
 		bioMedicalUtil = new BioMedicalUtil();
+		tfIdfMatrixGenerator = new TfIdfMatrixGenerator();
+		wekaProcessingUtil = new WekaProcessingUtil();
 	}
 
 	
 	public void Process() {
 		try{
 			//loadAllDocsBiomedicalByW2VecListAndWriteToArff();
+			loadAllDocsBiomedicalByW2VecWithLowDocFreAndWriteToArff();
 			//CombineBioASQData();
 			
 		}
@@ -33,6 +39,30 @@ public class ProcessBiomedicalData {
 		}
 		
 	}
+
+	private void loadAllDocsBiomedicalByW2VecWithLowDocFreAndWriteToArff() {
+		try{
+			
+			//int maxDocFreqTolerance =1;			
+			//HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
+			
+			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
+			//ArrayList<String []> alBodyLabelPruned = bioMedicalUtil.docClusterUtil
+			//		.textUtilShared.FixedPruneWordsByDocFreqs(docFreqs, alBodyLabel, maxDocFreqTolerance);
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());			
+			ArrayList<InstanceW2Vec> instants = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alBodyLabel, hmW2Vec);
+			HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = bioMedicalUtil.docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants);
+			
+			//System.out.println("Original body label="+alBodyLabel.size()+", pruned="+alBodyLabelPruned.size());
+			
+			wekaProcessingUtil.WriteW2VecsToArffFile(BioMedicalConstant.BiomedicalW2VecArffFile,
+					BioMedicalConstant.BioASQ2018W2VecDimension, clusterGroupsOriginalLabel.keySet(), instants);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 
 	private void CombineBioASQData() {
 		try{
@@ -83,7 +113,7 @@ public class ProcessBiomedicalData {
 			   line = line.trim();
 			   if(line.isEmpty()) continue;
 			   
-			   String [] arrLabelBody = line.split("\\t");
+			   String [] arrLabelBody = line.split("\\t+");
 			   
 			   if(arrLabelBody.length!=2)
 				   continue;

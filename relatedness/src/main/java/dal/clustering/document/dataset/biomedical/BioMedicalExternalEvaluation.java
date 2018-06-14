@@ -22,7 +22,8 @@ public class BioMedicalExternalEvaluation {
 		try{
 			//2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels 41.8
 			//2n-biomedical-w2vecitr-bioasq2018-sparse-20000-6-labels 41.215
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
+			String externalClusteringResultFile = "D:\\PhD\\Python+PCA\\out";
 			
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			
