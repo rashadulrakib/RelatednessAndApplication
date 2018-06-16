@@ -392,6 +392,15 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 //							lastClustersPred.get(pureLabel).size(), alInsts, docFreqs, maxDocFreqTolerance);
 					ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
 							1000, alInsts, docFreqs, maxDocFreqTolerance);
+					
+					for(InstanceW2Vec closestPureText: closestPureTexts){
+						if(!closestPureText.ClusteredLabel.equals(pureLabel)){
+							//remove closestPureText from prev group of lastClustersPred;
+							lastClustersPred = RemoveClosestPureTextFromGroup(closestPureText, lastClustersPred);
+						}
+						closestPureText.ClusteredLabel = pureLabel;
+					}
+					
 					lastClustersPred.put(pureLabel, closestPureTexts);
 					//loop++;
 //					if(loop>1){
@@ -411,6 +420,22 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	private LinkedHashMap<String, ArrayList<InstanceW2Vec>> RemoveClosestPureTextFromGroup(
+			InstanceW2Vec closestPureText,
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPred) {
+		try{
+			String label = closestPureText.ClusteredLabel;
+			ArrayList<InstanceW2Vec> al = lastClustersPred.get(label);
+			System.out.println("prev size="+al.size());
+			al.remove(closestPureText);
+			System.out.println("new size="+al.size());
+			lastClustersPred.put(label, al);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return lastClustersPred;
 	}
 
 	private LinkedHashMap<String, ArrayList<InstanceW2Vec>> GetSublist(
@@ -454,6 +479,8 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					simIndex.add(new double[]{sim, i});
 				}
 				
+				System.out.println("simIndex.size="+simIndex.size());
+				
 				Collections.sort(simIndex, new Comparator<double[]>(){
 
 					@Override
@@ -466,7 +493,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					int ind = (int)simIndex.get(i)[1];
 					
 					InstanceW2Vec newInst = new InstanceW2Vec();
-					newInst.ClusteredLabel = pureLabel;
+					newInst.ClusteredLabel = alInsts.get(ind).ClusteredLabel;
 					newInst.OriginalLabel = alInsts.get(ind).OriginalLabel;
 					newInst.Text = alInsts.get(ind).Text;
 					newInst.Features = alInsts.get(ind).Features;
