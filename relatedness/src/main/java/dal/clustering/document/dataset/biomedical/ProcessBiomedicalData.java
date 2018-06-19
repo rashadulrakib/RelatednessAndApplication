@@ -32,13 +32,66 @@ public class ProcessBiomedicalData {
 			//loadAllDocsBiomedicalByW2VecListAndWriteToArff();
 			loadAllDocsBiomedicalByW2VecWithLowDocFreAndWriteToArff();
 			//CombineBioASQData();
-			
+			//ExtrcatMeshTagsWriteToFile();
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 		
 	}
+
+	private void ExtrcatMeshTagsWriteToFile() {
+		try{
+			String file = "C:\\Users\\mona\\Desktop\\BioASQ\\MTI\\MTI-strict-filer-wsd\\text.out.txt";
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\mona\\Desktop\\BioASQ\\MTI\\MTI-strict-filer-wsd\\text.processed.txt"));
+			
+			BufferedReader br =  new BufferedReader(new FileReader(file));
+			String line = "";
+			int count = 0;
+
+			int ii=0;
+			
+			ArrayList<String []> bodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
+			
+			while((line = br.readLine())!=null){
+			   line = line.trim().toLowerCase();
+			   if(line.isEmpty()) continue;
+			   String arr[] = line.split("\\|");
+			   
+			   System.out.print(count/1000+1);
+			   bw.write(Integer.toString(count/1000+1));
+			   count++;
+			   
+			   StringBuilder sb = new StringBuilder();
+			   for(int i=1;i<arr.length; i++){
+				   String part = arr[i];
+				   String mhArr [] = part.split(":");
+				   if(mhArr[1].equals("mh")){   
+					   sb.append(mhArr[0].toLowerCase()+" ");
+				   }
+			   }
+			   
+			   String preproc = bioMedicalUtil.docClusterUtil.textUtilShared.performPreprocess(sb.toString().trim());
+			   ArrayList<String> txtAl = bioMedicalUtil.docClusterUtil.textUtilShared.RemoveStopWord(preproc);
+			   String txt = bioMedicalUtil.docClusterUtil.textUtilShared.ConvertArrayListToString(txtAl);
+			   
+			   txt = txt.isEmpty()? bodyLabel.get(ii)[0]: txt.trim();
+			   
+			   System.out.println(" "+txt);
+			   bw.write("\t"+txt+"\n");
+			   
+			   ii++;
+			}
+			br.close();
+			
+			bw.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 
 	private void loadAllDocsBiomedicalByW2VecWithLowDocFreAndWriteToArff() {
 		try{
@@ -51,7 +104,7 @@ public class ProcessBiomedicalData {
 			//		.textUtilShared.FixedPruneWordsByDocFreqs(docFreqs, alBodyLabel, maxDocFreqTolerance);
 			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());			
 			ArrayList<InstanceW2Vec> instants = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alBodyLabel, hmW2Vec);
-			HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = bioMedicalUtil.docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants);
+			HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = bioMedicalUtil.docClusterUtil.GetClusterGroupsVectorByLabel(instants, true);
 			
 			//System.out.println("Original body label="+alBodyLabel.size()+", pruned="+alBodyLabelPruned.size());
 			

@@ -1,11 +1,8 @@
 package dal.clustering.document.dataset.biomedical;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -202,22 +199,12 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
 			
 			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
-			
-			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
-			
-			String line="";
-			ArrayList<String> clusterLables = new ArrayList<String>();
-			
-			while((line=br.readLine()) != null) {
-		        line = line.trim();
-		        if(line.isEmpty()) continue;
-		        
-		        String clusterGroups [] = line.split(",");
-		        clusterLables.addAll(Arrays.asList(clusterGroups));
-			}
-			br.close();
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq2018-sparse-20000-labels";
+
+			ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
 			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPred = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+			//just to print and compare result
 			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersOrigi = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
 	
 			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
@@ -264,7 +251,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				
 				//LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPredSubList = GetSublist(new String[]{"2", "6"}, lastClustersPred);
 				
-				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(lastClustersPred);
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(lastClustersPred);
 				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVector(lastClustersPredSubList);
 				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(lastClustersOrigi);
 				
@@ -293,6 +280,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				}
 				
 				
+				//just to print and compare result
 				HashMap<String, Integer> clusterDisFreqOrigi = new HashMap<String, Integer>();
 				
 				for(String label: lastClustersOrigi.keySet()){
@@ -315,7 +303,8 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 						}
 					}
 				}
-								
+				
+				//just to print and compare result
 				BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\word-org-pred-distribution"));
 				int disPredCountGreat2 = 0;
 				for(String word: clusterDisFreqPred.keySet()){
@@ -328,8 +317,6 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				}
 				
 				bw.write("disPredCountGreat2="+disPredCountGreat2+", total word="+docFreqs.size()+ "\n");
-				
-				
 				///end
 				
 				//find the pure text
@@ -388,14 +375,17 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 							+",lastClustersPredSize="+lastClustersPred.get(pureLabel).size());
 					//find lastClustersPred.size() most similar items to pureLabeltext
 					
-//					ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
-//							lastClustersPred.get(pureLabel).size(), alInsts, docFreqs, maxDocFreqTolerance);
 					ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
-							1000, alInsts, docFreqs, maxDocFreqTolerance);
+							lastClustersPred.get(pureLabel).size(), alInsts, docFreqs, maxDocFreqTolerance);
+//					ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
+//							1000, alInsts, docFreqs, maxDocFreqTolerance);
+
 					
+					
+					
+					//remove closestPureText from prev group of lastClustersPred;
 					for(InstanceW2Vec closestPureText: closestPureTexts){
 						if(!closestPureText.ClusteredLabel.equals(pureLabel)){
-							//remove closestPureText from prev group of lastClustersPred;
 							lastClustersPred = RemoveClosestPureTextFromGroup(closestPureText, lastClustersPred);
 						}
 						closestPureText.ClusteredLabel = pureLabel;
@@ -429,7 +419,26 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			String label = closestPureText.ClusteredLabel;
 			ArrayList<InstanceW2Vec> al = lastClustersPred.get(label);
 			System.out.println("prev size="+al.size());
-			al.remove(closestPureText);
+			
+			int index = -1;
+			for(int i=0;i<al.size();i++){
+				if(al.get(i).Text.equals(closestPureText.Text)){
+					index = i;
+					break;
+				}
+			}
+			
+			if(index>=0){
+				al.remove(index);
+			}
+			
+			//temp remove
+			for(int i=0;i<100;i++){
+				if(al.size()>1){
+					al.remove(0);
+				}
+			}
+			
 			System.out.println("new size="+al.size());
 			lastClustersPred.put(label, al);
 		}catch(Exception e){
@@ -510,6 +519,31 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			e.printStackTrace();
 		}
 		return finalClosestTexts;
+	}
+
+	public void AddhocClusteringTuned() {
+		try{
+			int maxDocFreqTolerance =1;
+			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq2018-sparse-20000-labels";
+			
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			
+			ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+			
+			ArrayList<InstanceW2Vec> data = bioMedicalUtil.docClusterUtil
+					.CreateW2VecForTrainData(bioMedicalUtil.getDocsBiomedicalFlat(), hmW2Vec, clusterLables);			
+			hmW2Vec.clear();
+			
+			HashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred = 
+					bioMedicalUtil.docClusterUtil.GetClusterGroupsVectorByLabel(data, false);
+			
+			HashMap<String, Integer> docFreqByClusters = bioMedicalUtil.docClusterUtil.GetDocFreqByClusters(labelWiseInstancesPred);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -608,6 +608,30 @@ public class DocClusterUtil {
 		return testW2Vecs;
 	}
 	
+	public ArrayList<InstanceW2Vec> CreateW2VecForTrainData(ArrayList<String[]> alBodyLabelTrue, HashMap<String, double[]> hmW2Vec, 
+			ArrayList<String> clusterLablesPred) {
+		
+		ArrayList<InstanceW2Vec> trainW2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			if(clusterLablesPred.size()== alBodyLabelTrue.size()){
+				for(int i=0;i<alBodyLabelTrue.size();i++ ){
+					InstanceW2Vec newInst = new InstanceW2Vec();
+					newInst.OriginalLabel = alBodyLabelTrue.get(i)[1];
+					newInst.Text = alBodyLabelTrue.get(i)[0];
+					newInst.ClusteredLabel = clusterLablesPred.get(i);
+					newInst.Features = PopulateW2VecForSingleDoc(newInst.Text, hmW2Vec);
+					trainW2Vecs.add(newInst);
+				}
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return trainW2Vecs;
+	}
+	
 	public ArrayList<InstanceW2Vec> CreateW2VecIDFForTestData(ArrayList<String[]> alDocLabelFlat,
 			HashMap<String, double[]> hmW2Vec, HashMap<String, Double> docFreqs) {
 		
@@ -1218,21 +1242,28 @@ public class DocClusterUtil {
 		return sampledList;
 	}
 	
-	public HashMap<String, ArrayList<InstanceW2Vec>> GetClusterGroupsVectorOriginalLabel(ArrayList<InstanceW2Vec> instants) {
+	public HashMap<String, ArrayList<InstanceW2Vec>> GetClusterGroupsVectorByLabel(ArrayList<InstanceW2Vec> instants, boolean isByOriginalLabel) {
 		
 		HashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = new HashMap<String, ArrayList<InstanceW2Vec>>();
 		
 		try{
 			for(InstanceW2Vec instant: instants){
-				if(!clusterGroups.containsKey(instant.OriginalLabel)){
+				
+				String label = instant.ClusteredLabel;
+				
+				if(isByOriginalLabel){
+					label = instant.OriginalLabel;
+				}
+				
+				if(!clusterGroups.containsKey(label)){
 					ArrayList<InstanceW2Vec> al = new ArrayList<InstanceW2Vec>();
 					al.add(instant);
-					clusterGroups.put(instant.OriginalLabel, al);
+					clusterGroups.put(label, al);
 				}
 				else{
-					ArrayList<InstanceW2Vec> al = clusterGroups.get(instant.OriginalLabel);
+					ArrayList<InstanceW2Vec> al = clusterGroups.get(label);
 					al.add(instant);
-					clusterGroups.put(instant.OriginalLabel, al);
+					clusterGroups.put(label, al);
 				}
 			}
 		}
@@ -1243,21 +1274,27 @@ public class DocClusterUtil {
 		return clusterGroups;
 	}
 	
-	public HashMap<String, ArrayList<InstanceText>> GetClusterGroupsTextOriginalLabel(ArrayList<InstanceText> instants) {
+	public HashMap<String, ArrayList<InstanceText>> GetClusterGroupsTextByLabel(ArrayList<InstanceText> instants, boolean isByOriginalLabel) {
 		
 		HashMap<String, ArrayList<InstanceText>> clusterGroups = new HashMap<String, ArrayList<InstanceText>>();
 
 		try{
 			for(InstanceText instant: instants){
-				if(!clusterGroups.containsKey(instant.OriginalLabel)){
+				String label = instant.ClusteredLabel;
+				
+				if(isByOriginalLabel){
+					label = instant.OriginalLabel;
+				}	
+				
+				if(!clusterGroups.containsKey(label)){
 					ArrayList<InstanceText> al = new ArrayList<InstanceText>();
 					al.add(instant);
-					clusterGroups.put(instant.OriginalLabel, al);
+					clusterGroups.put(label, al);
 				}
 				else{
-					ArrayList<InstanceText> al = clusterGroups.get(instant.OriginalLabel);
+					ArrayList<InstanceText> al = clusterGroups.get(label);
 					al.add(instant);
-					clusterGroups.put(instant.OriginalLabel, al);
+					clusterGroups.put(label, al);
 				}
 			}
 		}
@@ -1452,6 +1489,38 @@ public class DocClusterUtil {
 			e.printStackTrace();
 		}
 		return centTodocs;
+	}
+
+	public HashMap<String, Integer> GetDocFreqByClusters(
+			HashMap<String, ArrayList<InstanceW2Vec>> instsByLabel) {
+		HashMap<String, Integer> docFreqByClusters = new HashMap<String, Integer>();
+		
+		try{
+			for(String label: instsByLabel.keySet()){
+				
+				HashSet<String> uniqWordsPerCluster = new HashSet<String>();
+				ArrayList<InstanceW2Vec> al = instsByLabel.get(label);
+				
+				for(InstanceW2Vec inst: al){
+					String [] textArr= inst.Text.split("\\s+");
+					for(String w: textArr){
+						uniqWordsPerCluster.add(w);
+					}
+				}
+				
+				for(String uniqword: uniqWordsPerCluster){
+					if(!docFreqByClusters.containsKey(uniqword)){
+						docFreqByClusters.put(uniqword, 1);
+					}else{
+						docFreqByClusters.put(uniqword, docFreqByClusters.get(uniqword)+ 1);
+					}
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return docFreqByClusters;
 	}
 
 }

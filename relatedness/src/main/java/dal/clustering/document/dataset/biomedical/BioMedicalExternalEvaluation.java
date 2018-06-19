@@ -25,19 +25,7 @@ public class BioMedicalExternalEvaluation {
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
 			String externalClusteringResultFile = "D:\\PhD\\Python+PCA\\out";
 			
-			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
-			
-			String line="";
-			ArrayList<String> clusterLables = new ArrayList<String>();
-			
-			while((line=br.readLine()) != null) {
-		        line = line.trim();
-		        if(line.isEmpty()) continue;
-		        
-		        String clusterGroups [] = line.split(",");
-		        clusterLables.addAll(Arrays.asList(clusterGroups));
-			}
-			br.close();
+			ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 	

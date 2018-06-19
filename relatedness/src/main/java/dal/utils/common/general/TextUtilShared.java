@@ -149,7 +149,7 @@ public class TextUtilShared {
 		return preprocessedDocs;
 	}
 	
-	private String performPreprocess(String doc) {
+	public String performPreprocess(String doc) {
 		
 		String pDoc = "";
 		try{
@@ -494,5 +494,26 @@ public class TextUtilShared {
 			e.printStackTrace();
 		}
 		return true;
+	}
+
+	public ArrayList<String> ReadClusterLabels(
+			String externalClusteringResultFile) {
+		try{
+			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
+			String line="";
+			ArrayList<String> clusterLables = new ArrayList<String>();
+			
+			while((line=br.readLine()) != null) {
+		        line = line.trim();
+		        if(line.isEmpty()) continue;
+		        
+		        String clusterGroups [] = line.split(",");
+		        clusterLables.addAll(Arrays.asList(clusterGroups));
+			}
+			br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

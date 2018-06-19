@@ -295,7 +295,8 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixW2VecAvgMaxHarmonicMean();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocSimMatrixW2VecCenterWeighted();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateDocsDisSimilarityMatrixCosineW2VecFixedSparsification();
-    	new ClusterUnSupervisedBioMedicalRAD().AddhocClustering();
+    	//new ClusterUnSupervisedBioMedicalRAD().AddhocClustering();
+    	new ClusterUnSupervisedBioMedicalRAD().AddhocClusteringTuned();
     	
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();

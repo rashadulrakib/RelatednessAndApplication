@@ -23,26 +23,7 @@ public class WebSnippetExternalEvaluation {
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-BTM-labels-2208";
 			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\n-to-2n-websnippet-w2vec-glove-sparse-2280-10-labels";
 			
-			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
-			
-			String line="";
-			ArrayList<String> clusterLables = new ArrayList<String>();
-			
-			while((line=br.readLine()) != null) {
-		        line = line.trim();
-		        if(line.isEmpty()) continue;
-		        
-		        String clusterGroups [] = line.split(",");
-		        
-		        ArrayList<String> labelGr = new ArrayList<String>();
-		        for(String gr: clusterGroups){
-		        	labelGr.add(Integer.toString((int)Double.parseDouble(gr)));
-		        }
-		        
-		        //clusterLables.addAll(Arrays.asList(clusterGroups));
-		        clusterLables.addAll(labelGr);
-			}
-			br.close();
+			ArrayList<String> clusterLables = googlewebSnippetUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 	

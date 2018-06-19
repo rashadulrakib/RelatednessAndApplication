@@ -22,19 +22,7 @@ public class AgNewsExternalEvaluation {
 		try{
 			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-tfidf-agnews-weightCenterBased-8000-labels";
 			
-			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
-			
-			String line="";
-			ArrayList<String> clusterLables = new ArrayList<String>();
-			
-			while((line=br.readLine()) != null) {
-		        line = line.trim();
-		        if(line.isEmpty()) continue;
-		        
-		        String clusterGroups [] = line.split(",");
-		        clusterLables.addAll(Arrays.asList(clusterGroups));
-			}
-			br.close();
+			ArrayList<String> clusterLables = agNewsUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 	

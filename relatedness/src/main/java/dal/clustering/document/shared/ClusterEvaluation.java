@@ -75,7 +75,7 @@ public class ClusterEvaluation {
 				ArrayList<InstanceText> instants = finalCluster.get(label);
 				totalItems = totalItems+ instants.size();
 				
-				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextByLabel(instants, true);
 				int maxMemInGroupSize = Integer.MIN_VALUE;
 				//String maxMemOriginalLabel = "";
 				for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
@@ -135,7 +135,7 @@ public class ClusterEvaluation {
 				ArrayList<InstanceW2Vec> instants = finalCluster.get(label);
 				totalItems = totalItems+ instants.size();
 				
-				HashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = docClusterUtil.GetClusterGroupsVectorByLabel(instants, true);
 				int maxMemInGroupSize = Integer.MIN_VALUE;
 				//String maxMemOriginalLabel = "";
 				for(String afterClusterLabel: clusterGroups.keySet()){
@@ -182,7 +182,7 @@ public class ClusterEvaluation {
 				ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
 				totalItems = totalItems+ instants.size();
 				
-				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextByLabel(instants, true);
 				int maxMemInGroupSize = Integer.MIN_VALUE;
 				String maxMemOriginalLabel = "";
 				for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
@@ -218,7 +218,7 @@ public class ClusterEvaluation {
 			for(String label: sortedFinalCluster.keySet()){
 				ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
 				
-				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextByLabel(instants, true);
 				TreeMap<String, ArrayList<InstanceText>> sortedClusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceText>>(clusterGroupsOriginalLabel);
 				
 				double [] col = new double[sortedFinalCluster.keySet().size()];
@@ -264,7 +264,7 @@ public class ClusterEvaluation {
 				mergedInstants.addAll(instants);
 			}
 			
-			TreeMap<String, ArrayList<InstanceText>> sortedClusterGroupsOriginalLabelByMerged = new TreeMap<String, ArrayList<InstanceText>>(docClusterUtil.GetClusterGroupsTextOriginalLabel(mergedInstants));
+			TreeMap<String, ArrayList<InstanceText>> sortedClusterGroupsOriginalLabelByMerged = new TreeMap<String, ArrayList<InstanceText>>(docClusterUtil.GetClusterGroupsTextByLabel(mergedInstants, true));
 			//end merge the instances
 			
 			int labelInd =0;
@@ -279,7 +279,7 @@ public class ClusterEvaluation {
 				ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
 				totalItems = totalItems+ instants.size();
 				
-				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextByLabel(instants, true);
 				int maxMemInGroupSize = Integer.MIN_VALUE;
 				String maxMemOriginalLabel = "";
 				for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
@@ -308,7 +308,7 @@ public class ClusterEvaluation {
 				for(String label: sortedFinalCluster.keySet()){
 					ArrayList<InstanceText> instants = sortedFinalCluster.get(label);
 					
-					TreeMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceText>>(docClusterUtil.GetClusterGroupsTextOriginalLabel(instants));
+					TreeMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceText>>(docClusterUtil.GetClusterGroupsTextByLabel(instants, true));
 					//TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(clusterGroupsOriginalLabel);
 					
 					double [] col = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()];
@@ -372,7 +372,7 @@ public class ClusterEvaluation {
 					mergedInstants.addAll(instants);
 				}
 				
-				TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabelByMerged = new TreeMap<String, ArrayList<InstanceW2Vec>>(docClusterUtil.GetClusterGroupsVectorOriginalLabel(mergedInstants));
+				TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabelByMerged = new TreeMap<String, ArrayList<InstanceW2Vec>>(docClusterUtil.GetClusterGroupsVectorByLabel(mergedInstants, true));
 				//end merge the instances
 				
 				int labelInd =0;
@@ -387,7 +387,7 @@ public class ClusterEvaluation {
 					ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
 					totalItems = totalItems+ instants.size();
 					
-					HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants);
+					HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsVectorByLabel(instants, true);
 					int maxMemInGroupSize = Integer.MIN_VALUE;
 					String maxMemOriginalLabel = "";
 					for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
@@ -416,7 +416,7 @@ public class ClusterEvaluation {
 					for(String label: sortedFinalCluster.keySet()){
 						ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
 						
-						TreeMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants));
+						TreeMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(docClusterUtil.GetClusterGroupsVectorByLabel(instants, true));
 						//TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(clusterGroupsOriginalLabel);
 						
 						double [] col = new double[sortedClusterGroupsOriginalLabelByMerged.keySet().size()];
@@ -482,7 +482,7 @@ public class ClusterEvaluation {
 				ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
 				totalItems = totalItems+ instants.size();
 				
-				HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsVectorByLabel(instants, true);
 				int maxMemInGroupSize = Integer.MIN_VALUE;
 				String maxMemOriginalLabel = "";
 				for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
@@ -518,7 +518,7 @@ public class ClusterEvaluation {
 			for(String label: sortedFinalCluster.keySet()){
 				ArrayList<InstanceW2Vec> instants = sortedFinalCluster.get(label);
 				
-				HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsVectorOriginalLabel(instants);
+				HashMap<String, ArrayList<InstanceW2Vec>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsVectorByLabel(instants, true);
 				//TreeMap<String, ArrayList<InstanceW2Vec>> sortedClusterGroupsOriginalLabel = new TreeMap<String, ArrayList<InstanceW2Vec>>(clusterGroupsOriginalLabel);
 				
 				double [] col = new double[sortedFinalCluster.keySet().size()];
