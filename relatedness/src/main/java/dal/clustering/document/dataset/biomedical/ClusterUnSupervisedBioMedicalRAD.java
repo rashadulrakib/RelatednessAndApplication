@@ -362,6 +362,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 						
 						if(pureClustersPred.get(label).size()== maxDocFreqTolerance){
 							pureClustersPredTolerated.put(label, pureClustersPred.get(label));
+							System.out.println("filter-pureClustersPred.get(label)="+pureClustersPred.get(label).get(0).Text);
 						}
 					}
 				}
@@ -523,10 +524,13 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 
 	public void AddhocClusteringTuned() {
 		try{
-			int maxDocFreqTolerance =1;
+			int maxDocFreqByClusterTolerance =1;
+			int maxDocFreqByDocumentTolerance =1;
+			int numberOfCenterTextsInEachLabel = 1;
+			int maxCenterTextInAClass = 1;
 			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
-			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq2018-sparse-20000-labels";
+		
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq2018-sparse-20000-labels-final";
 			
 			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 			
@@ -536,10 +540,23 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					.CreateW2VecForTrainData(bioMedicalUtil.getDocsBiomedicalFlat(), hmW2Vec, clusterLables);			
 			hmW2Vec.clear();
 			
-			HashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred = 
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred = 
 					bioMedicalUtil.docClusterUtil.GetClusterGroupsVectorByLabel(data, false);
 			
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(labelWiseInstancesPred);
+			
 			HashMap<String, Integer> docFreqByClusters = bioMedicalUtil.docClusterUtil.GetDocFreqByClusters(labelWiseInstancesPred);
+			
+			HashMap<String, ArrayList<InstanceW2Vec>> centerTexts = bioMedicalUtil.docClusterUtil.GetCenterTextsDocFreqByClusters(docFreqByClusters, labelWiseInstancesPred, 
+					numberOfCenterTextsInEachLabel, maxDocFreqByClusterTolerance);			
+			HashMap<String, ArrayList<InstanceW2Vec>> filterCenterTextsByDocFreq = bioMedicalUtil.docClusterUtil
+					.GetFilterCenterTextsByDocFreq(centerTexts, docFreqs, maxDocFreqByDocumentTolerance, maxCenterTextInAClass);
+			
+			labelWiseInstancesPred = bioMedicalUtil.docClusterUtil
+					.FindclosestTextsToCenters(labelWiseInstancesPred, filterCenterTextsByDocFreq, data,
+							docFreqs, maxDocFreqByDocumentTolerance);
+			
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(labelWiseInstancesPred);
 			
 		}catch(Exception e){
 			e.printStackTrace();

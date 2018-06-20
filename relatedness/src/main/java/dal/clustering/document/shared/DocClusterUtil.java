@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -1242,9 +1243,9 @@ public class DocClusterUtil {
 		return sampledList;
 	}
 	
-	public HashMap<String, ArrayList<InstanceW2Vec>> GetClusterGroupsVectorByLabel(ArrayList<InstanceW2Vec> instants, boolean isByOriginalLabel) {
+	public LinkedHashMap<String, ArrayList<InstanceW2Vec>> GetClusterGroupsVectorByLabel(ArrayList<InstanceW2Vec> instants, boolean isByOriginalLabel) {
 		
-		HashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = new HashMap<String, ArrayList<InstanceW2Vec>>();
+		LinkedHashMap<String, ArrayList<InstanceW2Vec>> clusterGroups = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
 		
 		try{
 			for(InstanceW2Vec instant: instants){
@@ -1521,6 +1522,253 @@ public class DocClusterUtil {
 		}
 		
 		return docFreqByClusters;
+	}
+
+	public HashMap<String, ArrayList<InstanceW2Vec>> GetCenterTextsDocFreqByClusters(
+			HashMap<String, Integer> hmDocFreqByClusters,
+			HashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred,
+			int numberOfCenterTextsInEachLabel, int maxDocFreqByClusters) {
+		
+		HashMap<String, ArrayList<InstanceW2Vec>> centerTexts = new HashMap<String, ArrayList<InstanceW2Vec>>(); 
+		
+		try{
+			for(String label: labelWiseInstancesPred.keySet()){
+				ArrayList<InstanceW2Vec> insts = labelWiseInstancesPred.get(label);
+				
+				ArrayList<int[]> docFreqDiff_Length_Sum_Index = new ArrayList<int[]>(); //diff, index
+				
+				for(int i=0;i<insts.size();i++){
+					InstanceW2Vec inst = insts.get(i);
+					
+					String arr [] = inst.Text.split("\\s+");
+					int wordCountForMaxDocFreqByClusters = GetWordCountForMaxDocFreqByClusters(arr, maxDocFreqByClusters, hmDocFreqByClusters);
+					int diffLengthSum = arr.length-wordCountForMaxDocFreqByClusters+arr.length;
+					docFreqDiff_Length_Sum_Index.add(new int[]{diffLengthSum, i});
+				}
+				
+				Collections.sort(docFreqDiff_Length_Sum_Index, new Comparator<int[]>(){
+
+					@Override
+					public int compare(int[] arg0, int[] arg1) {
+						return Double.compare(arg0[0], arg1[0]); //sort by docFreqDiff_Length in asecnding order 
+					}
+				});
+				
+				ArrayList<InstanceW2Vec> centerInsts = new ArrayList<InstanceW2Vec>();  
+				for(int i=0;i<numberOfCenterTextsInEachLabel;i++){
+					int index = docFreqDiff_Length_Sum_Index.get(i)[1];
+					centerInsts.add(insts.get(index));
+					
+					System.out.println("label="+label+",center-text="+insts.get(index).Text);
+				}
+				
+//				for(int i=0;i<docFreqDiff_Length_Sum_Index.size() && i<10;i++){
+//					int index = docFreqDiff_Length_Sum_Index.get(i)[1];
+//					//centerInsts.add(insts.get(index));
+//					
+//					System.out.println("label="+label+",multiple-center-text="+insts.get(index).Text);
+//				}
+				
+				centerTexts.put(label, centerInsts);				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return centerTexts;
+	}
+
+	private int GetWordCountForMaxDocFreqByClusters(String[] arr,
+			int maxDocFreqByClusters, HashMap<String, Integer> hmDocFreqByClusters) {
+		int wordCountForMaxDocFreqByClusters = 0;
+		try{
+			for(String word: arr){
+				if(!hmDocFreqByClusters.containsKey(word)
+						|| hmDocFreqByClusters.get(word)>maxDocFreqByClusters) continue;
+				
+				wordCountForMaxDocFreqByClusters++;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return wordCountForMaxDocFreqByClusters;
+	}
+
+	public HashMap<String, ArrayList<InstanceW2Vec>> GetFilterCenterTextsByDocFreq(
+			HashMap<String, ArrayList<InstanceW2Vec>> centerTexts,
+			HashMap<String, Double> docFreqs, int maxDocFreqByDocumentTolerance, int maxCenterTextInAClass) {
+		
+		HashMap<String, ArrayList<InstanceW2Vec>> fikterCenterTexts = new HashMap<String, ArrayList<InstanceW2Vec>>();
+		
+		try{
+			for(String label: centerTexts.keySet()){
+				
+				ArrayList<InstanceW2Vec> filteredinsts = new ArrayList<InstanceW2Vec>(); 
+				for(InstanceW2Vec inst : centerTexts.get(label)){
+					
+//					String [] arr = inst.Text.split("\\s+");
+//					StringBuilder sb = new StringBuilder();
+//					for(String word: arr){
+//						if(!docFreqs.containsKey(word) || docFreqs.get(word)>maxDocFreqByDocumentTolerance) continue;
+//						sb.append(word+" ");
+//					}
+					
+//					String filteredText = sb.toString().trim();
+//					System.out.println("continue="+inst.Text);
+//					if(filteredText.isEmpty()) continue;
+//					
+//					InstanceW2Vec filteredinst = new InstanceW2Vec();
+//					filteredinst.ClusteredLabel = inst.ClusteredLabel;
+//					filteredinst.Features = inst.Features;
+//					filteredinst.OriginalLabel = inst.OriginalLabel;
+//					filteredinst.Text = filteredText;
+					
+					boolean allHaveMaxDocFreq = textUtilShared.IsAllWordsHaveLessThanEqualMaxDocFreq(inst.Text, maxDocFreqByDocumentTolerance, docFreqs);
+					if(!allHaveMaxDocFreq) continue;
+					
+					filteredinsts.add(inst);
+				}
+				
+				if(filteredinsts.size()!=maxCenterTextInAClass) continue;
+				
+				fikterCenterTexts.put(label, filteredinsts);
+				System.out.println("label="+label+",filtered center-text="+filteredinsts.get(0).Text);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return fikterCenterTexts;
+	}
+
+	public LinkedHashMap<String, ArrayList<InstanceW2Vec>> FindclosestTextsToCenters(
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred,
+			HashMap<String, ArrayList<InstanceW2Vec>> pureClustersPredTolerated,
+			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Double> docFreqs,
+			int maxDocFreqByDocumentTolerance) {
+		
+		try{
+			
+			for(String pureLabel: pureClustersPredTolerated.keySet()){
+				ArrayList<InstanceW2Vec> pureTexts = pureClustersPredTolerated.get(pureLabel);
+				System.out.println(pureLabel+","+pureTexts.size()
+						+",lastClustersPredSize="+labelWiseInstancesPred.get(pureLabel).size());
+				//find lastClustersPred.size() most similar items to pureLabeltext
+				
+				ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
+						labelWiseInstancesPred.get(pureLabel).size(), alInsts, docFreqs, maxDocFreqByDocumentTolerance);
+				//ArrayList<InstanceW2Vec> closestPureTexts = FindClosestPureTexts(pureTexts, pureLabel, 
+				//		1000, alInsts, docFreqs, maxDocFreqByDocumentTolerance);
+
+				
+				//remove closestPureText from prev group of lastClustersPred;
+				for(InstanceW2Vec closestPureText: closestPureTexts){
+					if(!closestPureText.ClusteredLabel.equals(pureLabel)){
+						labelWiseInstancesPred = RemoveClosestPureTextFromGroup(closestPureText, labelWiseInstancesPred);
+					}
+					closestPureText.ClusteredLabel = pureLabel;
+				}
+				
+				labelWiseInstancesPred.put(pureLabel, closestPureTexts);
+				//loop++;
+//				if(loop>1){
+//					break;
+//				}
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return labelWiseInstancesPred;
+	}
+	
+	private LinkedHashMap<String, ArrayList<InstanceW2Vec>> RemoveClosestPureTextFromGroup(
+			InstanceW2Vec closestPureText,
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> lastClustersPred) {
+		try{
+			String label = closestPureText.ClusteredLabel;
+			ArrayList<InstanceW2Vec> al = lastClustersPred.get(label);
+			System.out.println("prev size="+al.size());
+			
+			int index = -1;
+			for(int i=0;i<al.size();i++){
+				if(al.get(i).Text.toLowerCase().trim().equals(closestPureText.Text.toLowerCase().trim())){
+					index = i;
+					break;
+				}
+			}
+			
+			if(index>=0){
+				al.remove(index);
+			}
+			
+			//temp remove
+//			for(int i=0;i<100;i++){
+//				if(al.size()>1){
+//					al.remove(0);
+//				}
+//			}
+			
+			System.out.println("new size="+al.size());
+			lastClustersPred.put(label, al);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return lastClustersPred;
+	}
+	
+	private ArrayList<InstanceW2Vec> FindClosestPureTexts(
+			ArrayList<InstanceW2Vec> pureTexts, String pureLabel, int numberOfClosestTexts,
+			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Double> docFreqs, int maxDocFreqTolerance) {
+		
+		ArrayList<InstanceW2Vec> finalClosestTexts = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			
+			ArrayList<HashSet<InstanceW2Vec>> listListClosets = new ArrayList<HashSet<InstanceW2Vec>>();
+			
+			for(InstanceW2Vec pureText: pureTexts){
+				
+				HashSet<InstanceW2Vec> closets = new HashSet<InstanceW2Vec>();
+				
+				ArrayList<double[]> simIndex = new ArrayList<double[]>();
+				
+				for(int i=0;i<alInsts.size();i++){
+					
+					boolean allHaveMaxDocFreq = textUtilShared.IsAllWordsHaveLessThanEqualMaxDocFreq(alInsts.get(i).Text, maxDocFreqTolerance, docFreqs);
+					if(!allHaveMaxDocFreq) continue;
+					
+					double sim = ComputeUtil.ComputeCosineSimilarity(pureText.Features, alInsts.get(i).Features);
+					simIndex.add(new double[]{sim, i});
+				}
+				
+				System.out.println("simIndex.size="+simIndex.size()+", pureText="+pureText.Text+","+ pureText.Features.length);
+				
+				Collections.sort(simIndex, new Comparator<double[]>(){
+
+					@Override
+					public int compare(double[] arg0, double[] arg1) {
+						return Double.compare(arg1[0], arg0[0]);
+					}
+				});
+				
+				for(int i=0;i<simIndex.size() && i<numberOfClosestTexts;i++){
+					int ind = (int)simIndex.get(i)[1];
+				    closets.add(alInsts.get(ind));
+				}
+				
+				listListClosets.add(closets);
+			}
+			
+			if(listListClosets.size()>0)
+				finalClosestTexts.addAll(listListClosets.get(0));
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return finalClosestTexts;
 	}
 
 }

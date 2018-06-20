@@ -498,10 +498,11 @@ public class TextUtilShared {
 
 	public ArrayList<String> ReadClusterLabels(
 			String externalClusteringResultFile) {
+		ArrayList<String> clusterLables = new ArrayList<String>();
+		
 		try{
 			BufferedReader br =  new BufferedReader(new FileReader(externalClusteringResultFile));
 			String line="";
-			ArrayList<String> clusterLables = new ArrayList<String>();
 			
 			while((line=br.readLine()) != null) {
 		        line = line.trim();
@@ -514,6 +515,6 @@ public class TextUtilShared {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return null;
+		return clusterLables;
 	}
 }
