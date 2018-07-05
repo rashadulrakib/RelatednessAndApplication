@@ -22,8 +22,9 @@ public class BioMedicalExternalEvaluation {
 		try{
 			//2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels 41.8
 			//2n-biomedical-w2vecitr-bioasq2018-sparse-20000-6-labels 41.215
-			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
-			String externalClusteringResultFile = "D:\\PhD\\Python+PCA\\out";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-word2vecnostopword-sparse-20000-0-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\Python+PCA\\out";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-keptftrs-sparse-16000-800-0-labels";
 			
 			ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			

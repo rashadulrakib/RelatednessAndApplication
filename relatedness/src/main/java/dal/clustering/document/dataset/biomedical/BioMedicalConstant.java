@@ -8,7 +8,9 @@ public class BioMedicalConstant {
 	public static final String BiomedicalW2VecArffFile =  "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedicalMeshW2Vec.arff";
 
 	//public static final String BiomedicalDocsFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedicalraw";
-    public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedicalraw";
+	//public static final String BiomedicalDocsFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/80-800-body-label";
+    //public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedicalraw";
+	public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\80-800-body-label";
 	//public static final String BiomedicalDocsFile = "C:\\Users\\mona\\Desktop\\BioASQ\\MTI\\MTI-strict-filer-wsd\\text.processed.txt";
 	
 	public static final String BioMedicalSTC2VocabIndexIn="D:\\PhD\\dr.norbert\\method\\STC2-master\\STC2-master\\dataset\\Biomedical_vocab2idx.dic";
@@ -29,4 +31,6 @@ public class BioMedicalConstant {
 	public static final String BioMedicalBioNlpPubMed = "/users/grad/rakib/w2vecs/biomedical/BioNlp/PubMed-w2v.txt";
 
 	public static final int NumberOfClusters = 20;
+	//public static final String KeptFtrsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\features-7000.txt";
+	public static final String KeptFtrsFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/features-7000.txt";
 }

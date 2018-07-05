@@ -1,11 +1,8 @@
 package dal.relatedness.text.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-
 import dal.clustering.document.shared.PairSim;
 import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenized;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;

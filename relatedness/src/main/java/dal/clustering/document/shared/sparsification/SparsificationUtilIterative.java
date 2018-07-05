@@ -179,7 +179,7 @@ public class SparsificationUtilIterative {
 			
 			boolean isGoodAvg = false;
 			//double alphaFactor = 1.5; //3 times
-			double alphaFactor = 1.5; //2 times
+			double alphaFactor = 1; //2 times
 			HashSet<Double> uniqueDiffs = new  HashSet<Double>();
 			
 			int whileCount = 0;
@@ -206,7 +206,7 @@ public class SparsificationUtilIterative {
 				
 				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff+", "+new Date().toLocaleString());
 				
-				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-w2vecavgmaxharmonic-bioasq2018-sparse-20000-"+whileCount, sparsifyDistMatrix, " ");
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/2n-biomedical-w2vec-keptftrs-sparse-16000-800-"+whileCount, sparsifyDistMatrix, " ");
 				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
 				
 				//alSparseDists.add(sparsifyDistMatrix);

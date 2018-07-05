@@ -27,6 +27,7 @@ public class BioMedicalUtil {
 	List<List<String>> documents;
 	List<List<String>> stemmedDocuments;
 	List<Set<String>> stemmedDocumnetsUniqueTerms;
+	HashSet<String> keptFtrs;
 	
 	public BioMedicalUtil(){
 		doc2VecUtil = new Doc2VecUtil();
@@ -41,8 +42,11 @@ public class BioMedicalUtil {
 		stemmedDocuments = new ArrayList<List<String>>();
 		stemmedDocumnetsUniqueTerms = new ArrayList<Set<String>>();
 		aldocsBodeyLabelFlatList = new ArrayList<ArrayList<String[]>>();
+		keptFtrs = new HashSet<String>();
 		
 		loadAllDocsBiomedical();
+		
+		loadKeptFtrList();
 		
 		//PopulateNFoldData();
 	}
@@ -85,6 +89,10 @@ public class BioMedicalUtil {
 	
 	public LinkedHashMap<String, ArrayList<String>> getDocsBiomedicalList(){
 		return docsLabelBodyList;
+	}
+	
+	public HashSet<String> GetKeptFtrList(){
+		return keptFtrs;
 	}
 		
 	private void loadAllDocsBiomedical() {
@@ -155,6 +163,26 @@ public class BioMedicalUtil {
 				System.out.println(key+","+docsLabelBodyList.get(key).size());
 			}
 		   
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadKeptFtrList() {
+		try{		
+			BufferedReader br =  new BufferedReader(new FileReader(BioMedicalConstant.KeptFtrsFile));
+			
+			String line = "";
+			while((line = br.readLine())!=null){
+			   
+			   line = line.trim().toLowerCase();
+			   if(line.isEmpty()) continue;
+			   
+			   keptFtrs.add(line);
+			}
+			
+			br.close();
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -37,13 +37,13 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				System.out.println(stemeddoc);
 			}
 			
-			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalStemmedDocuments());
+			HashMap<String, Integer> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalStemmedDocuments());
 
 			for(String term: docFreqs.keySet()){
 				System.out.println(term+"="+docFreqs.get(term));
 			}
 			
-	        Set<Entry<String, Double>> entries = docFreqs.entrySet();
+	        Set<Entry<String, Integer>> entries = docFreqs.entrySet();
 	        
 	        Comparator<Entry<String, Double>> valueComparator = new Comparator<Entry<String,Double>>() {
 	            
@@ -55,7 +55,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	            }
 	        };
 	
-	        List<Entry<String, Double>> listOfEntries = new ArrayList<Entry<String, Double>>(entries);
+	        List<Entry<String, Double>> listOfEntries = new ArrayList<Entry<String, Double>>();
 	        Collections.sort(listOfEntries, valueComparator);
 	        LinkedHashMap<String, Double> sortedByValue = new LinkedHashMap<String, Double>(listOfEntries.size());
 	        for(Entry<String, Double> entry : listOfEntries){
@@ -118,11 +118,12 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	
 	public void GenerateDocSimMatrixDoc2Vec(){
 		try{
-			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.doc2VecUtil.CreateDoc2VecInstances("/users/grad/rakib/doc2vec/doc2vec-100", bioMedicalUtil.getDocsBiomedicalFlat(), ",");
+			//ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.doc2VecUtil.CreateDoc2VecInstances("/users/grad/rakib/doc2vec/doc2vec-100", bioMedicalUtil.getDocsBiomedicalFlat(), ",");
+			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.doc2VecUtil.CreateDoc2VecInstances("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/t80-800", bioMedicalUtil.getDocsBiomedicalFlat(), " ");
 			
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-doc2vec100-sim-20000", docSimMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedical-tfidf-sim-16000-800", docSimMatrix, " ");
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -149,7 +150,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();			
 			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
 			
-			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());			
+			HashMap<String, Integer> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());			
 			ArrayList<String []> alDocLabelFlatPruned = bioMedicalUtil.docClusterUtil.textUtilShared.StatisticalPruneWordsByDocFreqs(docFreqs, alDocLabelFlat, 950); 
 			
 			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlatPruned, hmW2Vec);			
@@ -196,7 +197,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 
 			int maxDocFreqTolerance =1;
 			
-			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
+			HashMap<String, Integer> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
 			
 			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-15-labels";
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq2018-sparse-20000-labels";
@@ -466,7 +467,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 
 	private ArrayList<InstanceW2Vec> FindClosestPureTexts(
 			ArrayList<InstanceW2Vec> pureTexts, String pureLabel, int numberOfClosestTexts,
-			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Double> docFreqs, int maxDocFreqTolerance) {
+			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Integer> docFreqs, int maxDocFreqTolerance) {
 		
 		ArrayList<InstanceW2Vec> finalClosestTexts = new ArrayList<InstanceW2Vec>();
 		
@@ -528,7 +529,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			int maxDocFreqByDocumentTolerance =1;
 			int numberOfCenterTextsInEachLabel = 1;
 			int maxCenterTextInAClass = 1;
-			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
+			HashMap<String, Integer> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(bioMedicalUtil.getUniqueWords(), bioMedicalUtil.GetBiomedicalDocuments());
 		
 			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq2018-sparse-20000-labels-final";
 			
@@ -538,26 +539,71 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			
 			ArrayList<InstanceW2Vec> data = bioMedicalUtil.docClusterUtil
 					.CreateW2VecForTrainData(bioMedicalUtil.getDocsBiomedicalFlat(), hmW2Vec, clusterLables);			
-			hmW2Vec.clear();
+			//hmW2Vec.clear();
 			
 			LinkedHashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred = 
 					bioMedicalUtil.docClusterUtil.GetClusterGroupsVectorByLabel(data, false);
 			
-			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(labelWiseInstancesPred);
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(labelWiseInstancesPred);
 			
 			HashMap<String, Integer> docFreqByClusters = bioMedicalUtil.docClusterUtil.GetDocFreqByClusters(labelWiseInstancesPred);
-			
+	
 			HashMap<String, ArrayList<InstanceW2Vec>> centerTexts = bioMedicalUtil.docClusterUtil.GetCenterTextsDocFreqByClusters(docFreqByClusters, labelWiseInstancesPred, 
 					numberOfCenterTextsInEachLabel, maxDocFreqByClusterTolerance);			
-			HashMap<String, ArrayList<InstanceW2Vec>> filterCenterTextsByDocFreq = bioMedicalUtil.docClusterUtil
+			HashMap<String, ArrayList<InstanceW2Vec>> filterCenterTexts = bioMedicalUtil.docClusterUtil
 					.GetFilterCenterTextsByDocFreq(centerTexts, docFreqs, maxDocFreqByDocumentTolerance, maxCenterTextInAClass);
 			
-			labelWiseInstancesPred = bioMedicalUtil.docClusterUtil
-					.FindclosestTextsToCenters(labelWiseInstancesPred, filterCenterTextsByDocFreq, data,
-							docFreqs, maxDocFreqByDocumentTolerance);
+			//labelWiseInstancesPred = bioMedicalUtil.docClusterUtil
+			//		.FindclosestTextsToCenters(labelWiseInstancesPred, filterCenterTexts, data,
+			//				docFreqs, maxDocFreqByDocumentTolerance);
 			
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(labelWiseInstancesPred);
 			
+			labelWiseInstancesPred = bioMedicalUtil.docClusterUtil.FindclosestTextsToCentersFixed(filterCenterTexts, 
+					1000, data, labelWiseInstancesPred, docFreqByClusters, hmW2Vec, maxDocFreqByClusterTolerance);
+			
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingVectorExternal(labelWiseInstancesPred);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void GenerateDocSimMatrixW2VecNoCommonWords() {
+		try{
+			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
+			
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecRemoveCommonWordParallel(alDocLabelFlat, 10, hmW2Vec
+					, bioMedicalUtil.docClusterUtil);
+			
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vecnocommonword-bioASQ2018-400D-sim-20000", docSimMatrix, " ");
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void ClusterByRemovingTopLengthVectors() {
+		try{
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void GenerateDocSimMatrixW2VecPrunedFtrsPreDefined() {
+		try{
+			ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
+			
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			
+			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestDataByKeptFtrs(alDocLabelFlat, hmW2Vec, bioMedicalUtil.GetKeptFtrList());			
+			
+			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
+
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedical-w2vec-bioASQ2018-400D-keptFtrs-sim-20000", docSimMatrix, " ");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

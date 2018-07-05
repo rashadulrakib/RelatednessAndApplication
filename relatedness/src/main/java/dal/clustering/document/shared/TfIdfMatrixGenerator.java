@@ -15,7 +15,7 @@ public class TfIdfMatrixGenerator {
 		try{
 			
 			Set<String> uniqueterms = GetUniqueTerms(documents);
-			HashMap<String, Double> docFreqs  = CalculateDocFrequency(uniqueterms, documents) ;
+			HashMap<String, Integer> docFreqs  = CalculateDocFrequency(uniqueterms, documents) ;
 			tfIdfs = CalculateTfIdfMatrix(docFreqs, documents);
 		}
 		catch(Exception e){
@@ -28,7 +28,7 @@ public class TfIdfMatrixGenerator {
 	public ArrayList<HashMap<String, Double>> ConstructTfIdfList(List<List<String>> documents, Set<String> uniqueterms){
 		ArrayList<HashMap<String, Double>> tfIdfs= null;
 		try{			
-			HashMap<String, Double> docFreqs  = CalculateDocFrequency(uniqueterms, documents) ;
+			HashMap<String, Integer> docFreqs  = CalculateDocFrequency(uniqueterms, documents) ;
 			tfIdfs = CalculateTfIdfMatrix(docFreqs, documents);
 		}
 		catch(Exception e){
@@ -38,7 +38,7 @@ public class TfIdfMatrixGenerator {
 		return tfIdfs;
 	}
 
-	private ArrayList<HashMap<String, Double>> CalculateTfIdfMatrix(HashMap<String, Double> docFreqs, List<List<String>> documents) {
+	private ArrayList<HashMap<String, Double>> CalculateTfIdfMatrix(HashMap<String, Integer> docFreqs, List<List<String>> documents) {
 		ArrayList<HashMap<String, Double>> tfIdfs = new ArrayList<HashMap<String,Double>>();
 		try{
 			for(List<String> doc: documents){
@@ -87,8 +87,8 @@ public class TfIdfMatrixGenerator {
 		return uniqueterms;
 	}
 
-	public HashMap<String, Double> CalculateDocFrequency(Set<String> uniqueterms, List<List<String>> documents) {
-		HashMap<String, Double> docFreqs = new HashMap<String, Double>();
+	public HashMap<String, Integer> CalculateDocFrequency(Set<String> uniqueterms, List<List<String>> documents) {
+		HashMap<String, Integer> docFreqs = new HashMap<String, Integer>();
 		
 		try{
 			for(String term: uniqueterms){
@@ -99,7 +99,7 @@ public class TfIdfMatrixGenerator {
 					}
 				}
 				
-				docFreqs.put(term, (double)docFreqCount);
+				docFreqs.put(term, docFreqCount);
 			}
 		}
 		catch(Exception e){ 

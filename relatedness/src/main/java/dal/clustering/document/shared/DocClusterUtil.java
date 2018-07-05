@@ -38,6 +38,7 @@ public class DocClusterUtil {
 	public SparsificationUtil sparsificationUtil;
 	public SparsificationUtilIterative sparsificationUtilIterative;
 	public SparsificationUtilRAD sparsificationUtilRAD;
+	public DocClusterUtilW2VecNoCommonWordParallel docClusterUtilW2vecNoCommonWordParallel;
 	
 	
 	public DocClusterUtil(){
@@ -51,6 +52,7 @@ public class DocClusterUtil {
 		sparsificationUtil = new SparsificationUtil(); 
 		sparsificationUtilIterative = new SparsificationUtilIterative();
 		sparsificationUtilRAD = new SparsificationUtilRAD();
+		docClusterUtilW2vecNoCommonWordParallel = new DocClusterUtilW2VecNoCommonWordParallel();
 	}
 	
 //	public double ComputeSimilarityFromWeightedMatrixBySTD(ArrayList<ArrayList<PairSim>> t1t2simPairList, double common,
@@ -129,13 +131,13 @@ public class DocClusterUtil {
 	}
 	
 
-	public double[] FindMinMaxDocFrequency(HashMap<String, Double> docFreqs, int totalDocs) {
+	public double[] FindMinMaxDocFrequency(HashMap<String, Integer> docFreqs, int totalDocs) {
 		double [] minMaxDocFreq = new double [2];
 		
 		try{
 			double sumFreq = 0;
 			
-			for(Double docFreq: docFreqs.values()){
+			for(Integer docFreq: docFreqs.values()){
 				sumFreq=sumFreq+ docFreq;
 			}
 			
@@ -143,7 +145,7 @@ public class DocClusterUtil {
 			
 			double sumOfSquare = 0;
 			
-			for(Double docFreq: docFreqs.values()){
+			for(Integer docFreq: docFreqs.values()){
 				sumOfSquare = sumOfSquare + (docFreq-avg)*(docFreq-avg);
 			}
 			
@@ -590,6 +592,49 @@ public class DocClusterUtil {
 			for(String[] bodyLabel: alTestDocsBodyLabelPreprocesed){
 				String body = bodyLabel[0];
 				String label = bodyLabel[1];
+				
+				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
+				
+				instanceW2Vec.OriginalLabel = label;
+				instanceW2Vec.Features = PopulateW2VecForSingleDoc(body, hmW2Vec);
+				instanceW2Vec.Text = body;
+				
+				testW2Vecs.add(instanceW2Vec);
+			}
+			
+			System.out.println("textLengtSum="+textLengtSum+", sumFound="+sumFound);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return testW2Vecs;
+	}
+	
+	public ArrayList<InstanceW2Vec> CreateW2VecForTestDataByKeptFtrs(ArrayList<String[]> alTestDocsBodyLabelPreprocesed, HashMap<String, double[]> hmW2Vec,
+			HashSet<String> keptFtrs) {
+		
+		ArrayList<InstanceW2Vec> testW2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			for(String[] bodyLabel: alTestDocsBodyLabelPreprocesed){
+				String body = bodyLabel[0];
+				String label = bodyLabel[1];
+				
+				String bodyArr [] = body.split("\\s+");
+				StringBuilder sb = new StringBuilder();
+				for(String s: bodyArr){
+					if(keptFtrs.contains(s)){
+						sb.append(s+" ");
+					}
+				}
+				
+				String tempBody = sb.toString().trim();
+				if(!tempBody.isEmpty()){
+					body = tempBody;
+				}else{
+					System.out.println("Empty="+ body);
+				}
 				
 				InstanceW2Vec instanceW2Vec = new InstanceW2Vec();
 				
@@ -1075,6 +1120,18 @@ public class DocClusterUtil {
 			e.printStackTrace();
 		}
 		
+		return docSimMatrix;
+	}
+	
+	public double[][] ComputeCosineMatrixW2VecRemoveCommonWordParallel(ArrayList<String[]> alDocLabelFlat, int threads,
+			HashMap<String, double[]> hmW2Vec, DocClusterUtil docClusterUtil) {
+		double[][] docSimMatrix = null;
+		try{
+			docSimMatrix = docClusterUtilW2vecNoCommonWordParallel.ComputeDocumentSimMatrixW2VecParallel(alDocLabelFlat, threads, 
+					hmW2Vec, docClusterUtil);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return docSimMatrix;
 	}
 	
@@ -1596,7 +1653,7 @@ public class DocClusterUtil {
 
 	public HashMap<String, ArrayList<InstanceW2Vec>> GetFilterCenterTextsByDocFreq(
 			HashMap<String, ArrayList<InstanceW2Vec>> centerTexts,
-			HashMap<String, Double> docFreqs, int maxDocFreqByDocumentTolerance, int maxCenterTextInAClass) {
+			HashMap<String, Integer> docFreqs, int maxDocFreqByDocumentTolerance, int maxCenterTextInAClass) {
 		
 		HashMap<String, ArrayList<InstanceW2Vec>> fikterCenterTexts = new HashMap<String, ArrayList<InstanceW2Vec>>();
 		
@@ -1644,10 +1701,12 @@ public class DocClusterUtil {
 	public LinkedHashMap<String, ArrayList<InstanceW2Vec>> FindclosestTextsToCenters(
 			LinkedHashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred,
 			HashMap<String, ArrayList<InstanceW2Vec>> pureClustersPredTolerated,
-			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Double> docFreqs,
+			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Integer> docFreqs,
 			int maxDocFreqByDocumentTolerance) {
 		
 		try{
+			
+			int loop =0;
 			
 			for(String pureLabel: pureClustersPredTolerated.keySet()){
 				ArrayList<InstanceW2Vec> pureTexts = pureClustersPredTolerated.get(pureLabel);
@@ -1669,11 +1728,10 @@ public class DocClusterUtil {
 					closestPureText.ClusteredLabel = pureLabel;
 				}
 				
+				//labelWiseInstancesPred.get(pureLabel).addAll(closestPureTexts);
+				
 				labelWiseInstancesPred.put(pureLabel, closestPureTexts);
-				//loop++;
-//				if(loop>1){
-//					break;
-//				}
+				if(++loop>0) break;				
 			}
 			
 			
@@ -1721,7 +1779,7 @@ public class DocClusterUtil {
 	
 	private ArrayList<InstanceW2Vec> FindClosestPureTexts(
 			ArrayList<InstanceW2Vec> pureTexts, String pureLabel, int numberOfClosestTexts,
-			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Double> docFreqs, int maxDocFreqTolerance) {
+			ArrayList<InstanceW2Vec> alInsts, HashMap<String, Integer> docFreqs, int maxDocFreqTolerance) {
 		
 		ArrayList<InstanceW2Vec> finalClosestTexts = new ArrayList<InstanceW2Vec>();
 		
@@ -1771,4 +1829,94 @@ public class DocClusterUtil {
 		return finalClosestTexts;
 	}
 
+	public LinkedHashMap<String, ArrayList<InstanceW2Vec>> FindclosestTextsToCentersFixed(
+			HashMap<String, ArrayList<InstanceW2Vec>> centerTexts,
+			int maxTextsEachCluster, ArrayList<InstanceW2Vec> data, 
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> labelWiseInstancesPred, 
+			HashMap<String, Integer> docFreqByClusters, HashMap<String, double[]> hmW2Vec,
+			int maxDocFreqByClusterTolerance) {
+		
+		LinkedHashMap<String, ArrayList<InstanceW2Vec>> instsByCatagory = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+		
+		try{
+			
+			int loop =0;
+			
+			ArrayList<String> keys = new ArrayList<String>();
+			keys.addAll(centerTexts.keySet());
+			
+			//for(String label: centerTexts.keySet())
+			
+			{
+				String label = keys.get(0);
+				
+				InstanceW2Vec centerInst = centerTexts.get(label).get(0);
+				ArrayList<double[]> simIndex = new ArrayList<double[]>();
+				
+				int textCount = 0;
+				
+				for(int i=0;i<data.size();i++){
+					
+					String textWithDocFreqByCluster = textUtilShared.GetWordsWithMaxDocFreqByCluster(data.get(i).Text, 
+							maxDocFreqByClusterTolerance, docFreqByClusters);
+//					
+					if(!textWithDocFreqByCluster.isEmpty()) textCount++;
+					
+					if(textWithDocFreqByCluster.isEmpty()) continue;
+//					
+					//double [] vecs = PopulateW2VecForSingleDoc(textWithDocFreqByCluster, hmW2Vec);
+										
+					//boolean allHaveMaxDocFreq = textUtilShared.IsAllWordsHaveLessThanEqualMaxDocFreq(data.get(i).Text, maxDocFreqByClusterTolerance, docFreqByClusters);
+					//if(!allHaveMaxDocFreq) continue;
+					
+					double sim = ComputeUtil.ComputeCosineSimilarity(centerInst.Features, data.get(i).Features);
+					//double sim = ComputeUtil.ComputeCosineSimilarity(centerInst.Features, vecs);
+					simIndex.add(new double[]{sim, i});
+				}
+				
+				System.out.println("simIndex.size="+simIndex.size()+", pureText="+centerInst.Text+","+ centerInst.Features.length);
+				
+				Collections.sort(simIndex, new Comparator<double[]>(){
+					@Override
+					public int compare(double[] arg0, double[] arg1) {
+						return Double.compare(arg1[0], arg0[0]);
+					}
+				});
+				
+				int newMaxTextsEachCluster = Math.min(maxTextsEachCluster, labelWiseInstancesPred.get(label).size());
+				
+				ArrayList<InstanceW2Vec> closests = new ArrayList<InstanceW2Vec>();				
+				for(int i=0;i<simIndex.size() && i<newMaxTextsEachCluster;i++){
+					int ind = (int)simIndex.get(i)[1];
+					closests.add(data.get(ind));
+				}
+				
+				instsByCatagory.put(label, closests);
+				
+				for(InstanceW2Vec closestText: closests){
+					if(!closestText.ClusteredLabel.equals(label)){
+						labelWiseInstancesPred = RemoveClosestPureTextFromGroup(closestText, labelWiseInstancesPred);
+					}
+					closestText.ClusteredLabel = label;
+				}
+				
+				System.out.println("textCount="+textCount);
+					
+				//if(++loop>0) break;
+			}
+			
+			//adjust
+			for(String label: labelWiseInstancesPred.keySet()){
+				if(instsByCatagory.containsKey(label)){
+					labelWiseInstancesPred.put(label, instsByCatagory.get(label));
+				}				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return labelWiseInstancesPred;
+	}
+	
 }

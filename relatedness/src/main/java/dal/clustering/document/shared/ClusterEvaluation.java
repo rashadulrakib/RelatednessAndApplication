@@ -68,7 +68,7 @@ public class ClusterEvaluation {
 		double purity = 0;
 		
 		try{
-			//int matchInCluster = 0;
+			int matchInCluster = 0;
 			int totalItems = 0;
 			int maxGroupSizeSum =0;
 			for(String label: finalCluster.keySet()){
@@ -77,24 +77,25 @@ public class ClusterEvaluation {
 				
 				HashMap<String, ArrayList<InstanceText>> clusterGroupsOriginalLabel = docClusterUtil.GetClusterGroupsTextByLabel(instants, true);
 				int maxMemInGroupSize = Integer.MIN_VALUE;
-				//String maxMemOriginalLabel = "";
+				String maxMemOriginalLabel = "";
 				for(String afterClusterLabel: clusterGroupsOriginalLabel.keySet()){
 					if(maxMemInGroupSize<clusterGroupsOriginalLabel.get(afterClusterLabel).size()){
 						maxMemInGroupSize= clusterGroupsOriginalLabel.get(afterClusterLabel).size();
-						//maxMemOriginalLabel = afterClusterLabel;
+						maxMemOriginalLabel = afterClusterLabel;
 					}
 				}
 				
 				maxGroupSizeSum=maxGroupSizeSum+ maxMemInGroupSize;
 				
-//				for(InstanceText inst: instants){
-//					if(maxMemOriginalLabel.equals(inst.ClusteredLabel)){
-//						matchInCluster++;
-//					}
-//				}
+				for(InstanceText inst: instants){
+					if(maxMemOriginalLabel.equals(inst.ClusteredLabel)){
+						matchInCluster++;
+					}
+				}
+				System.out.println("label="+label+",items="+finalCluster.get(label).size()+", acc="+(double)maxMemInGroupSize/finalCluster.get(label).size());
 			}
 			
-			System.out.println("Semi-supervised purity-majority-text="+ (double)maxGroupSizeSum/totalItems);
+			System.out.println("acc -majority-text="+ (double)maxGroupSizeSum/totalItems);
 			purity = (double)maxGroupSizeSum/totalItems;
 		}
 		catch(Exception e){
@@ -152,9 +153,10 @@ public class ClusterEvaluation {
 //						matchInCluster++;
 //					}
 //				}
+				//System.out.println("label="+label+",items="+finalCluster.get(label).size()+", acc="+(double)maxMemInGroupSize/finalCluster.get(label).size());
 			}
 			
-			System.out.println("Semi-supervised purity-majority-vector="+ (double)maxGroupSizeSum/totalItems);
+			System.out.println("acc-majority-vector="+ (double)maxGroupSizeSum/totalItems);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -297,8 +299,8 @@ public class ClusterEvaluation {
 				}
 			}
 			
-			//System.out.println("labels_pred = "+preds);
-			//System.out.println("labels_true = "+trues);
+			System.out.println("labels_pred = "+preds);
+			System.out.println("labels_true = "+trues);
 			
 			if(sortedFinalCluster.keySet().size()== sortedClusterGroupsOriginalLabelByMerged.keySet().size()){
 

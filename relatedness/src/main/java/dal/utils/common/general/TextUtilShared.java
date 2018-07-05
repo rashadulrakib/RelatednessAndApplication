@@ -395,19 +395,19 @@ public class TextUtilShared {
         return wPhs;
     }
 
-	public ArrayList<String[]> StatisticalPruneWordsByDocFreqs(HashMap<String, Double> docFreqs, 
+	public ArrayList<String[]> StatisticalPruneWordsByDocFreqs(HashMap<String, Integer> docFreqs, 
 			ArrayList<String[]> alDocLabelFlat, int maxDocFreq) {
 		
 		ArrayList<String []> alDocLabelFlatPruned = new ArrayList<String[]>(); 
 		
 		try{
 			
-			ArrayList<Double> aldocFreqs = UtilsShared.ConvertCollectionToArrayList(docFreqs.values());
+			ArrayList<Integer> aldocFreqs = UtilsShared.ConvertCollectionToArrayList(docFreqs.values());
 			
 			Double average = aldocFreqs.stream().mapToDouble(val -> val).average().orElse(0.0);
 			
 			double varainceSum = 0;
-			for(Double num: aldocFreqs){
+			for(Integer num: aldocFreqs){
 				varainceSum = varainceSum + (num-average)*(num-average);
 			}
 			
@@ -461,7 +461,7 @@ public class TextUtilShared {
 		return alDocLabelFlatPruned;
 	}
 	
-	public ArrayList<String[]> FixedPruneWordsByDocFreqs(HashMap<String, Double> docFreqs, 
+	public ArrayList<String[]> FixedPruneWordsByDocFreqs(HashMap<String, Integer> docFreqs, 
 			ArrayList<String[]> alDocLabelFlat, int maxDocFreq) {
 		
 		ArrayList<String []> alDocLabelFlatPruned = new ArrayList<String[]>(); 
@@ -481,7 +481,7 @@ public class TextUtilShared {
 		return alDocLabelFlatPruned;
 	}
 	
-	public boolean IsAllWordsHaveLessThanEqualMaxDocFreq(String text, int maxDocFreq, HashMap<String, Double> docFreqs) {
+	public boolean IsAllWordsHaveLessThanEqualMaxDocFreq(String text, int maxDocFreq, HashMap<String, Integer> docFreqs) {
 		try{
 		
 			String [] arr = text.split("\\s+");
@@ -516,5 +516,79 @@ public class TextUtilShared {
 			e.printStackTrace();
 		}
 		return clusterLables;
+	}
+
+	public String GetWordsWithMaxDocFreqByCluster(String text,
+			int maxDocFreqByClusterTolerance,
+			HashMap<String, Integer> docFreqByClusters) {
+		
+		String textWithDocFreqByCluster = "";
+		
+		try{
+			String [] arr = text.split("\\s+");
+			
+			StringBuilder sb = new StringBuilder();
+			
+			for(String str: arr){
+				if(!docFreqByClusters.containsKey(str) 
+						|| docFreqByClusters.get(str)> maxDocFreqByClusterTolerance) continue;
+				
+				sb.append(str+" ");
+			}
+			
+			textWithDocFreqByCluster = sb.toString().trim();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return textWithDocFreqByCluster;
+	}
+
+	public String[] RemoveCommonWords(String ftr1Tex, String ftr2Tex) {
+		String[] texts = new String[2];
+		
+		try{
+			String arr1 [] = ftr1Tex.split("\\s+");
+			String arr2 [] = ftr2Tex.split("\\s+");
+			
+			HashSet<String> arr1set = new HashSet<String>();
+			arr1set.addAll(Arrays.asList(arr1));
+			
+			HashSet<String> arr2set = new HashSet<String>();
+			arr2set.addAll(Arrays.asList(arr2));
+			
+			HashSet<String> common = new HashSet<String>();
+			
+			for(String str: arr1set){
+				if(arr2set.contains(str)){
+					common.add(str);
+				}
+			}
+			
+			arr1set.removeAll(common);
+			arr2set.removeAll(common);
+			
+			texts[0] = ConvertSetToString(arr1set);
+			texts[1] = ConvertSetToString(arr2set);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return texts;
+	}
+
+	private String ConvertSetToString(HashSet<String> arrset) {
+		StringBuilder sb = new StringBuilder();
+		try{
+			for(String s: arrset){
+				sb.append(s+" ");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sb.toString().trim();
 	}
 }

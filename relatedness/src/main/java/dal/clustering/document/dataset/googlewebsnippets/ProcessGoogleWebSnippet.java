@@ -104,7 +104,7 @@ public class ProcessGoogleWebSnippet {
 				docs.add(words);
 				uniqueterms.addAll(words);
 			}
-			HashMap<String, Double> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(uniqueterms, docs);
+			HashMap<String, Integer> docFreqs = tfIdfMatrixGenerator.CalculateDocFrequency(uniqueterms, docs);
 			double [] minMaxDocFreq = docClusterUtil.FindMinMaxDocFrequency(docFreqs, docs.size());
 			
 			//sub: take only the words in a sentence whose doc freqs are within maxMin Doc Freq.
