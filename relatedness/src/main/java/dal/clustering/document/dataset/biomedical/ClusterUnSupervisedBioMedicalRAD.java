@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
+import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
@@ -609,4 +610,33 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 		}
 	}
 	
+	public void GenerateEnsembleClusters(){
+		try{
+			
+			ArrayList<String> clusterLabelFiles = new ArrayList<String>();
+			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-word2vecnostopword-sparse-20000-0-labels");
+			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels");
+			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-add-sparse-20000-0-labels");
+			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-tfidf-alpha-20000-0-labels");
+			
+			List<LinkedHashMap<String, ArrayList<InstanceText>>> lastClustersList = new ArrayList<LinkedHashMap<String,ArrayList<InstanceText>>>(); 
+			
+			for(String externalClusteringResultFile: clusterLabelFiles){
+				ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+				ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();			
+				ArrayList<InstanceText> trainInstTexts = bioMedicalUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+				LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = bioMedicalUtil.docClusterUtil
+						.GetClusterGroupsTextByLabel(trainInstTexts, false);
+				
+				lastClustersList.add(lastClusters);
+			}
+			
+			LinkedHashMap<String, ArrayList<InstanceText>> commonlastClusters = bioMedicalUtil.docClusterUtil.GetCommonLastClusters(lastClustersList);			
+		}catch(Exception e){
+			e.printStackTrace();
+		}		
+	}
 }
+
+
+

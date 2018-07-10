@@ -300,6 +300,7 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClustering();
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClusteringTuned();    	
     	//new ClusterUnSupervisedBioMedicalRAD().ClusterByRemovingTopLengthVectors();
+    	 new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
     	
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();

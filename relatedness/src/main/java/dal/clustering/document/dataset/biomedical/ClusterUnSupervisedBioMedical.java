@@ -262,7 +262,7 @@ public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedical-w2vec-bioASQ2018-400D-keptFtrs-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ2018-400D-sim-20000";
 			//String simFile = "/users/grad/rakib/w2vecs/biomedical/BioASQ/2018/sim_matrixwdm-2000-10";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);

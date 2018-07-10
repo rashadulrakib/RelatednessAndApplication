@@ -453,9 +453,9 @@ public class DocClusterUtil {
 			textLengtSum = textLengtSum+arr.length;
 			
 			//averaging avgvec
-        	for(int i=0;i<avgVec.length;i++){
-        		avgVec[i]=avgVec[i]/(double)arr.length;
-        	}
+        	//for(int i=0;i<avgVec.length;i++){
+        	//	avgVec[i]=avgVec[i]/(double)arr.length;
+        	//}
         	//end averaging avgvec
 		}
 		catch(Exception e){
@@ -652,6 +652,26 @@ public class DocClusterUtil {
 		}
 		
 		return testW2Vecs;
+	}
+	
+	public ArrayList<InstanceText> CreateW2VecForTrainData(ArrayList<String[]> alBodyLabelTrue, ArrayList<String> clusterLablesPred){
+		ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
+		
+		try{
+			if(clusterLablesPred.size()== alBodyLabelTrue.size()){
+				for(int i=0;i<alBodyLabelTrue.size();i++ ){
+					InstanceText newInst = new InstanceText();
+					newInst.OriginalLabel = alBodyLabelTrue.get(i)[1];
+					newInst.Text = alBodyLabelTrue.get(i)[0];
+					newInst.ClusteredLabel = clusterLablesPred.get(i);
+					trainInstTexts.add(newInst);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return trainInstTexts;
 	}
 	
 	public ArrayList<InstanceW2Vec> CreateW2VecForTrainData(ArrayList<String[]> alBodyLabelTrue, HashMap<String, double[]> hmW2Vec, 
@@ -1332,9 +1352,9 @@ public class DocClusterUtil {
 		return clusterGroups;
 	}
 	
-	public HashMap<String, ArrayList<InstanceText>> GetClusterGroupsTextByLabel(ArrayList<InstanceText> instants, boolean isByOriginalLabel) {
+	public LinkedHashMap<String, ArrayList<InstanceText>> GetClusterGroupsTextByLabel(ArrayList<InstanceText> instants, boolean isByOriginalLabel) {
 		
-		HashMap<String, ArrayList<InstanceText>> clusterGroups = new HashMap<String, ArrayList<InstanceText>>();
+		LinkedHashMap<String, ArrayList<InstanceText>> clusterGroups = new LinkedHashMap<String, ArrayList<InstanceText>>();
 
 		try{
 			for(InstanceText instant: instants){
@@ -1917,6 +1937,22 @@ public class DocClusterUtil {
 		}
 		
 		return labelWiseInstancesPred;
+	}
+
+	public LinkedHashMap<String, ArrayList<InstanceText>> GetCommonLastClusters(
+			List<LinkedHashMap<String, ArrayList<InstanceText>>> lastClustersList) {
+		
+		LinkedHashMap<String, ArrayList<InstanceText>> commonlastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
+		
+		try{
+			for(LinkedHashMap<String, ArrayList<InstanceText>> lastClusters : lastClustersList){
+				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return commonlastClusters;
 	}
 	
 }

@@ -250,7 +250,8 @@ public class TextUtilShared {
 		try{
 			doc = doc.toLowerCase().trim();
 			pDoc = doc.replaceAll("&amp;", " ").trim();
-			pDoc = pDoc.replaceAll("[^a-zA-Z ]", " ").trim().replaceAll("\\s+", " ").trim();
+			//pDoc = pDoc.replaceAll("[^a-zA-Z ]", " ").trim().replaceAll("\\s+", " ").trim();
+			pDoc = pDoc.replaceAll("\\b[a-z]\\b|\\b\\d+\\b", " ").replaceAll("\\s+", " ").trim();		 
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -506,7 +507,10 @@ public class TextUtilShared {
 			
 			while((line=br.readLine()) != null) {
 		        line = line.trim();
-		        if(line.isEmpty()) continue;
+		        
+		        //if(line.isEmpty()){
+		        //	line="20";
+		        //}
 		        
 		        String clusterGroups [] = line.split(",");
 		        clusterLables.addAll(Arrays.asList(clusterGroups));

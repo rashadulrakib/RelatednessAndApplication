@@ -9,8 +9,8 @@ public class BioMedicalConstant {
 
 	//public static final String BiomedicalDocsFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedicalraw";
 	//public static final String BiomedicalDocsFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/80-800-body-label";
-    //public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedicalraw";
-	public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\80-800-body-label";
+    public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedicalraw";
+	//public static final String BiomedicalDocsFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\80-800-body-label";
 	//public static final String BiomedicalDocsFile = "C:\\Users\\mona\\Desktop\\BioASQ\\MTI\\MTI-strict-filer-wsd\\text.processed.txt";
 	
 	public static final String BioMedicalSTC2VocabIndexIn="D:\\PhD\\dr.norbert\\method\\STC2-master\\STC2-master\\dataset\\Biomedical_vocab2idx.dic";

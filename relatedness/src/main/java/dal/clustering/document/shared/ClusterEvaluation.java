@@ -83,6 +83,7 @@ public class ClusterEvaluation {
 						maxMemInGroupSize= clusterGroupsOriginalLabel.get(afterClusterLabel).size();
 						maxMemOriginalLabel = afterClusterLabel;
 					}
+					//System.out.println(afterClusterLabel+","+clusterGroupsOriginalLabel.get(afterClusterLabel).size());
 				}
 				
 				maxGroupSizeSum=maxGroupSizeSum+ maxMemInGroupSize;
@@ -92,7 +93,7 @@ public class ClusterEvaluation {
 						matchInCluster++;
 					}
 				}
-				System.out.println("label="+label+",items="+finalCluster.get(label).size()+", acc="+(double)maxMemInGroupSize/finalCluster.get(label).size());
+				System.out.println("label="+label+",items="+finalCluster.get(label).size()+", acc="+(double)maxMemInGroupSize/finalCluster.get(label).size()+",max label="+maxMemOriginalLabel);
 			}
 			
 			System.out.println("acc -majority-text="+ (double)maxGroupSizeSum/totalItems);

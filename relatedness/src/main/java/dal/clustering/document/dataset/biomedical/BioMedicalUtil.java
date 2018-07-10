@@ -46,7 +46,7 @@ public class BioMedicalUtil {
 		
 		loadAllDocsBiomedical();
 		
-		loadKeptFtrList();
+		//loadKeptFtrList();
 		
 		//PopulateNFoldData();
 	}
