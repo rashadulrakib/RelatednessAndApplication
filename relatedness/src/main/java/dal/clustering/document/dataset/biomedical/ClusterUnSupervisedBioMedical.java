@@ -234,7 +234,7 @@ public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 			
 			double [][] docSimMatrix= bioMedicalUtil.docClusterUtil.ComputeCosineMatrixW2VecParallel(testW2Vecs, 10);
 
-			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ2018-400D-sim-20000", docSimMatrix, " ");
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ2018-400D-sim-12265", docSimMatrix, " ");
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -262,15 +262,15 @@ public class ClusterUnSupervisedBioMedical extends ClusterBioMedical {
 	
 	public void GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative() {
 		try{
-			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ2018-400D-sim-20000";
+			String simFile = "/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-w2vec-bioASQ2018-400D-sim-12265";
 			//String simFile = "/users/grad/rakib/w2vecs/biomedical/BioASQ/2018/sim_matrixwdm-2000-10";
 			//String simFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\web-snippet-w2vec-sim-google-2280";
 			double [][] docSimMatrix= UtilsShared.LoadMatrixFromFile(simFile);
 			
 			//List<double[][]> alSparseDists = bioMedicalUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters);
 			List<double[][]> alSparseDists = bioMedicalUtil.docClusterUtil.sparsificationUtilIterative.SparsifyDocDisSimilarityMatrixAlgorithomicExactIterative(docSimMatrix, BioMedicalConstant.NumberOfClusters); //RAD
-			//double [][] docDisSimMatrixDense = UtilsShared.CopyMatrix(docSimMatrix, true);
-			//UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedical-tfidf-dist-16000-800", docDisSimMatrixDense, " ");
+			double [][] docDisSimMatrixDense = UtilsShared.CopyMatrix(docSimMatrix, true);
+			UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedical-bioasq2018-400-add-dense-12265", docDisSimMatrixDense, " ");
 			
 //			for(int i=0;i< alSparseDists.size();i++){
 //				double[][] sparseDistMatrix = alSparseDists.get(i);

@@ -96,7 +96,7 @@ public class ClusterEvaluation {
 				System.out.println("label="+label+",items="+finalCluster.get(label).size()+", acc="+(double)maxMemInGroupSize/finalCluster.get(label).size()+",max label="+maxMemOriginalLabel);
 			}
 			
-			System.out.println("acc -majority-text="+ (double)maxGroupSizeSum/totalItems);
+			System.out.println("acc -majority-text="+ (double)maxGroupSizeSum/totalItems+", totalItems="+totalItems);
 			purity = (double)maxGroupSizeSum/totalItems;
 		}
 		catch(Exception e){

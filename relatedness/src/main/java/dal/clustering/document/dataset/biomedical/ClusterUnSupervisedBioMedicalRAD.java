@@ -1,6 +1,8 @@
 package dal.clustering.document.dataset.biomedical;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -613,17 +615,20 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	public void GenerateEnsembleClusters(){
 		try{
 			
+			//HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			
 			ArrayList<String> clusterLabelFiles = new ArrayList<String>();
-			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-word2vecnostopword-sparse-20000-0-labels");
-			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels");
+			//clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-word2vecnostopword-sparse-20000-0-labels");
+			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-w2vec-bioasq-sparse-alpha-20000-0-labels");
 			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-add-sparse-20000-0-labels");
-			clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-tfidf-alpha-20000-0-labels");
+			//clusterLabelFiles.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-tfidf-alpha-20000-0-labels");
 			
 			List<LinkedHashMap<String, ArrayList<InstanceText>>> lastClustersList = new ArrayList<LinkedHashMap<String,ArrayList<InstanceText>>>(); 
 			
+			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
+			
 			for(String externalClusteringResultFile: clusterLabelFiles){
 				ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
-				ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();			
 				ArrayList<InstanceText> trainInstTexts = bioMedicalUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
 				LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = bioMedicalUtil.docClusterUtil
 						.GetClusterGroupsTextByLabel(trainInstTexts, false);
@@ -632,9 +637,238 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			}
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> commonlastClusters = bioMedicalUtil.docClusterUtil.GetCommonLastClusters(lastClustersList);			
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(commonlastClusters);
+			
+			//rough
+			//int n_K = 1000;
+			for(LinkedHashMap<String, ArrayList<InstanceText>> alltextsPerLable: lastClustersList){
+				HashSet<String> labelsToRemove = new HashSet<String>();
+				//HashMap<String, double[]> labelCenters = new LinkedHashMap<String, double[]>();
+				
+				for(String label: alltextsPerLable.keySet()){
+					if(!commonlastClusters.containsKey(label)){
+						commonlastClusters.put(label, alltextsPerLable.get(label));
+						labelsToRemove.add(label);
+					}
+					//System.out.println(label+","+commonlastClusters.get(label).size());
+					//if(commonlastClusters.get(label).size()<n_K)
+					{
+						//ArrayList<InstanceW2Vec> instancew2Vecs = bioMedicalUtil.docClusterUtil.ConvertInsTextToW2Vec(commonlastClusters.get(label), hmW2Vec);
+						//InstanceW2Vec center = bioMedicalUtil.docClusterUtil.ComputeCenterInstanceW2Vec(instancew2Vecs);
+						//labelCenters.put(label, center.Features);
+					}
+				}
+				
+				
+				//rough
+				LinkedHashMap<String, ArrayList<InstanceText>> rough = alltextsPerLable;
+				for(String key: commonlastClusters.keySet()){
+					if(commonlastClusters.get(key).size()<500){
+						ArrayList<InstanceText> commonIns = commonlastClusters.get(key);
+						List<InstanceText> tempList = rough.get(key).subList(0, rough.get(key).size()>500? 500 : rough.get(key).size());
+						commonIns.addAll(tempList);
+						commonlastClusters.put(key, commonIns);
+					}
+				}
+				
+				//remove larger groups
+				for(String key: commonlastClusters.keySet()){
+					ArrayList<InstanceText> commonIns = commonlastClusters.get(key);
+					if(commonIns.size()>800){
+						List<InstanceText> commonInsSub = commonIns.subList(800, commonIns.size()-1);
+						commonIns.removeAll(commonInsSub);
+						commonlastClusters.put(key, commonIns);
+					}
+				}
+				
+				//end rough
+				
+				
+				//ArrayList<InstanceText> remainInstTexts = bioMedicalUtil.docClusterUtil.FindRemainInstances(alltextsPerLable, commonlastClusters);
+				//ArrayList<InstanceW2Vec> remainInstsW2Vec = bioMedicalUtil.docClusterUtil.ConvertInsTextToW2Vec(remainInstTexts, hmW2Vec);
+
+//				LinkedHashMap<String, ArrayList<InstanceText>> remainInstTextsClusters = bioMedicalUtil.docClusterUtil
+//						.GetClusterGroupsTextByLabel(remainInstTexts, false);
+//				System.out.println("\nramina="+remainInstTexts.size()+"\n");
+//				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(remainInstTextsClusters);
+				
+				//LinkedHashMap<String, ArrayList<InstanceW2Vec>> remainPredictedCluster = bioMedicalUtil.docClusterUtil.GetInstanceClosestToCentersW2Vec(remainInstsW2Vec, labelCenters, commonlastClusters);  
+				//LinkedHashMap<String, ArrayList<InstanceText>> remainPredictedClusterText = bioMedicalUtil.docClusterUtil.ConvertInsW2VecToText(remainPredictedCluster);
+				
+				System.out.println("\n\ncommon\n\n");
+				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(commonlastClusters);
+				
+				//System.out.println("ramanin\n\n");
+				//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(remainPredictedClusterText);
+				
+				//merge commonlastClusters and remainPredictedCluster
+				//evaluate merged clusters
+				
+//				LinkedHashMap<String, ArrayList<InstanceText>> mergedCluster = new LinkedHashMap<String, ArrayList<InstanceText>>();
+//				for(String lable: commonlastClusters.keySet()){
+//					ArrayList<InstanceText> al = commonlastClusters.get(lable);
+//					if(remainPredictedClusterText.containsKey(lable)){
+//						al.addAll(remainPredictedClusterText.get(lable));
+//					}
+//					mergedCluster.put(lable, al);
+//				}
+//				
+//				System.out.println("merged\n\n");
+//				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(mergedCluster);
+				
+				BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_train"));				
+				LinkedHashMap<String, String[]> uniqueTrainSetPredTrue=new LinkedHashMap<String, String[]>();				
+				for(String key: commonlastClusters.keySet()){
+					for(InstanceText instTxt: commonlastClusters.get(key)){
+						uniqueTrainSetPredTrue.put(instTxt.Text, new String []{instTxt.ClusteredLabel, instTxt.OriginalLabel});
+					}
+				}				
+				for(String text: uniqueTrainSetPredTrue.keySet()){
+					String [] predTrue = uniqueTrainSetPredTrue.get(text);
+					bw.write(predTrue[0]+"\t"+predTrue[1]+"\t" +text+"\n");
+				}
+				bw.close();
+				
+				
+				bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_test"));				
+				for(String [] bodyLabel: alBodyLabel){
+					String body = bodyLabel[0];
+					String originalLabel = bodyLabel[1];
+					
+					if(uniqueTrainSetPredTrue.containsKey(body)) continue;
+					bw.write(originalLabel+"\t"+originalLabel+"\t" +body+"\n");
+				}
+				bw.close();
+				
+				for(String label: labelsToRemove){
+					commonlastClusters.remove(label);
+					System.out.println("to remove label="+label);
+				}
+			}
+			
+			//end rough
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}		
+	}
+
+	public void GenerateTrainTest() {
+		try{
+			String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
+			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
+			
+			ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+			ArrayList<InstanceText> allInstTexts = bioMedicalUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = bioMedicalUtil.docClusterUtil
+					.GetClusterGroupsTextByLabel(allInstTexts, false);
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			
+			//int maxElementsInCluster=500;
+			
+			ArrayList<InstanceText> testInstTexts = new ArrayList<InstanceText>();
+			ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
+			for(String label: lastClusters.keySet()){
+				ArrayList<InstanceText> insts = lastClusters.get(label);
+				
+				//BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\4118\\"+label));
+				
+				for(InstanceText inst: insts){
+					//bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t"+inst.Text+"\n");
+				}
+				
+				//HashSet<Integer> indexes = UtilsShared.GenerateRandomIndex(0, insts.size(), maxElementsInCluster);
+				//ArrayList<InstanceText> subInsts = UtilsShared.GetSelectedItems(indexes, insts);
+				
+				//List<InstanceText> subInsts = insts.subList(maxElementsInCluster<insts.size()? maxElementsInCluster: insts.size()-1, insts.size());
+				ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
+				if(insts.size()>800){
+					subInsts.addAll(insts.subList(0, 800));
+					testInstTexts.addAll(insts.subList(800, insts.size()));
+				}else{
+					subInsts.addAll(insts);
+				}
+				trainInstTexts.addAll(subInsts);
+				//testInstTexts.addAll(subInsts);
+				
+				//insts.removeAll(subInsts);
+				//lastClusters.put(label, insts);
+				lastClusters.put(label, subInsts);
+				
+				//bw.close();
+			}			
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = bioMedicalUtil.docClusterUtil
+					.GetClusterGroupsTextByLabel(testInstTexts, false);
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTest);
+			
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = bioMedicalUtil.docClusterUtil
+					.GetClusterGroupsTextByLabel(trainInstTexts, false);
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
+			
+			
+			BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_train"));											
+			for(InstanceText inst: trainInstTexts){
+				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
+			}
+			bw.close();
+			
+			bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_test"));											
+			for(InstanceText inst: testInstTexts){
+				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
+			}
+			bw.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void FilterOutliers() {
+		try{
+			
+			String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
+			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
+			
+			ArrayList<String> clusterLables = bioMedicalUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+			ArrayList<InstanceText> allInstTexts = bioMedicalUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = bioMedicalUtil.docClusterUtil
+					.GetClusterGroupsTextByLabel(allInstTexts, false);
+			
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			
+			for(int i=1;i<=20;i++){
+				
+				String label = Integer.toString(i);
+				ArrayList<InstanceText> insts = lastClusters.get(label);
+				
+				String outlierFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\4118\\"+i+"_outlierpred";
+				
+				ArrayList<InstanceText> tobeRemovedInsts = new ArrayList<InstanceText>();
+				
+				BufferedReader br =  new BufferedReader(new FileReader(outlierFile));
+				String line = "";
+				int lc = 0;
+				while((line = br.readLine())!=null){				   
+				   line = line.trim().toLowerCase();
+				   if(line.isEmpty()) continue;
+				   
+				   if(line.equals("-1")){
+					   tobeRemovedInsts.add(insts.get(lc));
+				   }
+				   lc++;
+				}
+				br.close();
+				
+				insts.removeAll(tobeRemovedInsts);
+				lastClusters.put(label, insts);					
+			}
+			
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }
 

@@ -33,8 +33,8 @@ public class ProcessGoogleWebSnippet {
 //				LinkedHashMap<String, ArrayList<String>> docsLabelBodyStemmed  = StemDocs(docsLabelBody);
 				
 				//one block
-				//ArrayList<String[]> aldocsBodeyLabel = loadAllDocsGoogleWebSnippetList();
-				//WriteToArffFile(aldocsBodeyLabel);
+				ArrayList<String[]> aldocsBodeyLabel = loadAllDocsGoogleWebSnippetList();
+				WriteToArffFile(aldocsBodeyLabel);
 				//end
 				
 				//two block

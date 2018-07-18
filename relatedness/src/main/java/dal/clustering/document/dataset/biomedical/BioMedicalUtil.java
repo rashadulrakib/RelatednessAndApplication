@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -98,6 +99,8 @@ public class BioMedicalUtil {
 	private void loadAllDocsBiomedical() {
 		try{
 			
+			HashMap<String, Integer> uniqueTexts = new LinkedHashMap<String, Integer>();
+			
 			BufferedReader br =  new BufferedReader(new FileReader(BioMedicalConstant.BiomedicalDocsFile));
 			
 			String line = "";
@@ -123,6 +126,12 @@ public class BioMedicalUtil {
 		        if(body.isEmpty() || bodyStemmed.isEmpty()) continue;
 		       
 		        //ArrayList<String> processed = new ArrayList<String>(Arrays.asList(body.split("\\s+")));
+		        
+		        if(!uniqueTexts.containsKey(body)){
+		        	uniqueTexts.put(body, 1);
+		        }else{
+		        	uniqueTexts.put(body, uniqueTexts.get(body)+1);
+		        }
 		        
 		        alBodies.add(body);
 		        
@@ -160,8 +169,14 @@ public class BioMedicalUtil {
 		   br.close();
 		   
 		   for(String key: docsLabelBodyList.keySet()){
-				System.out.println(key+","+docsLabelBodyList.get(key).size());
-			}
+				System.out.println(key+","+docsLabelBodyList.get(key).size()+", uniquesize="+uniqueTexts.size());
+		   }
+		   
+		   for(String key: uniqueTexts.keySet()){
+			   if(uniqueTexts.get(key)>1){
+				   System.out.println(key+","+uniqueTexts.get(key));
+			   }
+		   }
 		   
 		}catch(Exception e){
 			e.printStackTrace();

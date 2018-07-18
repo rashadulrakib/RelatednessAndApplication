@@ -9,6 +9,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
+import dal.clustering.document.shared.entities.InstanceText;
 
 public class UtilsShared {
 	public static boolean AnyOverlapBetweenTwoRanges(int range1First, int range1Last, int range2First, int range2Last){
@@ -338,6 +342,34 @@ public class UtilsShared {
 		}
 		
 		return list;
+	}
+	
+	public static HashSet<Integer> GenerateRandomIndex(int min, int max, int size){
+		HashSet<Integer> index = new HashSet<Integer>();
+		try{
+			Random random = new Random();
+		    for (int i = 0; i < size; i++){
+		    	index.add(min+ random.nextInt(max-min));
+		    }
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return index;
+	}
+
+	public static <T> ArrayList<T> GetSelectedItems(
+			HashSet<Integer> indexes, ArrayList<T> items) {
+		
+		ArrayList<T> newList = new ArrayList<T>();
+		
+		try{
+			for(int index: indexes){
+				newList.add(items.get(index));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return newList;
 	}
 		
 }

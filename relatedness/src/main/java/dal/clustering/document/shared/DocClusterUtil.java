@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 import dal.clustering.document.dataset.biomedical.BioMedicalConstant;
 import dal.clustering.document.shared.entities.InstanceText;
@@ -1945,14 +1946,281 @@ public class DocClusterUtil {
 		LinkedHashMap<String, ArrayList<InstanceText>> commonlastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
 		
 		try{
+			HashMap<String, ArrayList<InstanceText>> textWiseLables = new LinkedHashMap<String, ArrayList<InstanceText>>();
+			
 			for(LinkedHashMap<String, ArrayList<InstanceText>> lastClusters : lastClustersList){
 				
+				for(String label: lastClusters.keySet()){
+					ArrayList<InstanceText> insts = lastClusters.get(label);
+					for(InstanceText inst: insts){
+						if(!textWiseLables.containsKey(inst.Text)){
+							ArrayList<InstanceText> al = new ArrayList<InstanceText>();
+							al.add(inst);
+							textWiseLables.put(inst.Text, al);
+						}else{
+							ArrayList<InstanceText> al = textWiseLables.get(inst.Text);
+							al.add(inst);
+							textWiseLables.put(inst.Text, al);
+						}
+					}
+				}
 			}
+			
+			int counter = 0;
+			for(String text: textWiseLables.keySet()){
+				//System.out.println(text+","+textWiseLables.get(text).size());
+				HashSet<String> predLabels =  new HashSet<String>();
+				String onlySameLabel = "";
+				for(InstanceText instForLables: textWiseLables.get(text)){
+					//System.out.println(instForLables.ClusteredLabel+"="+instForLables.OriginalLabel);
+					predLabels.add(instForLables.ClusteredLabel);
+					onlySameLabel=instForLables.ClusteredLabel;
+				}
+				
+				if(predLabels.size()<textWiseLables.get(text).size() && predLabels.size()==1){ //in all cluster this text has same label
+					//System.out.println(++counter+","+text+", predSize="+predLabels.size()+","+textWiseLables.get(text).size());
+					//for(InstanceText instForLables: textWiseLables.get(text)){
+					//	System.out.println(instForLables.ClusteredLabel+"="+instForLables.OriginalLabel);
+					//}
+					
+					if(!commonlastClusters.containsKey(onlySameLabel)){
+						ArrayList<InstanceText> al = new ArrayList<InstanceText>();
+						al.add(textWiseLables.get(text).get(0));
+						commonlastClusters.put(onlySameLabel, al);
+					}else{
+						ArrayList<InstanceText> al = commonlastClusters.get(onlySameLabel);
+						al.add(textWiseLables.get(text).get(0));
+						commonlastClusters.put(onlySameLabel, al);
+					}
+				}
+			}
+			
+//			//rough
+//			LinkedHashMap<String, ArrayList<InstanceText>> rough = lastClustersList.get(0);
+//			for(String key: commonlastClusters.keySet()){
+//				if(commonlastClusters.get(key).size()<400){
+//					ArrayList<InstanceText> commonIns = commonlastClusters.get(key);
+//					List<InstanceText> tempList = rough.get(key).subList(0, rough.get(key).size()>400? 400 : rough.get(key).size());
+//					commonIns.addAll(tempList);
+//					commonlastClusters.put(key, commonIns);
+//				}
+//			}
+//			
+//			for(String key: commonlastClusters.keySet()){
+//				ArrayList<InstanceText> commonIns = commonlastClusters.get(key);
+//				if(commonIns.size()>800){
+//					List<InstanceText> commonInsSub = commonIns.subList(800, commonIns.size()-1);
+//					commonIns.removeAll(commonInsSub);
+//					commonlastClusters.put(key, commonIns);
+//				}
+//			}
+//			
+//			//end rough
+			
+			System.out.println("total text="+textWiseLables.size()+", overlapped="+counter);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		return commonlastClusters;
 	}
+
+	public ArrayList<InstanceText> FindRemainInstances(
+			LinkedHashMap<String, ArrayList<InstanceText>> alltextsPerLable,
+			LinkedHashMap<String, ArrayList<InstanceText>> commonlastClusters) {
+		
+		ArrayList<InstanceText> remainInstsW2Vec = new ArrayList<InstanceText>();
+		
+		try{
+			for(String allLabel: alltextsPerLable.keySet()){
+				ArrayList<InstanceText> installTexts = alltextsPerLable.get(allLabel);
+				if(commonlastClusters.containsKey(allLabel)){
+					ArrayList<InstanceText> instaCommonTexts = commonlastClusters.get(allLabel);
+					ArrayList<InstanceText> instsNotInAll = FindInstTextNotInAll(installTexts, instaCommonTexts);
+					remainInstsW2Vec.addAll(instsNotInAll);
+				}
+				
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return remainInstsW2Vec;
+	}
+
+	public ArrayList<InstanceText> FindInstTextNotInAll(
+			ArrayList<InstanceText> installTexts,
+			ArrayList<InstanceText> instaCommonTexts) {
+		
+		ArrayList<InstanceText> instsNotInAll = new ArrayList<InstanceText>(); 
+		try{
+			for(InstanceText instTextAll: installTexts){
+				boolean found = false;
+				for(InstanceText instaCommonText: instaCommonTexts){
+					if(instTextAll.Text.toLowerCase().equals(instaCommonText.Text.toLowerCase())){
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					instsNotInAll.add(instTextAll);
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return instsNotInAll;
+	}
+
+	public LinkedHashMap<String, ArrayList<InstanceW2Vec>> GetInstanceClosestToCentersW2Vec(
+			ArrayList<InstanceW2Vec> remainInstsW2Vec,
+			HashMap<String, double[]> labelCenters, LinkedHashMap<String, ArrayList<InstanceText>> commonLastClusters) {
+		
+		LinkedHashMap<String, ArrayList<InstanceW2Vec>> remainPredictedCluster = new LinkedHashMap<String, ArrayList<InstanceW2Vec>>();
+		
+		try{
+			
+			TreeMap<Double, String> distLabel = new TreeMap<Double, String>();
+			
+			for(InstanceW2Vec instW2Vec: remainInstsW2Vec){
+				
+				distLabel.clear();
+				
+				//double closeDist = Double.MAX_VALUE;
+				
+				for(String centerLabel: labelCenters.keySet()){
+					double [] centerFtr = labelCenters.get(centerLabel);
+					
+					double dist = ComputeUtil.ComputeEuclidianDistance(centerFtr, instW2Vec.Features);
+//					if(closeDist>dist){
+//						closeDist = dist;
+//						closeLabel = centerLabel;
+//					}
+					distLabel.put(dist, centerLabel);
+				}
+				
+				String closeLabel = "";
+				String label="";
+				for(Double dist: distLabel.keySet()){
+					label = distLabel.get(dist);
+					if((remainPredictedCluster.containsKey(label) &&
+							(remainPredictedCluster.get(label).size()+commonLastClusters.get(label).size())>1000)
+							|| commonLastClusters.get(label).size()>1000){
+						continue;
+					}else{
+						closeLabel = label;
+						break;
+					}
+				}
+				
+				if(closeLabel.length()==0){
+					closeLabel = label;
+				}
+				
+				if(!remainPredictedCluster.containsKey(closeLabel)){
+					ArrayList<InstanceW2Vec> al = new ArrayList<InstanceW2Vec>();
+					al.add(instW2Vec);
+					remainPredictedCluster.put(closeLabel, al);
+				}else{
+					ArrayList<InstanceW2Vec> al = remainPredictedCluster.get(closeLabel);
+					al.add(instW2Vec);
+					remainPredictedCluster.put(closeLabel, al);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return remainPredictedCluster;
+	}
+
+	public ArrayList<InstanceW2Vec> ConvertInsTextToW2Vec(
+			ArrayList<InstanceText> instTexts, HashMap<String, double[]> hmW2Vec) {
+	
+		ArrayList<InstanceW2Vec> instancew2Vecs = new ArrayList<InstanceW2Vec>();
+		
+		try{
+			for(InstanceText instText: instTexts){
+				
+				InstanceW2Vec instW2Vec = new InstanceW2Vec();
+				instW2Vec.ClusteredLabel = instText.ClusteredLabel;
+				instW2Vec.OriginalLabel = instText.OriginalLabel;
+				instW2Vec.Text = instText.Text;
+				instW2Vec.Features = PopulateW2VecForSingleDoc(instText.Text, hmW2Vec);
+				
+				instancew2Vecs.add(instW2Vec);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return instancew2Vecs;
+	}
+
+	public LinkedHashMap<String, ArrayList<InstanceText>> ConvertInsW2VecToText(
+			LinkedHashMap<String, ArrayList<InstanceW2Vec>> remainPredictedCluster) {
+		
+		LinkedHashMap<String, ArrayList<InstanceText>> insTextByLabel = new LinkedHashMap<String, ArrayList<InstanceText>>();
+		
+		try{
+			
+			for(String label: remainPredictedCluster.keySet()){
+				ArrayList<InstanceW2Vec> insVec = remainPredictedCluster.get(label);
+				ArrayList<InstanceText> insText = ConvertInsW2VecToText(insVec);
+				
+				insTextByLabel.put(label, insText);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return insTextByLabel;
+	}
+
+	public ArrayList<InstanceText> ConvertInsW2VecToText(
+			ArrayList<InstanceW2Vec> insVecs) {
+		
+		ArrayList<InstanceText> insTexts = new ArrayList<InstanceText>();
+		
+		try{
+			for(InstanceW2Vec insVec: insVecs){
+				InstanceText insText = new InstanceText();
+				insText.ClusteredLabel = insVec.ClusteredLabel;
+				insText.OriginalLabel = insVec.OriginalLabel;
+				insText.Text = insVec.Text;
+				
+				insTexts.add(insText);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return insTexts;
+	}
+
+//	public List<LinkedHashMap<String, ArrayList<InstanceText>>> KeepCommonAmongClusters(
+//			List<LinkedHashMap<String, ArrayList<InstanceText>>> lastClustersList,
+//			LinkedHashMap<String, ArrayList<InstanceText>> commonlastClusters) {
+//		
+//		List<LinkedHashMap<String, ArrayList<InstanceText>>> lastClustersKeptCommonList 
+//		= new ArrayList<LinkedHashMap<String,ArrayList<InstanceText>>>();
+//		
+//		try{
+//			
+//			for(String label: commonlastClusters.keySet()){
+//				System.out.println(label+","+commonlastClusters.get(label).size());
+//			}
+//			
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//		
+//		return lastClustersKeptCommonList;
+//	}
 	
 }

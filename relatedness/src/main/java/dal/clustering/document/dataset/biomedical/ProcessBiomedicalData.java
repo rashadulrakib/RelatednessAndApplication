@@ -30,9 +30,12 @@ public class ProcessBiomedicalData {
 	public void Process() {
 		try{
 			//loadAllDocsBiomedicalByW2VecListAndWriteToArff();
-			loadAllDocsBiomedicalByW2VecWithLowDocFreAndWriteToArff();
+			//loadAllDocsBiomedicalByW2VecWithLowDocFreAndWriteToArff();
 			//CombineBioASQData();
 			//ExtrcatMeshTagsWriteToFile();
+			wekaProcessingUtil.WriteTextToArffFile(
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biorawweka.arff", bioMedicalUtil.getDocsBiomedicalFlat(), 
+					"bio20000relation");
 		}
 		catch(Exception e){
 			e.printStackTrace();
