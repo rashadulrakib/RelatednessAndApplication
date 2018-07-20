@@ -655,6 +655,25 @@ public class DocClusterUtil {
 		return testW2Vecs;
 	}
 	
+	public ArrayList<InstanceText> CreateW2VecForTrainData(ArrayList<String[]> predTrueTexts){
+		ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
+		
+		try{
+			for(String [] predTrueText: predTrueTexts){
+				InstanceText inst = new InstanceText();
+				inst.ClusteredLabel = predTrueText[0];
+				inst.OriginalLabel = predTrueText[1];
+				inst.Text = predTrueText[2];
+				
+				trainInstTexts.add(inst);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return trainInstTexts;
+	}
+	
 	public ArrayList<InstanceText> CreateW2VecForTrainData(ArrayList<String[]> alBodyLabelTrue, ArrayList<String> clusterLablesPred){
 		ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
 		

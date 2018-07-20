@@ -595,4 +595,25 @@ public class TextUtilShared {
 		
 		return sb.toString().trim();
 	}
+
+	public ArrayList<String[]> ReadPredTrueTexts(String trainTestTextFile) {
+		
+		ArrayList<String[]> predTrueTexts = new ArrayList<String[]>();
+		
+		try{
+			BufferedReader br =  new BufferedReader(new FileReader(trainTestTextFile));
+			String line = "";
+			
+			while((line = br.readLine())!=null){				   
+			   line = line.trim().toLowerCase();
+			   String predTrueText [] = line.split("\\t+");			   
+			   predTrueTexts.add(predTrueText);
+			}			
+			br.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return predTrueTexts;
+	}
 }
