@@ -3,13 +3,16 @@ package dal.utils.common.general;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.TreeSet;
 
+import dal.clustering.document.shared.entities.InstanceText;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 
 public class TextUtilShared {
@@ -616,4 +619,51 @@ public class TextUtilShared {
 		
 		return predTrueTexts;
 	}
+	
+	public void WriteTextsOfEachGroup(String dir,
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters) {
+		try{
+			for(String label: lastClusters.keySet()){
+				java.io.BufferedWriter bw = new java.io.BufferedWriter(new FileWriter(dir+label));
+				
+				for(InstanceText inst: lastClusters.get(label)){
+					bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t"+inst.Text+"\n");
+				}
+				
+				bw.close();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public HashMap<String, ArrayList<String>> ReadPredOutliersAll(String dir) {
+		HashMap<String, ArrayList<String>> outliersByLabel = new LinkedHashMap<String, ArrayList<String>>();
+		try{
+			for(int i=1;i<=20;i++){
+				String outlierFile = dir+i+"_outlierpred";
+				
+				ArrayList<String> outliersPred = new ArrayList<String>();
+				
+				BufferedReader br =  new BufferedReader(new FileReader(outlierFile));
+				String line = "";
+				
+				while((line = br.readLine())!=null){				   
+				   line = line.trim().toLowerCase();
+				   if(line.isEmpty()) continue;
+				   
+				   outliersPred.add(line);
+				}
+				br.close();
+				
+				outliersByLabel.put(Integer.toString(i), outliersPred);
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return outliersByLabel;
+	}
+
 }

@@ -301,7 +301,7 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClusteringTuned();    	
     	//new ClusterUnSupervisedBioMedicalRAD().ClusterByRemovingTopLengthVectors();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
-    	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
+    	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2(750);
     	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedBioMedicalRAD().FilterOutliers();

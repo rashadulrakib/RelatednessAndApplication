@@ -2221,6 +2221,7 @@ public class DocClusterUtil {
 		
 		return insTexts;
 	}
+	
 
 //	public List<LinkedHashMap<String, ArrayList<InstanceText>>> KeepCommonAmongClusters(
 //			List<LinkedHashMap<String, ArrayList<InstanceText>>> lastClustersList,

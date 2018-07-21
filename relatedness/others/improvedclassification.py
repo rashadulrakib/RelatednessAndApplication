@@ -1,20 +1,19 @@
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_selection import SelectKBest, chi2
+#from sklearn.feature_selection import SelectKBest, chi2
 import numpy as np
 import random
 import sys
 from time import time
 from sklearn import metrics
-from sklearn.linear_model import RidgeClassifier
-from sklearn.svm import LinearSVC
+from sklearn.linear_model import RidgeClassifier, LogisticRegression
+#from sklearn.svm import LinearSVC
 from sklearn.linear_model import SGDClassifier
-from sklearn.linear_model import Perceptron
-from sklearn.naive_bayes import BernoulliNB, MultinomialNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn import linear_model
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+#from sklearn.linear_model import Perceptron
+#from sklearn.naive_bayes import BernoulliNB, MultinomialNB
+#from sklearn.neighbors import KNeighborsClassifier
+#from sklearn import linear_model
+#from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_train","r")
 #file=open("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/biomedicalraw","r")
