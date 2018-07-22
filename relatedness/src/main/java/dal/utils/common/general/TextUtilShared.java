@@ -1,6 +1,7 @@
 package dal.utils.common.general;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -15,7 +16,7 @@ import java.util.TreeSet;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 
-public class TextUtilShared {
+public class TextUtilShared<T> {
 	public HashMap<String, Double> hmGtmPairSim;
 	public HashMap<String, Double> hmTrwpPairSim;
 	HashSet<String> listStopWords ;
@@ -664,6 +665,35 @@ public class TextUtilShared {
 		}
 		
 		return outliersByLabel;
+	}
+
+	public void WriteTrainTestInstances(ArrayList<InstanceText> trainInstTexts,
+			String file) {
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));											
+			for(InstanceText inst: trainInstTexts){
+				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
+			}
+			bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public ArrayList<T> FlatInsts(
+			LinkedHashMap<String, ArrayList<T>> lastClustersCommon) {
+		
+		ArrayList<T> flat = new ArrayList<T>();
+		
+		try{
+			for(String key: lastClustersCommon.keySet()){
+				flat.addAll(lastClustersCommon.get(key));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return flat;
 	}
 
 }

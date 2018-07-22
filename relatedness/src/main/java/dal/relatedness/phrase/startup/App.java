@@ -300,11 +300,12 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClustering();
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClusteringTuned();    	
     	//new ClusterUnSupervisedBioMedicalRAD().ClusterByRemovingTopLengthVectors();
-    	//new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
-    	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
+    	new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2(750);
     	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedBioMedicalRAD().FilterOutliers();
+    	new ClusterUnSupervisedBioMedicalRAD().GenerateCommonCluster();
     	
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();

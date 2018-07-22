@@ -2221,6 +2221,21 @@ public class DocClusterUtil {
 		
 		return insTexts;
 	}
+
+	public LinkedHashMap<String, ArrayList<InstanceText>> FindCommonInstancePerCluster(
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters0,
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters1) {
+		
+		LinkedHashMap<String, ArrayList<InstanceText>> commonInsts = new LinkedHashMap<String, ArrayList<InstanceText>>();
+		
+		try{
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return commonInsts;
+	}
 	
 
 //	public List<LinkedHashMap<String, ArrayList<InstanceText>>> KeepCommonAmongClusters(
