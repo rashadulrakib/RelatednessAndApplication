@@ -641,7 +641,7 @@ public class TextUtilShared<T> {
 	public HashMap<String, ArrayList<String>> ReadPredOutliersAll(String dir) {
 		HashMap<String, ArrayList<String>> outliersByLabel = new LinkedHashMap<String, ArrayList<String>>();
 		try{
-			for(int i=1;i<=20;i++){
+			for(int i=1;i<=4;i++){
 				String outlierFile = dir+i+"_outlierpred";
 				
 				ArrayList<String> outliersPred = new ArrayList<String>();

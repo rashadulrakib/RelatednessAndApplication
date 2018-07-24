@@ -7,25 +7,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import dal.clustering.document.shared.ClusterEvaluation;
 import dal.clustering.document.shared.TfIdfMatrixGenerator;
-import dal.clustering.document.shared.cluster.UnSupervisedClusteringText;
-import dal.clustering.document.shared.cluster.UnSupervisedClusteringW2Vec;
 import dal.clustering.document.shared.entities.ClusterResultConatainerText;
 import dal.clustering.document.shared.entities.ClusterResultConatainerVector;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.general.UtilsShared;
 
-public class ClusterUnSupervisedAgNews {
+public class ClusterUnSupervisedAgNews extends ClusterAgNews{
 
-	UnSupervisedClusteringText unSupervisedClusteringText;
-	UnSupervisedClusteringW2Vec unSupervisedClusteringW2Vec;
-	ClusterEvaluation clusterEvaluation;
-	AgNewsUtil agNewsUtil;
-	
 	public ClusterUnSupervisedAgNews() throws IOException{
-		agNewsUtil = new AgNewsUtil();	
-		clusterEvaluation = new ClusterEvaluation(agNewsUtil.docClusterUtil);
 //		unSupervisedClusteringW2Vec = new UnSupervisedClusteringW2Vec(agNewsUtil.getUniqueWords(),
 //				agNewsUtil.getAgNewsFlat(), agNewsUtil.getAgNewsList(), 
 //				agNewsUtil.docClusterUtil);

@@ -2229,12 +2229,51 @@ public class DocClusterUtil {
 		LinkedHashMap<String, ArrayList<InstanceText>> commonInsts = new LinkedHashMap<String, ArrayList<InstanceText>>();
 		
 		try{
+			for(String label0: lastClusters0.keySet()){
+				ArrayList<InstanceText> list0 = lastClusters0.get(label0);
+				
+				int maxMatch = Integer.MIN_VALUE;
+				ArrayList<InstanceText> maxGroup = new ArrayList<InstanceText>();
+				
+				for(String lable1: lastClusters1.keySet()){					
+					ArrayList<InstanceText> list1 = lastClusters1.get(lable1);
+					
+					ArrayList<InstanceText> commons = GetCommonItems(list0, list1);
+					if(maxMatch<commons.size()){
+						maxMatch = commons.size();
+						maxGroup = commons;
+					}
+				}
+				
+				commonInsts.put(label0, maxGroup);				
+			}
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		
 		return commonInsts;
+	}
+
+	public ArrayList<InstanceText> GetCommonItems(
+			ArrayList<InstanceText> list0, ArrayList<InstanceText> list1) {
+		
+		ArrayList<InstanceText> commons = new ArrayList<InstanceText>();
+		
+		try{
+			for(InstanceText inst0: list0){
+				for(InstanceText inst1: list1){
+					if(inst0.Text.equals(inst1.Text)){
+						commons.add(inst0);
+						break;
+					}
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return commons;
 	}
 	
 

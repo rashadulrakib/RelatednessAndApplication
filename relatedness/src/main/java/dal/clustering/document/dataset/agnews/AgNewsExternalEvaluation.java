@@ -22,6 +22,7 @@ public class AgNewsExternalEvaluation {
 		try{
 			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-tfidf-agnews-weightCenterBased-8000-labels";
 			
+			@SuppressWarnings("unchecked")
 			ArrayList<String> clusterLables = agNewsUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = new LinkedHashMap<String, ArrayList<InstanceText>>();
@@ -139,6 +140,43 @@ public class AgNewsExternalEvaluation {
 			
 			System.out.println("maxPurity="+maxPurity+",maxFile="+maxFile);
 						
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void ExternalEvaluateRAD() {
+		try{
+			BufferedReader br =  new BufferedReader(new FileReader
+					("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_traintest"));
+			
+			String line="";
+			ArrayList<InstanceText> instTexts = new ArrayList<InstanceText>();
+			
+			while((line=br.readLine()) != null) {
+		        line = line.trim();
+		        if(line.isEmpty()) continue;
+		        
+		        String arr [] = line.split("\t");
+
+		        String predl = arr[0];
+		        String truel = arr[1];
+		        String text = arr[2];
+		        
+		        InstanceText inst = new InstanceText();
+		        inst.Text = text;
+		        inst.OriginalLabel = truel;
+		        inst.ClusteredLabel = predl;
+		        
+		        instTexts.add(inst);
+			}
+			br.close();
+			
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = agNewsUtil.docClusterUtil
+					.GetClusterGroupsTextByLabel(instTexts, false);
+						
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

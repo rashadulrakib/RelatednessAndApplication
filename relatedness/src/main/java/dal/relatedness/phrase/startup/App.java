@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import dal.clustering.document.dataset.agnews.AgNewsExternalEvaluation;
 import dal.clustering.document.dataset.agnews.ClusterSemiSupervisedAgNews;
 import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNews;
+import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNewsRAD;
 import dal.clustering.document.dataset.agnews.ProcessAgNewsDocument;
 import dal.clustering.document.dataset.all.process.btm.BTMProcessor;
 import dal.clustering.document.dataset.all.process.w2vec.W2VecAggregator;
@@ -223,6 +224,10 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocSimMatrixW2VecList();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
+    	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest();
+    	new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest2List();
+    	
+    	
     	//new ProcessGoogleWebSnippet().Process();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2List();
@@ -300,12 +305,12 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClustering();
     	//new ClusterUnSupervisedBioMedicalRAD().AddhocClusteringTuned();    	
     	//new ClusterUnSupervisedBioMedicalRAD().ClusterByRemovingTopLengthVectors();
-    	new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2(750);
-    	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedBioMedicalRAD().FilterOutliers();
-    	new ClusterUnSupervisedBioMedicalRAD().GenerateCommonCluster();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateCommonCluster();
     	
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();

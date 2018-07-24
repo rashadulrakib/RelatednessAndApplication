@@ -15,19 +15,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import dal.clustering.document.shared.TfIdfMatrixGenerator;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.compute.ComputeUtil;
 import dal.utils.common.general.UtilsShared;
 
 public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
-	
-	TfIdfMatrixGenerator tfIdfMatrixGenerator;
-	
-	public ClusterUnSupervisedBioMedicalRAD(){
-		tfIdfMatrixGenerator = new TfIdfMatrixGenerator();
-	}
 	
 	public void ClusterDocsByFrequentTerms(){
 		try{
@@ -753,6 +746,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 		}		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void GenerateTrainTest2(int portion) {
 		try{
 			
@@ -766,7 +760,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			ArrayList<InstanceText> testInstTexts = new ArrayList<InstanceText>();
 			ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();			
 			
-			/*//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			//write texts of each group in  
 			bioMedicalUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\textsperlabel\\"
 					,lastClusters);
@@ -805,7 +799,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				testInstTexts.addAll(instOutLier);
 				
 				lastClusters.put(label, insts);
-			}*/
+			}
 			
 			
 			for(String label: lastClusters.keySet()){
@@ -823,8 +817,8 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				lastClusters.put(label, subInsts);
 			}			
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = bioMedicalUtil.docClusterUtil
-					.GetClusterGroupsTextByLabel(testInstTexts, false);
+			//LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = bioMedicalUtil.docClusterUtil
+			//		.GetClusterGroupsTextByLabel(testInstTexts, false);
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTest);
 			
 			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = bioMedicalUtil.docClusterUtil
@@ -962,8 +956,9 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	public void GenerateTrainTest() {
 		try{
 			//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels";   //2n-biomedical-w2vec-bioasq-sparse-20000-0-labels; //2017-bio-asq
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\2n-biomedical-w2vec-bioasq-sparse-20000-0-labels"; //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels;   //2n-biomedical-w2vec-bioasq-sparse-20000-0-labels; //2017-bio-asq
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
+			
 			
 			ArrayList<String []> alBodyLabel = bioMedicalUtil.getDocsBiomedicalFlat();
 			
@@ -976,7 +971,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
 			
 			
-			/*//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			//write texts of each group in  
 			bioMedicalUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\textsperlabel\\"
 					,lastClusters);
@@ -1017,7 +1012,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				testInstTexts.addAll(instOutLier);
 				
 				lastClusters.put(label, insts);
-			}*/
+			}
 			
 			for(String label: lastClusters.keySet()){
 				ArrayList<InstanceText> insts = lastClusters.get(label);
@@ -1108,7 +1103,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 	public void GenerateTrainTest2List() {
 		try{
 			
-			int maxIteration = 10;
+			int maxIteration = 5;
 			BioMedicalExternalEvaluation obj = new BioMedicalExternalEvaluation();
 			
 			for(int i=0;i<maxIteration;i++){
@@ -1139,10 +1134,10 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			files.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\bioasq-2017-2n-sparse-4867\\biomedicalraw_ensembele_traintest");
 			files.add("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\bioasq-2018-2n-sparse-4829\\biomedicalraw_ensembele_traintest");
 			
-			String mergedFile = "";
+			String mergedTrainTestFile = "";
 			
 			for(int i=0;i<files.size()-1;i++){
-				String file0 = i>0 ? mergedFile: files.get(i);
+				String file0 = i>0 ? mergedTrainTestFile: files.get(i);
 				String file1 = files.get(i+1);
 				
 				ArrayList<String[]> predTrueTexts0 = bioMedicalUtil.docClusterUtil.textUtilShared.ReadPredTrueTexts(file0);			
@@ -1158,11 +1153,38 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				
 				
 				LinkedHashMap<String, ArrayList<InstanceText>> lastClustersCommon = bioMedicalUtil.docClusterUtil.FindCommonInstancePerCluster(lastClusters0, lastClusters1);
-				ArrayList<InstanceText> mergedInsts = bioMedicalUtil.docClusterUtil.textUtilShared.FlatInsts(lastClustersCommon);
+				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersCommon);
 				
+				ArrayList<InstanceText> commonTrainInsts = bioMedicalUtil.docClusterUtil.textUtilShared.FlatInsts(lastClustersCommon);
 				
-				mergedFile="D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_merged_traintest";
-				bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(mergedInsts,mergedFile);				
+				mergedTrainTestFile="D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_traintest";
+				bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(commonTrainInsts,mergedTrainTestFile);
+				
+				int portion = 450;
+				
+				ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();;
+				ArrayList<InstanceText> testInstTexts = new ArrayList<InstanceText>();;
+				
+				for(String label: lastClustersCommon.keySet()){
+					
+					ArrayList<InstanceText> insts = lastClustersCommon.get(label);
+					ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
+					
+					if(insts.size()>portion){
+						subInsts.addAll(insts.subList(0, portion));
+						testInstTexts.addAll(insts.subList(portion, insts.size()));
+					}else{
+						subInsts.addAll(insts);
+					}
+					trainInstTexts.addAll(subInsts);	
+					lastClustersCommon.put(label, subInsts);
+				}
+				
+				String mergedTrainFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_train";
+				String mergedTestFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_test";
+				
+				bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts,mergedTrainFile);
+				bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts,mergedTestFile);
 			}
 			
 		}catch(Exception e){
