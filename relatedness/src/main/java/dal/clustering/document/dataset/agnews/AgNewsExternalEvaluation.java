@@ -20,7 +20,8 @@ public class AgNewsExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-tfidf-agnews-weightCenterBased-8000-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-tfidf-agnews-weightCenterBased-8000-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\kmLabels-127275";
 			
 			@SuppressWarnings("unchecked")
 			ArrayList<String> clusterLables = agNewsUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
@@ -64,7 +65,7 @@ public class AgNewsExternalEvaluation {
 					}
 				}
 				
-				clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
+				//clusterEvaluation.ClusterEvaluationGeneratorTextExternal(lastClusters);
 				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			}
 			else{

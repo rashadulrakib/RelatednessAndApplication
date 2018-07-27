@@ -15,7 +15,9 @@ import dal.clustering.document.shared.DocClusterUtil;
 public class AgNewsUtil {
 	
 	HashSet<String> uniqueWords;
+	HashSet<String> uniqueWordsTitle;
 	ArrayList<String[]> aldocsBodeyLabelFlat;
+	ArrayList<String[]> aldocsBodyTitleLabelFlat;
 	ArrayList<ArrayList<String[]>> aldocsBodeyLabelFlatList;
 	List<List<String>> documents;
 	LinkedHashMap<String, ArrayList<String>> docsLabelBodyList;
@@ -31,12 +33,22 @@ public class AgNewsUtil {
 		docClusterUtil = new DocClusterUtil();
 		alBodies = new ArrayList<String>();
 		aldocsBodeyLabelFlatList = new ArrayList<ArrayList<String[]>>();
+		aldocsBodyTitleLabelFlat = new ArrayList<String[]>();
+		uniqueWordsTitle = new HashSet<String>();
 		
 		loadAllAgNews();
 		
 		PopulateNFoldWebSnippet();
 	}
 	
+	public HashSet<String> getUniqueWordsTitle() {
+		return uniqueWordsTitle;
+	}
+
+	public ArrayList<String[]> getAldocsBodyTitleLabelFlat() {
+		return aldocsBodyTitleLabelFlat;
+	}
+
 	public ArrayList<String> GetBodies(){
 		return alBodies;
 	}
@@ -78,32 +90,41 @@ public class AgNewsUtil {
 			   
 		        String label=null;
 		        String body=null;
+		        String bodyTitle = "";
 		        
 		        if(arrLabelTitleBody.length==3){
 		        	label = arrLabelTitleBody[0].trim();
 			       body =  (arrLabelTitleBody[1]+ " " +arrLabelTitleBody[2]).trim();
+			       bodyTitle = arrLabelTitleBody[1].trim();
 		        }else if(arrLabelTitleBody.length==2){
 		        	label = arrLabelTitleBody[0].trim();
 			        body =  arrLabelTitleBody[1].trim();
+			        bodyTitle = arrLabelTitleBody[1].trim();
 		        }
 		        
 		        body = docClusterUtil.textUtilShared.PerformPreprocess(body);
 		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		        
+		        bodyTitle = docClusterUtil.textUtilShared.PerformPreprocess(bodyTitle);
+		        ArrayList<String> processedTitle = docClusterUtil.textUtilShared.RemoveStopWord(bodyTitle);
+		        bodyTitle = docClusterUtil.textUtilShared.ConvertArrayListToString(processedTitle);
+		        
 		        if(body.isEmpty()) continue;
 		        
 		        alBodies.add(body);
 		        
 		        uniqueWords.addAll(processed);
+		        uniqueWordsTitle.addAll(processedTitle);
 		        
 		        documents.add(processed);
 		        
-		        String arr[] = new String[2];
-		        arr[0]= body;
-		        arr[1] = label;
+//		        String arr[] = new String[2];
+//		        arr[0]= body;
+//		        arr[1] = label;
 			    
-		        aldocsBodeyLabelFlat.add(arr);
+		        aldocsBodeyLabelFlat.add(new String[]{body, label});
+		        aldocsBodyTitleLabelFlat.add(new String[] {bodyTitle, label});
 		        
 		        if(!docsLabelBodyList.containsKey(label)){
 		        	ArrayList<String> bodies = new ArrayList<String>();

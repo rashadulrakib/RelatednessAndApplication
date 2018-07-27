@@ -252,10 +252,11 @@ public class TextUtilShared<T> {
 		
 		String pDoc = "";
 		try{
-			doc = doc.toLowerCase().trim();
-			pDoc = doc.replaceAll("&amp;", " ").trim();
-			//pDoc = pDoc.replaceAll("[^a-zA-Z ]", " ").trim().replaceAll("\\s+", " ").trim();
-			pDoc = pDoc.replaceAll("\\b[a-z]\\b|\\b\\d+\\b", " ").replaceAll("\\s+", " ").trim();		 
+			pDoc = doc.replaceAll("&amp;", " ").toLowerCase().trim();
+			pDoc = pDoc.replaceAll("[^a-zA-Z0-9 ]", " ").trim().replaceAll("\\s+", " ").trim();
+			pDoc = pDoc.replaceAll("\\b[a-z]\\b|\\b\\d+\\b", " ").replaceAll("\\s+", " ").trim();
+			pDoc = pDoc.replaceAll("lt", " ").replaceAll("\\s+", " ").trim();
+			pDoc = pDoc.replaceAll("gt", " ").replaceAll("\\s+", " ").trim();
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -638,10 +639,10 @@ public class TextUtilShared<T> {
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> ReadPredOutliersAll(String dir) {
+	public HashMap<String, ArrayList<String>> ReadPredOutliersAll(String dir, int noclass) {
 		HashMap<String, ArrayList<String>> outliersByLabel = new LinkedHashMap<String, ArrayList<String>>();
 		try{
-			for(int i=1;i<=4;i++){
+			for(int i=1;i<=noclass;i++){
 				String outlierFile = dir+i+"_outlierpred";
 				
 				ArrayList<String> outliersPred = new ArrayList<String>();
@@ -673,6 +674,19 @@ public class TextUtilShared<T> {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));											
 			for(InstanceText inst: trainInstTexts){
 				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
+			}
+			bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void WriteTrainTestInstancesBodyLabel(ArrayList<String[]> bodyLabelList,
+			String file) {
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));											
+			for(String [] bodyLabel: bodyLabelList){
+				bw.write(bodyLabel[1]+"\t"+bodyLabel[0]+"\n");
 			}
 			bw.close();
 		}catch(Exception e){

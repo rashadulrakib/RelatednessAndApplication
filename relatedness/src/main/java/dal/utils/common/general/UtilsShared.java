@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
+import dal.clustering.document.shared.entities.InstanceW2Vec;
+
 public class UtilsShared {
 	public static boolean AnyOverlapBetweenTwoRanges(int range1First, int range1Last, int range2First, int range2Last){
 		
@@ -367,6 +369,33 @@ public class UtilsShared {
 			e.printStackTrace();
 		}
 		return newList;
+	}
+
+	public static void WriteVectorWithLabel(String file,
+			ArrayList<InstanceW2Vec> testW2Vecs, String seperator) {
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			
+			for(int i=0;i<testW2Vecs.size();i++){
+				InstanceW2Vec instVec = testW2Vecs.get(i);
+				
+				bw.write(instVec.OriginalLabel);
+				int zeroCount = 0;
+				for(double ftr: instVec.Features){
+					bw.write(seperator+ftr);
+					if(ftr==0) zeroCount++;
+				}
+				if(zeroCount==instVec.Features.length){
+					System.out.println("all zero,"+i+1);
+				}
+				bw.write("\n");
+			}
+			
+			bw.close();
+			System.out.println("WriteVectorWithLabel "+file+" end");
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
 	}
 		
 }

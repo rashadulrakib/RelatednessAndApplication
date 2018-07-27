@@ -6,76 +6,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import dal.clustering.document.dataset.agnews.AgNewsExternalEvaluation;
-import dal.clustering.document.dataset.agnews.ClusterSemiSupervisedAgNews;
-import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNews;
 import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNewsRAD;
-import dal.clustering.document.dataset.agnews.ProcessAgNewsDocument;
-import dal.clustering.document.dataset.all.process.btm.BTMProcessor;
-import dal.clustering.document.dataset.all.process.w2vec.W2VecAggregator;
-import dal.clustering.document.dataset.biomedical.BioMedicalExternalEvaluation;
-import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedical;
-import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedicalRAD;
-import dal.clustering.document.dataset.biomedical.ProcessBiomedicalData;
-import dal.clustering.document.dataset.biomedical.ProcessBiomedicalSTC2;
-import dal.clustering.document.dataset.cicling2002.Cicling2002ExternalEvaluation;
-import dal.clustering.document.dataset.cicling2002.ClusterUnSupervisedCicling2002;
-import dal.clustering.document.dataset.googlewebsnippets.ClusterSemiSupervisedGoogleWebSnippet;
-import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippet;
-import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetWEKA;
-import dal.clustering.document.dataset.googlewebsnippets.ProcessGoogleWebSnippet;
-import dal.clustering.document.dataset.googlewebsnippets.ProcessWebSnippetSTC2;
-import dal.clustering.document.dataset.googlewebsnippets.WebSnippetExternalEvaluation;
-import dal.clustering.document.dataset.googlewebsnippets.WebSnippetInternalEvaluation;
-import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflow;
-import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflowWEKA;
-import dal.clustering.document.dataset.stackoverflow.ProcessStackOverflow;
-import dal.clustering.document.dataset.stackoverflow.ProcessStackOverflowSTC2;
-import dal.clustering.document.dataset.stackoverflow.StackOverflowExternalEvaluation;
-import dal.clustering.document.dataset.twentynewsgroup.ProcessMiniNewsGroupDocument;
-import dal.computationalintelligence.CIStartup;
-import dal.dimensionality.reduction.fastmap.FastMapDimReducer;
-import dal.dimensionality.reduction.tsne.TsneInputMatrixConstructor;
-import dal.relatedness.phrase.Relatedness;
-import dal.relatedness.phrase.RelatednessProcessedContext;
-import dal.relatedness.phrase.bigram.BigramGeneratorFromFourGramContext;
 import dal.relatedness.phrase.bigram.LoadBigram;
-import dal.relatedness.phrase.common.ContextDictionaryGenerator;
-import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenized;
-import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenizedFastPFOR;
-import dal.relatedness.phrase.compute.tokenized.PhraseRelatednessTokenizedVByteCoding;
-import dal.relatedness.phrase.constants.PhraseDirectories;
 import dal.relatedness.phrase.entities.bigram.BigramKey;
-import dal.relatedness.phrase.fileindexing.bigram.BigramFileIndexing;
-import dal.relatedness.phrase.fileindexing.fourgram.FourgramFileIndexing;
-import dal.relatedness.phrase.fileindexing.trigram.TrigramFileIndexing;
-import dal.relatedness.phrase.fourgram.ContextProcessorFourgram;
-import dal.relatedness.phrase.fourgram.LoadFourGram;
-import dal.relatedness.phrase.fourgram.TokenizeFourGram;
-import dal.relatedness.phrase.stemming.bigram.BigramStemmer;
-import dal.relatedness.phrase.stemming.fourgram.FourgramStemmer;
-import dal.relatedness.phrase.stemming.trigram.TrigramStemmer;
-import dal.relatedness.phrase.stemming.unigram.UnigramStemmer;
-import dal.relatedness.phrase.tokenize.fourgram.TokenizeFourgramFromCrossChecked;
-import dal.relatedness.phrase.tokenize.fourgram.TokenizeFourgramFromTokenizedByEliasOmega;
-import dal.relatedness.phrase.tokenize.fourgram.TokenizeFourgramFromTokenizedByFastPFOR;
-import dal.relatedness.phrase.tokenize.fourgram.TokenizeFourgramFromTokenizedByVByteCoding;
-import dal.relatedness.phrase.tokenize.trigram.TokenizeTrigramFromCrossChecked;
-import dal.relatedness.phrase.tokenize.trigram.TokenizeTrigramFromTokenizedByEliasOmega;
-import dal.relatedness.phrase.tokenize.trigram.TokenizeTrigramFromTokenizedByFastPFOR;
-import dal.relatedness.phrase.tokenize.trigram.TokenizeTrigramFromTokenizedByVByteCoding;
-import dal.relatedness.phrase.tuning.bigramfourgram.BigramFourgramTuning;
-import dal.relatedness.phrase.tuning.unigrambigram.TuneUnigramBigram;
-import dal.relatedness.phrase.tuning.unigramtrigram.UnigramTrigramTuning;
 import dal.relatedness.phrase.unigram.LoadUnigram;
-import dal.relatedness.text.compute.trwp.TextRelatednessOverlappingContext;
-import dal.relatedness.text.compute.trwp.TextRelatednessTrwp;
 
 
 
@@ -224,9 +163,10 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocSimMatrixW2VecList();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
     	
+    	//new ClusterUnSupervisedAgNewsRAD().FindCommonGenerateTrainTest();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest();
     	new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest2List();
-    	
+    	//new ClusterUnSupervisedAgNewsRAD().GenerateDocTermMatrixW2Vec();
     	
     	//new ProcessGoogleWebSnippet().Process();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2();
@@ -264,6 +204,9 @@ public class App
     	//new WebSnippetExternalEvaluation().ExternalEvaluateList();
     	//new WebSnippetInternalEvaluation().InternalEvaluateAndSelectModel();
     	
+    	//new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest();
+    	//new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest2List();
+    	
     	//new ProcessStackOverflow().Process();
     	//new ProcessStackOverflowSTC2().ProcessBySTC2();
     	//new ClusterUnSupervisedStackOverflowWEKA().ClusterDocsNGramBasedSimilarityGtmAndW2VecByWEKA();
@@ -287,6 +230,9 @@ public class App
     	//new ClusterUnSupervisedStackOverflow().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedStackOverflow().GenerateDocSimMatrixW2VecList();
     	//new StackOverflowExternalEvaluation().ExternalEvaluate();
+    	
+    	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest();
+    	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest2List();
     	
     	//***********biomedical************//
     	//new ProcessBiomedicalData().Process();

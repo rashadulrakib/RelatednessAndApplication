@@ -20,7 +20,7 @@ public class StackOverflowExternalEvaluation {
 	
 	public void ExternalEvaluate() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\sparseMatrix-tfidf-stack-weightCenterBased-20000-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\2n-stackoverflow-gtm-sparse-alpha-20000-0-labels";
 			
 			ArrayList<String> clusterLables = stackOverflowUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
@@ -145,6 +145,43 @@ public class StackOverflowExternalEvaluation {
 			}
 			
 			System.out.println("maxPurity="+maxPurity+",maxFile="+maxFile);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void ExternalEvaluateRAD() {
+		try{
+			BufferedReader br =  new BufferedReader(new FileReader
+					("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_traintest"));
+			
+			String line="";
+			ArrayList<InstanceText> instTexts = new ArrayList<InstanceText>();
+			
+			while((line=br.readLine()) != null) {
+		        line = line.trim();
+		        if(line.isEmpty()) continue;
+		        
+		        String arr [] = line.split("\t");
+
+		        String predl = arr[0];
+		        String truel = arr[1];
+		        String text = arr[2];
+		        
+		        InstanceText inst = new InstanceText();
+		        inst.Text = text;
+		        inst.OriginalLabel = truel;
+		        inst.ClusteredLabel = predl;
+		        
+		        instTexts.add(inst);
+			}
+			br.close();
+			
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = stackOverflowUtil.docClusterUtil
+					.GetClusterGroupsTextByLabel(instTexts, false);
+						
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			
 		}catch(Exception e){
 			e.printStackTrace();

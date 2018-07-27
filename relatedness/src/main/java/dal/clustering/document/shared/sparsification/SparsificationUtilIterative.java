@@ -206,7 +206,7 @@ public class SparsificationUtilIterative {
 				
 				System.out.println("sparsified avg count="+avgAvgCount+", alphaFactor="+alphaFactor+", diff="+diff+", "+new Date().toLocaleString());
 				
-				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/biomedical/2n-biomedical-bioasq2018-400-add-sparse-12665-"+whileCount, sparsifyDistMatrix, " ");
+				UtilsShared.WriteMatrixToFile("/users/grad/rakib/dr.norbert/dataset/shorttext/data-web-snippets/2n-web-snippet-glove-add-sparse-12340-"+whileCount, sparsifyDistMatrix, " ");
 				//UtilsShared.WriteMatrixToFile("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\sparseMatrix-btmkl-alpha-2280-"+whileCount, sparsifyDistMatrix, " ");
 				
 				//alSparseDists.add(sparsifyDistMatrix);

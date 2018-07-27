@@ -61,6 +61,7 @@ public class StackOverflowUtil {
 		return docsLabelBodyList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void loadAllDocsStackOverflow() {
 		try{
 			BufferedReader br =  new BufferedReader(new FileReader(StackOverflowConstant.StackOverflowDocsFile));
@@ -80,10 +81,14 @@ public class StackOverflowUtil {
 			   String body =  arrLabelBody[1].trim();
 			   
 			   body = docClusterUtil.textUtilShared.PerformPreprocess(body);
-		        ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
+		        //@SuppressWarnings("unchecked")
+				ArrayList<String> processed = docClusterUtil.textUtilShared.RemoveStopWord(body);
 		        body = docClusterUtil.textUtilShared.ConvertArrayListToString(processed);
 		       
-		        if(body.isEmpty()) continue;
+		        if(body.isEmpty()){
+		        	//body = arrLabelBody[1].trim();
+		        	continue;
+		        }
 		        
 		        uniqueWords.addAll(processed);
 		        

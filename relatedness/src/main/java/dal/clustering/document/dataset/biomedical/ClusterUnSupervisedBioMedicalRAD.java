@@ -773,7 +773,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			
 			//read outliers 
 			HashMap<String,ArrayList<String>> outliersByLabel = bioMedicalUtil.docClusterUtil.textUtilShared.ReadPredOutliersAll(
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\textsperlabel\\"); 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\textsperlabel\\", 20); 
 			
 			for(String label: lastClusters.keySet()){
 				ArrayList<InstanceText> insts = lastClusters.get(label);
@@ -784,7 +784,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					continue;
 				}
 				
-				if(insts.size()<=portion) continue;
+				//if(insts.size()<=portion) continue;
 				
 				ArrayList<InstanceText> instOutLier = new ArrayList<InstanceText>();
 				
@@ -984,7 +984,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 			
 			//read outliers 
 			HashMap<String,ArrayList<String>> outliersByLabel = bioMedicalUtil.docClusterUtil.textUtilShared.ReadPredOutliersAll(
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\textsperlabel\\"); 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\textsperlabel\\", 20); 
 			
 			//filter instants by outlier..
 			
@@ -997,7 +997,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					continue;
 				}
 				
-				if(insts.size()<=700) continue;
+				//if(insts.size()<=700) continue;
 				
 				ArrayList<InstanceText> instOutLier = new ArrayList<InstanceText>();
 				

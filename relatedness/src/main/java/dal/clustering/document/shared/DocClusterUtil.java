@@ -263,21 +263,25 @@ public class DocClusterUtil {
 			
             while ((text = br.readLine()) != null) {
             	text = text.trim().toLowerCase();
-            	
+            	//System.out.println(text);
             	String [] arr = text.split("\\s+");
+            	
+            	if(arr.length<20) continue;
+            	
             	String EmbeddingWord = arr[0];
             	
             	if(uniqueWords.contains(EmbeddingWord)){
-            		String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
-            		double [] vecDoubles = new double[vecs.length];
-            		for(int i=0; i< vecs.length;i++){
-            			vecDoubles[i] = Double.parseDouble(vecs[i]);
+            		double [] vecDoubles = new double[arr.length-1];
+            		for(int i=1; i< arr.length;i++){
+            			vecDoubles[i-1] = Double.parseDouble(arr[i]);
             		}
             		w2vec.put(EmbeddingWord, vecDoubles);
             	}
             }
            
             br.close();
+            
+            System.out.println("missing="+Math.abs(w2vec.size()-uniqueWords.size()));
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -300,16 +304,17 @@ public class DocClusterUtil {
             	String EmbeddingWord = arr[0];
             	
             	if(uniqueWords.contains(EmbeddingWord)){
-            		String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
-            		double [] vecDoubles = new double[vecs.length];
-            		for(int i=0; i< vecs.length;i++){
-            			vecDoubles[i] = Double.parseDouble(vecs[i]);
+            		double [] vecDoubles = new double[arr.length-1];
+            		for(int i=1; i< arr.length;i++){
+            			vecDoubles[i-1] = Double.parseDouble(arr[i]);
             		}
             		w2vec.put(EmbeddingWord, vecDoubles);
             	}
             }
-           
+            
             br.close();
+            
+            System.out.println("missing="+Math.abs(w2vec.size()-uniqueWords.size()));
 		}
 		catch(Exception e){
 			e.printStackTrace();
