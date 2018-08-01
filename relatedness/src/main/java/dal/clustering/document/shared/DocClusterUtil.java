@@ -328,7 +328,7 @@ public class DocClusterUtil {
 		HashMap<String, double[]> w2vec = new HashMap<String, double[]>();
 		try{
 			//BufferedReader br = new BufferedReader(new FileReader(TextRelatednessW2VecConstant.InputGlobalWordEmbeddingFile));
-			BufferedReader br = new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQ2018));
+			BufferedReader br = new BufferedReader(new FileReader(BioMedicalConstant.BioMedicalBioASQCombined));
 	           
 			String text="";
 			HashSet<String> notFound = new HashSet<String>();
@@ -343,7 +343,6 @@ public class DocClusterUtil {
             	String EmbeddingWord = arr[0];
             	
             	if(uniqueWords.contains(EmbeddingWord)){
-            		//String [] vecs = text.replaceAll(EmbeddingWord, "").trim().split("\\s+");
             		double [] vecDoubles = new double[arr.length-1];
             		for(int i=1; i< arr.length;i++){
             			vecDoubles[i-1] = Double.parseDouble(arr[i]);

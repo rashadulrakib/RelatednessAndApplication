@@ -766,7 +766,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -977,7 +977,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -1037,18 +1037,11 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 					.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
+			bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_train");
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_train"));											
-			for(InstanceText inst: trainInstTexts){
-				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-			}
-			bw.close();
-			
-			bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_test"));											
-			for(InstanceText inst: testInstTexts){
-				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-			}
-			bw.close();
+			bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedicalraw_ensembele_test");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -1110,7 +1103,7 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				System.out.println("iteration="+i);
 				for(int items = 700; items<=1000;items=items+50){
 					
-					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
 					int exitVal = p.waitFor();
 					System.out.println("Process status code="+exitVal);
 					p.destroy();
@@ -1187,6 +1180,19 @@ public class ClusterUnSupervisedBioMedicalRAD extends ClusterBioMedical{
 				bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts,mergedTestFile);
 			}
 			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void SaveDataToEmbedding() {
+		try{
+            ArrayList<String []> alDocLabelFlat =bioMedicalUtil.getDocsBiomedicalFlat();
+			HashMap<String, double[]> hmW2Vec = bioMedicalUtil.docClusterUtil.PopulateW2VecBioMedical(bioMedicalUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = bioMedicalUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			bioMedicalUtil.docClusterUtil.textUtilShared.WriteTrainTestInstancesTextVec(testW2Vecs, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\biomedical_20000_vecs");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

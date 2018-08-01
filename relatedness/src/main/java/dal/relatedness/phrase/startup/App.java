@@ -10,8 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import dal.clustering.document.dataset.agnews.AgNewsExternalEvaluation;
 import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNewsRAD;
+import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedicalRAD;
+import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetRAD;
+import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflowRAD;
 import dal.relatedness.phrase.bigram.LoadBigram;
 import dal.relatedness.phrase.entities.bigram.BigramKey;
 import dal.relatedness.phrase.unigram.LoadUnigram;
@@ -165,8 +167,10 @@ public class App
     	
     	//new ClusterUnSupervisedAgNewsRAD().FindCommonGenerateTrainTest();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest();
-    	new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest2List();
+    	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateDocTermMatrixW2Vec();
+    	//new AgNewsExternalEvaluation().ExternalEvaluateRAD();
+    	//new ClusterUnSupervisedAgNewsRAD().SaveDataToEmbedding();
     	
     	//new ProcessGoogleWebSnippet().Process();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2();
@@ -206,6 +210,7 @@ public class App
     	
     	//new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest2List();
+    	//new ClusterUnSupervisedGoogleWebSnippetRAD().SaveDataToEmbedding();
     	
     	//new ProcessStackOverflow().Process();
     	//new ProcessStackOverflowSTC2().ProcessBySTC2();
@@ -233,6 +238,7 @@ public class App
     	
     	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest2List();
+    	//new ClusterUnSupervisedStackOverflowRAD().SaveDataToEmbedding();
     	
     	//***********biomedical************//
     	//new ProcessBiomedicalData().Process();
@@ -254,9 +260,10 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2(750);
-    	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
+    	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedBioMedicalRAD().FilterOutliers();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateCommonCluster();
+    	//new ClusterUnSupervisedBioMedicalRAD().SaveDataToEmbedding();
     	
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();

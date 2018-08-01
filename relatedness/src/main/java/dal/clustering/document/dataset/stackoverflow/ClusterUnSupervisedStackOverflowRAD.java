@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.entities.InstanceText;
+import dal.clustering.document.shared.entities.InstanceW2Vec;
 
 public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 
@@ -32,7 +33,7 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -92,18 +93,12 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 					.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
+			stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_train");
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_train"));											
-			for(InstanceText inst: trainInstTexts){
-				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-			}
-			bw.close();
+			stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_test");
 			
-			bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_test"));											
-			for(InstanceText inst: testInstTexts){
-				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-			}
-			bw.close();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -118,7 +113,7 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 				System.out.println("iteration="+i);
 				for(int items = 700; items<=1000;items=items+50){
 					
-					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
 					int exitVal = p.waitFor();
 					System.out.println("Process status code="+exitVal);
 					p.destroy();
@@ -154,7 +149,7 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -221,6 +216,19 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 			
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+	}
+
+	public void SaveDataToEmbedding() {
+		try{
+			ArrayList<String []> alDocLabelFlat =stackOverflowUtil.getDocsStackOverflowFlat();	
+			HashMap<String, double[]> hmW2Vec = stackOverflowUtil.docClusterUtil.PopulateW2Vec(stackOverflowUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = stackOverflowUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstancesTextVec(testW2Vecs, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflow_20000_vecs");
+		}catch(Exception e){
+			
 		}
 	}
 }

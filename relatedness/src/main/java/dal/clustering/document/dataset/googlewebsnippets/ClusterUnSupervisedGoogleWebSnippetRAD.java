@@ -1,18 +1,17 @@
 package dal.clustering.document.dataset.googlewebsnippets;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.entities.InstanceText;
+import dal.clustering.document.shared.entities.InstanceW2Vec;
 
 public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnippet {
 
 	public void GenerateTrainTest() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //2n-web-snippet-glove-add-sparse-12340-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\2n-web-snippet-glove-add-sparse-12340-0-labels"; //2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //2n-web-snippet-glove-add-sparse-12340-0-labels";
 			
 			ArrayList<String []> alBodyLabel = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
@@ -32,7 +31,7 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -73,13 +72,13 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 				ArrayList<InstanceText> insts = lastClusters.get(label);
 			
 				ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
-				//if(insts.size()>1080)
-				if(insts.size()>200)
+				if(insts.size()>1080)
+				//if(insts.size()>200)
 				{
-					subInsts.addAll(insts.subList(0, 200));
-					testInstTexts.addAll(insts.subList(200, insts.size()));
+					//subInsts.addAll(insts.subList(0, 200));
 					//testInstTexts.addAll(insts.subList(200, insts.size()));
-					//testInstTexts.addAll(insts.subList(1540, insts.size()));
+					subInsts.addAll(insts.subList(0, 1080));
+					testInstTexts.addAll(insts.subList(1080, insts.size()));
 				}else{
 					subInsts.addAll(insts);
 				}
@@ -97,17 +96,12 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_train"));											
-			for(InstanceText inst: trainInstTexts){
-				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-			}
-			bw.close();
+			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_train");
 			
-			bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_test"));											
-			for(InstanceText inst: testInstTexts){
-				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-			}
-			bw.close();
+			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_test");
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -121,10 +115,10 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 			for(int i=0;i<maxIteration;i++){
 				System.out.println("iteration="+i);
 				
-				//for(int items = 1100; items<=1550;items=items+50)
-				for(int items = 200; items<=280;items=items+20)
+				for(int items = 1100; items<=1550;items=items+50)
+				//for(int items = 200; items<=280;items=items+20)
 				{
-					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
 					int exitVal = p.waitFor();
 					System.out.println("Process status code="+exitVal);
 					p.destroy();
@@ -160,7 +154,7 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -219,12 +213,28 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 					.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_train");
+			//if((double)trainInstTexts.size()/(trainInstTexts.size()+testInstTexts.size())<=0.85)
+			{
+				googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_train");
+				
+				googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_test");	
+			}
+						
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void SaveDataToEmbedding() {
+		try{
+			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
+			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);
 			
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_test");
-			
+			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstancesTextVec(testW2Vecs, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_12340_vecs");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

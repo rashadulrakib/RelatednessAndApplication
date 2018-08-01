@@ -149,6 +149,7 @@ public class AgNewsExternalEvaluation {
 	public void ExternalEvaluateRAD() {
 		try{
 			BufferedReader br =  new BufferedReader(new FileReader
+					//("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\4_1950"));
 					("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_traintest"));
 			
 			String line="";

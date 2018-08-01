@@ -87,8 +87,9 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 	public void GenerateTrainTest() {
 		try{
 
-			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\agnews-sparse-w2vec-alpha-8000-0-labels";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\kmLabels-127275";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\agnews-sparse-w2vec-alpha-8000-0-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\4_1800";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\kmLabels-127275";
 			
 			ArrayList<String []> alBodyLabel = agNewsUtil.getAgNewsFlat();
 			
@@ -101,14 +102,13 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 			ArrayList<InstanceText> testInstTexts = new ArrayList<InstanceText>();
 			ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
 			
-			
-			/*//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			//write texts of each group in  
 			agNewsUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\textsperlabel\\"
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -143,15 +143,17 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 				testInstTexts.addAll(instOutLier);
 				
 				lastClusters.put(label, insts);
-			}*/
+			}
 			
 			for(String label: lastClusters.keySet()){
 				ArrayList<InstanceText> insts = lastClusters.get(label);
 			
 				ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
-				if(insts.size()>22000){
-					subInsts.addAll(insts.subList(0, 22000));
-					testInstTexts.addAll(insts.subList(22000, insts.size()));
+				//if(insts.size()>22000)
+				if(insts.size()>1400)
+				{
+					subInsts.addAll(insts.subList(0, 1400));
+					testInstTexts.addAll(insts.subList(1400, insts.size()));
 				}else{
 					subInsts.addAll(insts);
 				}
@@ -168,19 +170,6 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 					.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
-			
-//			BufferedWriter bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_train"));											
-//			for(InstanceText inst: trainInstTexts){
-//				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-//			}
-//			bw.close();
-//			
-//			bw = new BufferedWriter(new FileWriter("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_test"));											
-//			for(InstanceText inst: testInstTexts){
-//				bw.write(inst.ClusteredLabel+"\t"+inst.OriginalLabel+"\t" +inst.Text+"\n");
-//			}
-//			bw.close();
-			
 			agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
 					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_train");
 			
@@ -195,14 +184,15 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 	public void GenerateTrainTest2List() {
 		try{
 			
-			int maxIteration = 1;
+			int maxIteration = 5;
 			AgNewsExternalEvaluation obj = new AgNewsExternalEvaluation();
 			
 			for(int i=0;i<maxIteration;i++){
 				System.out.println("iteration="+i);
-				//for(int items = 1400; items<=2000;items=items+50)
-				for(int items = 22000; items<=30000;items=items+1000){					
-					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+				for(int items = 1400; items<=2000;items=items+50)
+				//for(int items = 22000; items<=30000;items=items+1000)
+				{					
+					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
 					int exitVal = p.waitFor();
 					System.out.println("Process status code="+exitVal);
 					p.destroy();
@@ -232,13 +222,13 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 			ArrayList<InstanceText> testInstTexts = new ArrayList<InstanceText>();
 			ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();			
 			
-			/*//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			//write texts of each group in  
 			agNewsUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\textsperlabel\\"
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -256,7 +246,7 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 					continue;
 				}
 				
-				if(insts.size()<=portion) continue;
+				//if(insts.size()<=portion) continue;
 				
 				ArrayList<InstanceText> instOutLier = new ArrayList<InstanceText>();
 				
@@ -271,15 +261,14 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 				testInstTexts.addAll(instOutLier);
 				
 				lastClusters.put(label, insts);
-			}*/
-			
+			}
 			
 			for(String label: lastClusters.keySet()){
 				
 				ArrayList<InstanceText> insts = lastClusters.get(label);
 				ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
 				
-				if(insts.size()>portion){
+				if(insts.size()>=portion){
 					subInsts.addAll(insts.subList(0, portion));
 					testInstTexts.addAll(insts.subList(portion, insts.size()));
 				}else{
@@ -287,15 +276,17 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 				}
 				trainInstTexts.addAll(subInsts);	
 				lastClusters.put(label, subInsts);
-			}			
+			}
+			
+			//if((double)trainInstTexts.size()/(double)allInstTexts.size() > 0.80) return;
 			
 			//LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = bioMedicalUtil.docClusterUtil
 			//		.GetClusterGroupsTextByLabel(testInstTexts, false);
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTest);
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = agNewsUtil.docClusterUtil
-					.GetClusterGroupsTextByLabel(trainInstTexts, false);
-			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
+			//LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = agNewsUtil.docClusterUtil
+			//		.GetClusterGroupsTextByLabel(trainInstTexts, false);
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
 			agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
 					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_train");
@@ -372,6 +363,19 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 			agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(notCommonTestInsts, 
 					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_test");*/
 			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void SaveDataToEmbedding() {
+		try{
+			ArrayList<String []> alDocLabelFlat =agNewsUtil.getAgNewsFlat();	
+			HashMap<String, double[]> hmW2Vec = agNewsUtil.docClusterUtil.PopulateW2Vec(agNewsUtil.getUniqueWords());
+			ArrayList<InstanceW2Vec> testW2Vecs = agNewsUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);			
+			
+			agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstancesTextVec(testW2Vecs, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnews_8000_vecs");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

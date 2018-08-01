@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.TreeSet;
 
 import dal.clustering.document.shared.entities.InstanceText;
+import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.relatedness.phrase.stemmer.porter.StemmingUtil;
 
 public class TextUtilShared<T> {
@@ -681,6 +682,33 @@ public class TextUtilShared<T> {
 		}
 	}
 	
+	public void WriteTrainTestInstancesTextVec(ArrayList<InstanceW2Vec> instVecs,
+			String file) {
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));											
+			for(InstanceW2Vec inst: instVecs){
+				String arrToString = ConvertArrayToString(inst.Features);
+				bw.write(inst.Text+"\t"+arrToString+"\n");
+			}
+			bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public String ConvertArrayToString (double[] features) {
+		StringBuilder sb= new StringBuilder();
+		try{
+			for(double ftr: features){
+				sb.append(Double.toString(ftr)+" ");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sb.toString().trim();
+	}
+
 	public void WriteTrainTestInstancesBodyLabel(ArrayList<String[]> bodyLabelList,
 			String file) {
 		try{
