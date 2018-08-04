@@ -1,5 +1,5 @@
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import TfidfVectorizer
 #from sklearn.feature_selection import SelectKBest, chi2
 import numpy as np
 import random
@@ -15,11 +15,27 @@ from sklearn.linear_model import SGDClassifier
 #from sklearn import linear_model
 #from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
+
+#############load txt vecs####
+dic_txt_vecs={}
+#file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/data-web-snippetsraw_12340_vecs","r")
+#file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/agnews_8000_vecs","r")
+#file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/stackoverflow_20000_vecs","r")
+file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedical_20000_vecs","r")
+lines1 = file.readlines()
+for txt in lines1:
+ txtarr = re.split("\t",txt.strip())
+ txtKey = txtarr[0]
+ txtVecs = re.split(" ",txtarr[1])
+ doubleVecs = list(map(float, txtVecs))
+ dic_txt_vecs[txtKey]=doubleVecs
+file.close()
+#############
+
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/stackoverflowraw_ensembele_train","r")
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/agnewsraw_ensembele_train","r")
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/data-web-snippetsraw_ensembele_train","r")
-#file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_train","r")
-file=open("D:/PhD/dr.norbert/dataset/shorttext/trec/semisupervised/trecraw_ensembele_train","r")
+file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_train","r")
 
 lines = file.readlines()
 np.random.shuffle(lines)
@@ -28,8 +44,7 @@ file.close()
 train_data = []
 train_labels = []
 train_trueLabels = []
-
-
+X_train=[]
 
 for line in lines:
  line=line.lower().strip() 
@@ -37,29 +52,31 @@ for line in lines:
  train_data.append(arr[2])
  train_labels.append(arr[0])
  train_trueLabels.append(arr[1])
+ X_train.append(dic_txt_vecs[arr[2]])
  
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/stackoverflowraw_ensembele_test","r")  
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/agnewsraw_ensembele_test","r") 
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/data-web-snippetsraw_ensembele_test","r")
-#file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_test","r")
-file=open("D:/PhD/dr.norbert/dataset/shorttext/trec/semisupervised/trecraw_ensembele_test","r")   
+file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_test","r")  
 
 lines = file.readlines()
 file.close()
 
 test_data = []
 test_labels = []
+X_test=[]
 
 for line in lines:
  line=line.lower().strip() 
  arr = re.split("\t", line)
  test_data.append(arr[2])
  test_labels.append(arr[1])
+ X_test.append(dic_txt_vecs[arr[2]])
 
-vectorizer = TfidfVectorizer( max_df=1.0, min_df=1, stop_words='english', use_idf=True, smooth_idf=True, norm='l2')
+#vectorizer = TfidfVectorizer( max_df=1.0, min_df=1, stop_words='english', use_idf=True, smooth_idf=True, norm='l2')
 #vectorizer = TfidfVectorizer(max_df=0.15, min_df=1, stop_words=stopwords, use_idf=True, smooth_idf=True, norm='l2')
-X_train = vectorizer.fit_transform(train_data)
-X_test = vectorizer.transform(test_data)
+#X_train = vectorizer.fit_transform(train_data)
+#X_test = vectorizer.transform(test_data)
 
 #scaler = MinMaxScaler(feature_range=(0, 1))
 #X_train = scaler.fit_transform(X_train.toarray())
@@ -117,11 +134,10 @@ print ("acc_score:   %0.3f" % score)
 score = metrics.normalized_mutual_info_score(y_test, pred_test)  
 print ("nmi_score:   %0.3f" % score)
 
-#file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_traintest","w")
+file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedicalraw_ensembele_traintest","w")
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/agnewsraw_ensembele_traintest","w")
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/stackoverflowraw_ensembele_traintest","w")
 #file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/data-web-snippetsraw_ensembele_traintest","w")
-file=open("D:/PhD/dr.norbert/dataset/shorttext/trec/semisupervised/trecraw_ensembele_traintest","w")
 
 for i in range(len(train_labels)):
  file.write(train_labels[i]+"\t"+train_trueLabels[i]+"\t"+train_data[i]+"\n")

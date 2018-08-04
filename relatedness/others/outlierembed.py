@@ -1,6 +1,6 @@
 from collections import Counter
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2, mutual_info_regression, mutual_info_classif, f_classif
 import numpy as np
 import random
@@ -21,29 +21,46 @@ from sklearn.covariance import EllipticEnvelope
 from sklearn.ensemble import IsolationForest
 #from sklearn.neighbors import LocalOutlierFactor
 
-for j in range(6):
+#############load txt vecs####
+dic_txt_vecs={}
+#file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/data-web-snippetsraw_12340_vecs","r")
+#file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/agnews_8000_vecs","r")
+#file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/stackoverflow_20000_vecs","r")
+file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/biomedical_20000_vecs","r")
+lines1 = file.readlines()
+for txt in lines1:
+ txtarr = re.split("\t",txt.strip())
+ txtKey = txtarr[0]
+ txtVecs = re.split(" ",txtarr[1])
+ doubleVecs = list(map(float, txtVecs))
+ dic_txt_vecs[txtKey]=doubleVecs
+file.close()
+#############
+
+for j in range(20):
  fileId = j+1 
- #file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/textsperlabel/"+str(fileId),"r")
+ file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/textsperlabel/"+str(fileId),"r")
  #file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/textsperlabel/"+str(fileId),"r")
  #file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/textsperlabel/"+str(fileId),"r")
  #file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/textsperlabel/"+str(fileId),"r")
- file=open("D:/PhD/dr.norbert/dataset/shorttext/trec/semisupervised/textsperlabel/"+str(fileId),"r")
  lines = file.readlines()
  file.close()
 
  train_data = []
  train_labels = []
  train_trueLabels = []
-
+ x_train=[]
+ 
  for line in lines:
   line=line.lower().strip() 
   arr = re.split("\t", line)
   train_data.append(arr[2])
   train_labels.append(arr[0])
   train_trueLabels.append(arr[1])
+  x_train.append(dic_txt_vecs[arr[2]])
 
- vectorizer = TfidfVectorizer( max_df=1.0, min_df=1, stop_words='english', use_idf=True, smooth_idf=True, norm='l2')
- x_train = vectorizer.fit_transform(train_data)
+ #vectorizer = TfidfVectorizer( max_df=1.0, min_df=1, stop_words='english', use_idf=True, smooth_idf=True, norm='l2')
+ #x_train = vectorizer.fit_transform(train_data)
 
  contratio = 0.1 #len(train_data)/20000*2
   
@@ -59,8 +76,7 @@ for j in range(6):
  #file=open("D:/PhD/dr.norbert/dataset/shorttext/data-web-snippets/semisupervised/textsperlabel/"+str(fileId)+"_outlierpred","w")
  #file=open("D:/PhD/dr.norbert/dataset/shorttext/agnews/semisupervised/textsperlabel/"+str(fileId)+"_outlierpred","w")
  #file=open("D:/PhD/dr.norbert/dataset/shorttext/stackoverflow/semisupervised/textsperlabel/"+str(fileId)+"_outlierpred","w")
- #file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/textsperlabel/"+str(fileId)+"_outlierpred","w")
- file=open("D:/PhD/dr.norbert/dataset/shorttext/trec/semisupervised/textsperlabel/"+str(fileId)+"_outlierpred","w")
+ file=open("D:/PhD/dr.norbert/dataset/shorttext/biomedical/semisupervised/textsperlabel/"+str(fileId)+"_outlierpred","w")
  for pred in outlierPreds:
   file.write(str(pred)+"\n") 
  
