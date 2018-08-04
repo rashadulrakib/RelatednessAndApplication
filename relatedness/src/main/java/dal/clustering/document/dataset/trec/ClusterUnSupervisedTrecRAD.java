@@ -1,45 +1,44 @@
-package dal.clustering.document.dataset.googlewebsnippets;
+package dal.clustering.document.dataset.trec;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import dal.clustering.document.shared.entities.InstanceText;
-import dal.clustering.document.shared.entities.InstanceW2Vec;
 
-public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnippet {
-
+public class ClusterUnSupervisedTrecRAD extends ClusterTrec {
 	public void GenerateTrainTest() {
 		try{
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\2n-web-snippet-glove-add-sparse-12340-0-labels"; //2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //2n-web-snippet-glove-add-sparse-12340-0-labels";
+			//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\2n-trec-glove-sparse-0-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
 			
-			ArrayList<String []> alBodyLabel = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
 			
-			@SuppressWarnings("unchecked")
-			ArrayList<String> clusterLables = googlewebSnippetUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
-			ArrayList<InstanceText> allInstTexts = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = googlewebSnippetUtil.docClusterUtil
+			ArrayList<String []> alBodyLabel = trecUtil.getTrecFlat();
+			
+			ArrayList<String> clusterLables = trecUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+			ArrayList<InstanceText> allInstTexts = trecUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = trecUtil.docClusterUtil
 					.GetClusterGroupsTextByLabel(allInstTexts, false);
-			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			
 			ArrayList<InstanceText> testInstTexts = new ArrayList<InstanceText>();
 			ArrayList<InstanceText> trainInstTexts = new ArrayList<InstanceText>();
-						
+			
+			
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			//write texts of each group in  
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\textsperlabel\\"
+			trecUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\textsperlabel\\"
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			//Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
 			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
 			
 			//read outliers 
-			HashMap<String,ArrayList<String>> outliersByLabel = googlewebSnippetUtil.docClusterUtil.textUtilShared.ReadPredOutliersAll(
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\textsperlabel\\", 8); 
+			HashMap<String,ArrayList<String>> outliersByLabel = trecUtil.docClusterUtil.textUtilShared.ReadPredOutliersAll(
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\textsperlabel\\", 6); 
 			
 			//filter instants by outlier..
 			
@@ -52,7 +51,7 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 					continue;
 				}
 				
-				//if(insts.size()<=1540) continue;
+				//if(insts.size()<=700) continue;
 				
 				ArrayList<InstanceText> instOutLier = new ArrayList<InstanceText>();
 				
@@ -73,13 +72,9 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 				ArrayList<InstanceText> insts = lastClusters.get(label);
 			
 				ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
-				if(insts.size()>1080)
-				//if(insts.size()>200)
-				{
-					//subInsts.addAll(insts.subList(0, 200));
-					//testInstTexts.addAll(insts.subList(200, insts.size()));
-					subInsts.addAll(insts.subList(0, 1080));
-					testInstTexts.addAll(insts.subList(1080, insts.size()));
+				if(insts.size()>700){
+					subInsts.addAll(insts.subList(0, 700));
+					testInstTexts.addAll(insts.subList(700, insts.size()));
 				}else{
 					subInsts.addAll(insts);
 				}
@@ -88,37 +83,36 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 			}			
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = googlewebSnippetUtil.docClusterUtil
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = trecUtil.docClusterUtil
 					.GetClusterGroupsTextByLabel(testInstTexts, false);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTest);
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = googlewebSnippetUtil.docClusterUtil
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = trecUtil.docClusterUtil
 					.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
+			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_train");
 			
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_train");
-			
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_test");
+			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_test");
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void GenerateTrainTest2List() {
 		try{
-			int maxIteration = 5; //15
-			WebSnippetExternalEvaluation obj = new WebSnippetExternalEvaluation();
+			
+			int maxIteration = 10;
+			TrecExternalEvaluation obj = new TrecExternalEvaluation();
 			
 			for(int i=0;i<maxIteration;i++){
 				System.out.println("iteration="+i);
-				
-				for(int items = 1100; items<=1550;items=items+50)
-				//for(int items = 200; items<=280;items=items+20)
-				{
+				//for(int items = 1400; items<=2000;items=items+50)
+				for(int items = 700; items<=900;items=items+50)
+				{					
 					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
 					//Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
 					int exitVal = p.waitFor();
@@ -137,13 +131,13 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 		}
 	}
 
-	public void GenerateTrainTest2(int portion) {
+	private void GenerateTrainTest2(int portion) {
 		try{
 			
-			String trainTestTextFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_traintest";			
-			ArrayList<String[]> predTrueTexts = googlewebSnippetUtil.docClusterUtil.textUtilShared.ReadPredTrueTexts(trainTestTextFile);			
-			ArrayList<InstanceText> allInstTexts = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTrainData(predTrueTexts);
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = googlewebSnippetUtil.docClusterUtil
+			String trainTestTextFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_traintest";			
+			ArrayList<String[]> predTrueTexts = trecUtil.docClusterUtil.textUtilShared.ReadPredTrueTexts(trainTestTextFile);			
+			ArrayList<InstanceText> allInstTexts = trecUtil.docClusterUtil.CreateW2VecForTrainData(predTrueTexts);
+			LinkedHashMap<String, ArrayList<InstanceText>> lastClusters = trecUtil.docClusterUtil
 					.GetClusterGroupsTextByLabel(allInstTexts, false);
 			
 			
@@ -152,7 +146,7 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 			
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClusters);
 			//write texts of each group in  
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\textsperlabel\\"
+			trecUtil.docClusterUtil.textUtilShared.WriteTextsOfEachGroup("D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\textsperlabel\\"
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
@@ -163,8 +157,8 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 			p.destroy();
 			
 			//read outliers 
-			HashMap<String,ArrayList<String>> outliersByLabel = googlewebSnippetUtil.docClusterUtil.textUtilShared.ReadPredOutliersAll(
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\textsperlabel\\", 8); 
+			HashMap<String,ArrayList<String>> outliersByLabel = trecUtil.docClusterUtil.textUtilShared.ReadPredOutliersAll(
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\textsperlabel\\", 6); 
 			
 			for(String label: lastClusters.keySet()){
 				ArrayList<InstanceText> insts = lastClusters.get(label);
@@ -192,13 +186,12 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 				lastClusters.put(label, insts);
 			}
 			
-			
 			for(String label: lastClusters.keySet()){
 				
 				ArrayList<InstanceText> insts = lastClusters.get(label);
 				ArrayList<InstanceText> subInsts = new ArrayList<InstanceText>();;
 				
-				if(insts.size()>portion){
+				if(insts.size()>=portion){
 					subInsts.addAll(insts.subList(0, portion));
 					testInstTexts.addAll(insts.subList(portion, insts.size()));
 				}else{
@@ -206,41 +199,26 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 				}
 				trainInstTexts.addAll(subInsts);	
 				lastClusters.put(label, subInsts);
-			}			
+			}
+			
+			//if((double)trainInstTexts.size()/(double)allInstTexts.size() > 0.80) return;
 			
 			//LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTest = bioMedicalUtil.docClusterUtil
 			//		.GetClusterGroupsTextByLabel(testInstTexts, false);
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTest);
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = googlewebSnippetUtil.docClusterUtil
-					.GetClusterGroupsTextByLabel(trainInstTexts, false);
-			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
+			//LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = agNewsUtil.docClusterUtil
+			//		.GetClusterGroupsTextByLabel(trainInstTexts, false);
+			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
-			//if((double)trainInstTexts.size()/(trainInstTexts.size()+testInstTexts.size())<=0.85)
-			{
-				googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
-						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_train");
-				
-				googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
-						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_ensembele_test");	
-			}
-						
+			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_train");
+			
+			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_test");
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-
-	public void SaveDataToEmbedding() {
-		try{
-			ArrayList<String []> alDocLabelFlat = googlewebSnippetUtil.GetDocsGoogleWebSnippetFlat();
-			HashMap<String, double[]> hmW2Vec = googlewebSnippetUtil.docClusterUtil.PopulateW2Vec(googlewebSnippetUtil.GetUniqueWords());
-			ArrayList<InstanceW2Vec> testW2Vecs = googlewebSnippetUtil.docClusterUtil.CreateW2VecForTestData(alDocLabelFlat, hmW2Vec);
-			
-			googlewebSnippetUtil.docClusterUtil.textUtilShared.WriteTrainTestInstancesTextVec(testW2Vecs, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\semisupervised\\data-web-snippetsraw_12340_vecs");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-
 }

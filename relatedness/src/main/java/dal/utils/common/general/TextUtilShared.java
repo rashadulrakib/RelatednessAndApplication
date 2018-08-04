@@ -738,4 +738,34 @@ public class TextUtilShared<T> {
 		return flat;
 	}
 
+	//to add
+	public void WriteCentersToFile(LinkedHashMap<String, double[]> centers, String file) {
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			for(String label: centers.keySet()){
+				double [] center = centers.get(label);
+				String singleStr = ConvertListValueToString(center);
+				bw.write(singleStr+"\n");
+			}
+			bw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public String ConvertListValueToString(double[] center) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		try{
+			for(double val: center){
+				sb.append(" "+val);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return sb.toString().trim();
+	}
+
 }

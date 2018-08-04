@@ -10,10 +10,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import dal.clustering.document.dataset.agnews.AgNewsExternalEvaluation;
+import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNews;
 import dal.clustering.document.dataset.agnews.ClusterUnSupervisedAgNewsRAD;
+import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedical;
 import dal.clustering.document.dataset.biomedical.ClusterUnSupervisedBioMedicalRAD;
 import dal.clustering.document.dataset.googlewebsnippets.ClusterUnSupervisedGoogleWebSnippetRAD;
 import dal.clustering.document.dataset.stackoverflow.ClusterUnSupervisedStackOverflowRAD;
+import dal.clustering.document.dataset.trec.ClusterUnSupervisedTrec;
+import dal.clustering.document.dataset.trec.ClusterUnSupervisedTrecRAD;
+import dal.clustering.document.dataset.trec.TrecExternalEvaluation;
 import dal.relatedness.phrase.bigram.LoadBigram;
 import dal.relatedness.phrase.entities.bigram.BigramKey;
 import dal.relatedness.phrase.unigram.LoadUnigram;
@@ -164,13 +170,14 @@ public class App
     	//new ClusterUnSupervisedAgNews().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedAgNews().GenerateDocSimMatrixW2VecList();
     	//new AgNewsExternalEvaluation().ExternalEvaluate();
+    	//new AgNewsExternalEvaluation().ExternalEvaluateRAD();
     	
     	//new ClusterUnSupervisedAgNewsRAD().FindCommonGenerateTrainTest();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateDocTermMatrixW2Vec();
-    	//new AgNewsExternalEvaluation().ExternalEvaluateRAD();
     	//new ClusterUnSupervisedAgNewsRAD().SaveDataToEmbedding();
+    	//new ClusterUnSupervisedAgNewsRAD().GenerateSeed();
     	
     	//new ProcessGoogleWebSnippet().Process();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2();
@@ -260,7 +267,7 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateEnsembleClusters();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2(750);
-    	new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedBioMedicalRAD().FilterOutliers();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateCommonCluster();
     	//new ClusterUnSupervisedBioMedicalRAD().SaveDataToEmbedding();
@@ -285,6 +292,17 @@ public class App
         //new BioMedicalExternalEvaluation().ExternalEvaluate();
     	//new BioMedicalExternalEvaluation().ExternalEvaluateRAD();
     	//***********end biomedical************//
+    	
+    	
+    	//////**************trec/////////////
+    	//new ClusterUnSupervisedTrec().GenerateDocSimMatrixW2Vec();
+    	//new ClusterUnSupervisedTrec().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
+    	//new TrecExternalEvaluation().ExternalEvaluate();
+    	
+    	//new ClusterUnSupervisedTrecRAD().GenerateTrainTest();
+    	new ClusterUnSupervisedTrecRAD().GenerateTrainTest2List();
+    	
+    	//*end trec
     	
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixCosineW2Vec();
     	//new ClusterUnSupervisedCicling2002().ClusterDocsBySimilarityMatrixGtm();
