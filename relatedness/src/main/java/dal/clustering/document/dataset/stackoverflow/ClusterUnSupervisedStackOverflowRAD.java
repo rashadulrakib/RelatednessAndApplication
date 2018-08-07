@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import dal.clustering.document.dataset.trec.TrecConstant;
+import dal.clustering.document.dataset.trec.TrecExternalEvaluation;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 
@@ -130,7 +132,7 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 		}
 	}
 
-	public void GenerateTrainTest2(int portion) {
+	public double GenerateTrainTest2(int portion) {
 		try{
 			
 			String trainTestTextFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_traintest";			
@@ -149,7 +151,7 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 					,lastClusters);
 			
 			//call python code to get the outliers in each cluster
-			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlierembed.py");
+			Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\outlier.py");
 			int exitVal = p.waitFor();
 			System.out.println("Process status code="+exitVal);
 			p.destroy();
@@ -204,19 +206,28 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 			//		.GetClusterGroupsTextByLabel(testInstTexts, false);
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTest);
 			
-			LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = stackOverflowUtil.docClusterUtil
-					.GetClusterGroupsTextByLabel(trainInstTexts, false);
-			clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
+			double trainDataRatio = (double)trainInstTexts.size()/(trainInstTexts.size()+testInstTexts.size());
+			System.out.println("trainDataRatio="+trainDataRatio);
 			
-			stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_train");
+			if(trainDataRatio<=0.9){
+				LinkedHashMap<String, ArrayList<InstanceText>> lastClustersTrain = stackOverflowUtil.docClusterUtil
+						.GetClusterGroupsTextByLabel(trainInstTexts, false);
+				clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
+				
+				stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_train");
+				
+				stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_test");
+			}
 			
-			stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_test");
+			return trainDataRatio;
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		return 1.0;
 	}
 
 	public void SaveDataToEmbedding() {
@@ -229,6 +240,68 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflow_20000_vecs");
 		}catch(Exception e){
 			
+		}
+	}
+
+	public void MergeAndWriteTrainTest() {
+		try{
+			//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\stackoverflow-w2vec-glove-sparse-alpha-20000-0-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
+			
+			
+			ArrayList<String []> alBodyLabel = stackOverflowUtil.getDocsStackOverflowFlat();
+			
+			ArrayList<String> clusterLables = stackOverflowUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+			ArrayList<InstanceText> allInstTexts = stackOverflowUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+			
+			stackOverflowUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(allInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_traintest");
+			
+			StackOverflowExternalEvaluation obj = new StackOverflowExternalEvaluation();
+			obj.ExternalEvaluateRAD();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+			
+	}
+
+	public void GenerateTrainTest2List1() {
+		try{
+			int iterations = 10;
+			ArrayList<String[]> predTrueTexts = stackOverflowUtil.docClusterUtil.textUtilShared.ReadPredTrueTexts("D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\semisupervised\\stackoverflowraw_ensembele_traintest");
+			int N= predTrueTexts.size();
+			int N_K = N/StackOverflowConstant.NumberOfClusters;
+			
+			int texts_Within_Training_Range = (int)(N_K*1.0 - N_K*0.7);
+			int Texts_Each_Block = texts_Within_Training_Range/5;
+			if((N_K*0.7)%50==0 && N_K%50==0 && texts_Within_Training_Range>=200){
+				Texts_Each_Block = 50;
+			}
+			
+			StackOverflowExternalEvaluation obj = new StackOverflowExternalEvaluation();
+			
+			for(int itr= 0; itr<iterations; itr++){
+				for (int text_train = (int)(N_K*0.7); text_train<=(int)(N_K*1.0); text_train=text_train+Texts_Each_Block){
+                    double trainDataRatio = GenerateTrainTest2(text_train);
+					
+					if(trainDataRatio>0.9) continue;
+					
+					System.out.println("itr="+itr+", text_train="+text_train);
+					
+					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+					//Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
+					int exitVal = p.waitFor();
+					System.out.println("Process status code="+exitVal);
+					p.destroy();
+					
+					obj.ExternalEvaluateRAD();	
+				}
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 }

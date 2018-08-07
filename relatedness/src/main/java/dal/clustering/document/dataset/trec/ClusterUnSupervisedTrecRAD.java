@@ -108,6 +108,8 @@ public class ClusterUnSupervisedTrecRAD extends ClusterTrec {
 			int maxIteration = 10;
 			TrecExternalEvaluation obj = new TrecExternalEvaluation();
 			
+			boolean first= true;
+			
 			for(int i=0;i<maxIteration;i++){
 				System.out.println("iteration="+i);
 				//for(int items = 1400; items<=2000;items=items+50)
@@ -121,6 +123,9 @@ public class ClusterUnSupervisedTrecRAD extends ClusterTrec {
 					
 					obj.ExternalEvaluateRAD();	
 					
+					if(first) items=750;
+					first = false;
+					
 					GenerateTrainTest2(items);
 				}
 				
@@ -131,7 +136,7 @@ public class ClusterUnSupervisedTrecRAD extends ClusterTrec {
 		}
 	}
 
-	private void GenerateTrainTest2(int portion) {
+	public double GenerateTrainTest2(int portion) {
 		try{
 			
 			String trainTestTextFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_traintest";			
@@ -211,14 +216,84 @@ public class ClusterUnSupervisedTrecRAD extends ClusterTrec {
 			//		.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
-			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_train");
+			double trainDataRatio = (double)trainInstTexts.size()/(trainInstTexts.size()+testInstTexts.size());
+			System.out.println("trainDataRatio="+trainDataRatio);
 			
-			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_test");
+			if(trainDataRatio<=0.9){
+				trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_train");
+				
+				trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_test");
+			}
+			
+			return trainDataRatio;
 			
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+		
+		return 1.0;
+	}
+
+	public void GenerateTrainTest2List1() {
+		try{
+			int iterations = 10;
+			ArrayList<String[]> predTrueTexts = trecUtil.docClusterUtil.textUtilShared.ReadPredTrueTexts("D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_traintest");
+			int N= predTrueTexts.size();
+			int N_K = N/TrecConstant.NumberOfClusters;
+			
+			int texts_Within_Training_Range = (int)(N_K*1.0 - N_K*0.7);
+			int Texts_Each_Block = texts_Within_Training_Range/5;
+			if((N_K*0.7)%50==0 && N_K%50==0 && texts_Within_Training_Range>=200){
+				Texts_Each_Block = 50;
+			}
+			
+			TrecExternalEvaluation obj = new TrecExternalEvaluation();
+			
+			for(int itr= 0; itr<iterations; itr++){
+				for (int text_train = (int)(N_K*0.7); text_train<=(int)(N_K*1.0); text_train=text_train+Texts_Each_Block){
+                    double trainDataRatio = GenerateTrainTest2(text_train);
+					
+					if(trainDataRatio>0.9) continue;
+					
+					System.out.println("itr="+itr+", text_train="+text_train);
+					
+					Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+					//Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
+					int exitVal = p.waitFor();
+					System.out.println("Process status code="+exitVal);
+					p.destroy();
+					
+					obj.ExternalEvaluateRAD();	
+				}
+			}
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void MergeAndWriteTrainTest() {
+		try{
+			//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\2n-trec-glove-sparse-0-labels";
+			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
+			
+			
+			ArrayList<String []> alBodyLabel = trecUtil.getTrecFlat();
+			
+			ArrayList<String> clusterLables = trecUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+			ArrayList<InstanceText> allInstTexts = trecUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+			
+			trecUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(allInstTexts, 
+					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\semisupervised\\trecraw_ensembele_traintest");
+			
+			TrecExternalEvaluation obj = new TrecExternalEvaluation();
+			obj.ExternalEvaluateRAD();
+		}catch(Exception e){
+			
 		}
 	}
 }

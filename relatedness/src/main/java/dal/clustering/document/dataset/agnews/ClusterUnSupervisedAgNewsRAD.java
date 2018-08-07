@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import dal.clustering.document.dataset.stackoverflow.StackOverflowConstant;
+import dal.clustering.document.dataset.stackoverflow.StackOverflowExternalEvaluation;
 import dal.clustering.document.shared.entities.InstanceText;
 import dal.clustering.document.shared.entities.InstanceW2Vec;
 import dal.utils.common.general.UtilsShared;
@@ -84,7 +86,7 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 	public void GenerateTrainTest() {
 		try{
 
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\agnews-127600-glove-center-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\agnews-w2vec-glove-sparse-alpha-8000-0-labels"; //agnews-127600-glove-center-labels";
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\4_1800";
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\kmLabels-127275";
 			
@@ -210,7 +212,7 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 		}
 	}
 	
-	public void GenerateTrainTest2(int portion) {
+	public double GenerateTrainTest2(int portion) {
 		try{
 			
 			String trainTestTextFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_traintest";			
@@ -290,15 +292,23 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 			//		.GetClusterGroupsTextByLabel(trainInstTexts, false);
 			//clusterEvaluation.EvalSemiSupervisedByPurityMajorityVotingTextExternal(lastClustersTrain);
 			
-			agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_train");
+			double trainDataRatio = (double)trainInstTexts.size()/(trainInstTexts.size()+testInstTexts.size());
+			System.out.println("trainDataRatio="+trainDataRatio);
 			
-			agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
-					"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_test");
+			if(trainDataRatio<=0.9){
+				agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(trainInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_train");
+				
+				agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(testInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_test");
+			}
+			return trainDataRatio;
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		return 1.0;
 	}
 
 	public void FindCommonGenerateTrainTest() {
@@ -474,6 +484,67 @@ public class ClusterUnSupervisedAgNewsRAD extends ClusterAgNews {
 				LinkedHashMap<String, double[]> centers = agNewsUtil.docClusterUtil.ReComputeCenters(lastClustersTrainW2Vec);
 				agNewsUtil.docClusterUtil.textUtilShared.WriteCentersToFile(centers
 						,"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\centers-127600");
+				
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+
+		public void MergeAndWriteTrainTest() {
+			try{
+				//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
+				String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\agnews-127600-glove-labels";
+				//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
+				
+				
+				ArrayList<String []> alBodyLabel = agNewsUtil.getAgNewsFlat();
+				
+				ArrayList<String> clusterLables = agNewsUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
+				ArrayList<InstanceText> allInstTexts = agNewsUtil.docClusterUtil.CreateW2VecForTrainData(alBodyLabel, clusterLables);
+				
+				agNewsUtil.docClusterUtil.textUtilShared.WriteTrainTestInstances(allInstTexts, 
+						"D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_traintest");
+				
+				AgNewsExternalEvaluation obj = new AgNewsExternalEvaluation();
+				obj.ExternalEvaluateRAD();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+
+		public void GenerateTrainTest2List1() {
+			try{
+				int iterations = 10;
+				ArrayList<String[]> predTrueTexts = agNewsUtil.docClusterUtil.textUtilShared.ReadPredTrueTexts("D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\semisupervised\\agnewsraw_ensembele_traintest");
+				int N= predTrueTexts.size();
+				int N_K = N/4;
+				
+				int texts_Within_Training_Range = (int)(N_K*1.0 - N_K*0.7);
+				int Texts_Each_Block = texts_Within_Training_Range/5;
+				if((N_K*0.7)%50==0 && N_K%50==0 && texts_Within_Training_Range>=200 && texts_Within_Training_Range<=300){
+					Texts_Each_Block = 50;
+				}
+				
+				AgNewsExternalEvaluation obj = new AgNewsExternalEvaluation();
+				
+				for(int itr= 0; itr<iterations; itr++){
+					for (int text_train = (int)(N_K*0.7); text_train<=(int)(N_K*1.0); text_train=text_train+Texts_Each_Block){
+	                    double trainDataRatio = GenerateTrainTest2(text_train);
+						
+						if(trainDataRatio>0.9) continue;
+						
+						System.out.println("itr="+itr+", text_train="+text_train);
+						
+						Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification.py");
+						//Process p = Runtime.getRuntime().exec("python D:\\PhD\\SupervisedFeatureSelection\\improvedclassification_embedd.py");
+						int exitVal = p.waitFor();
+						System.out.println("Process status code="+exitVal);
+						p.destroy();
+						
+						obj.ExternalEvaluateRAD();	
+					}
+				}
+				
 				
 			}catch(Exception e){
 				e.printStackTrace();

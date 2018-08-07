@@ -178,6 +178,8 @@ public class App
     	//new ClusterUnSupervisedAgNewsRAD().GenerateDocTermMatrixW2Vec();
     	//new ClusterUnSupervisedAgNewsRAD().SaveDataToEmbedding();
     	//new ClusterUnSupervisedAgNewsRAD().GenerateSeed();
+    	//new ClusterUnSupervisedAgNewsRAD().MergeAndWriteTrainTest();
+    	//new ClusterUnSupervisedAgNewsRAD().GenerateTrainTest2List1();
     	
     	//new ProcessGoogleWebSnippet().Process();
     	//new ProcessWebSnippetSTC2().ProcessBySTC2();
@@ -218,6 +220,8 @@ public class App
     	//new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedGoogleWebSnippetRAD().SaveDataToEmbedding();
+    	new ClusterUnSupervisedGoogleWebSnippetRAD().MergeAndWriteTrainTest();
+    	new ClusterUnSupervisedGoogleWebSnippetRAD().GenerateTrainTest2List1();
     	
     	//new ProcessStackOverflow().Process();
     	//new ProcessStackOverflowSTC2().ProcessBySTC2();
@@ -246,6 +250,8 @@ public class App
     	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest();
     	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest2List();
     	//new ClusterUnSupervisedStackOverflowRAD().SaveDataToEmbedding();
+    	//new ClusterUnSupervisedStackOverflowRAD().MergeAndWriteTrainTest();
+    	//new ClusterUnSupervisedStackOverflowRAD().GenerateTrainTest2List1();
     	
     	//***********biomedical************//
     	//new ProcessBiomedicalData().Process();
@@ -271,6 +277,8 @@ public class App
     	//new ClusterUnSupervisedBioMedicalRAD().FilterOutliers();
     	//new ClusterUnSupervisedBioMedicalRAD().GenerateCommonCluster();
     	//new ClusterUnSupervisedBioMedicalRAD().SaveDataToEmbedding();
+        //new ClusterUnSupervisedBioMedicalRAD().MergeAndWriteTrainTest();
+    	//new ClusterUnSupervisedBioMedicalRAD().GenerateTrainTest2List1();
     	
     	//new ClusterUnSupervisedBioMedical().ClusterDocsNGramBasedSimilarityGtm();
     	//new ClusterUnSupervisedBioMedical().ClusterDocsSimilarityByW2VecFollowingGtm();
@@ -298,9 +306,13 @@ public class App
     	//new ClusterUnSupervisedTrec().GenerateDocSimMatrixW2Vec();
     	//new ClusterUnSupervisedTrec().GenerateDocsDisSimilarityMatrixFromFileSparsificationIterative();
     	//new TrecExternalEvaluation().ExternalEvaluate();
+    	//new TrecExternalEvaluation().ExternalEvaluateRAD();
+    	
     	
     	//new ClusterUnSupervisedTrecRAD().GenerateTrainTest();
-    	new ClusterUnSupervisedTrecRAD().GenerateTrainTest2List();
+    	//new ClusterUnSupervisedTrecRAD().GenerateTrainTest2(700);
+    	//new ClusterUnSupervisedTrecRAD().MergeAndWriteTrainTest();
+    	//new ClusterUnSupervisedTrecRAD().GenerateTrainTest2List1();
     	
     	//*end trec
     	
