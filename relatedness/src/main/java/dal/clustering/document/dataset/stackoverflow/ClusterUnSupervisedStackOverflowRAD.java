@@ -246,7 +246,8 @@ public class ClusterUnSupervisedStackOverflowRAD extends ClusterStackOverflow {
 	public void MergeAndWriteTrainTest() {
 		try{
 			//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\stackoverflow-w2vec-glove-sparse-alpha-20000-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\stackoverflow\\stackoverflow-20000-kmeans---glove-labels";//stackoverflow-w2vec-glove-sparse-alpha-20000-0-labels";
+			
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
 			
 			

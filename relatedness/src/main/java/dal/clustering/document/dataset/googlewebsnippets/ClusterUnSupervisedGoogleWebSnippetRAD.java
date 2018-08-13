@@ -253,7 +253,7 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 	public void MergeAndWriteTrainTest() {
 		try{
 			//String externalClusteringResultFile= "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\semisupervised\\2n-biomedical-w2vec-add-sparse-20000-0-labels";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //2n-web-snippet-glove-add-sparse-12340-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //2n-web-snippet-glove-add-sparse-12340-0-labels";
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\biomedical\\biomedical-sparse-gtm-alpha-20000-0-labels";  //2n-biomedical-w2vecitr-bioasq2018-sparse-20000-0-labels
 			
 			
@@ -287,11 +287,15 @@ public class ClusterUnSupervisedGoogleWebSnippetRAD extends ClusterGoogleWebSnip
 			
 			WebSnippetExternalEvaluation obj = new WebSnippetExternalEvaluation();
 			
-			for(int itr= 0; itr<iterations; itr++){
-				for (int text_train = (int)(N_K*0.7); text_train<=(int)(N_K*1.0); text_train=text_train+Texts_Each_Block){
+			//for(int itr= 0; itr<iterations; itr++)
+			int itr= 0;
+			{
+				//for (int text_train = (int)(N_K*0.7); text_train<=(int)(N_K*1.0); text_train=text_train+Texts_Each_Block)
+				int text_train = (int)(N_K*0.8); 
+				{
                     double trainDataRatio = GenerateTrainTest2(text_train);
 					
-					if(trainDataRatio>0.9) continue;
+					//if(trainDataRatio>0.9) continue;
 					
 					System.out.println("itr="+itr+", text_train="+text_train);
 					

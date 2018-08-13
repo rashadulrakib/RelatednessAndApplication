@@ -20,7 +20,7 @@ public class TrecExternalEvaluation {
 	public void ExternalEvaluate() {
 		try{
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\agnews\\sparseMatrix-tfidf-agnews-weightCenterBased-8000-labels";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\2n-trec-glove-sparse-0-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\trec\\trec-5952-hcward-glove-labels";
 			
 			@SuppressWarnings("unchecked")
 			ArrayList<String> clusterLables = trecUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
