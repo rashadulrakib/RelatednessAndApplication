@@ -21,7 +21,7 @@ public class WebSnippetExternalEvaluation {
 	public void ExternalEvaluate() {
 		try{
 			//String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-BTM-labels-2208";
-			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\websnippet-12340-kmeans-glove-labels";
+			String externalClusteringResultFile = "D:\\PhD\\dr.norbert\\dataset\\shorttext\\data-web-snippets\\2n-websnippet-w2vec-glove-sparse-2280-0-labels"; //\\STC2\\stc2-le_searchsnippet12340-labels";
 			
 			ArrayList<String> clusterLables = googlewebSnippetUtil.docClusterUtil.textUtilShared.ReadClusterLabels(externalClusteringResultFile);
 			
